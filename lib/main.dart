@@ -142,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: const Text('Ir a Inicio de Sesión'),
             ),
+            const Text('yendo a login desde home'),
           ],
         ),
       ),

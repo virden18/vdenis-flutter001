@@ -78,28 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     : (_counter < 0 ? Colors.red : Colors.black),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Advertencia'),
-                      content: const Text('Esta es una advertencia importante.'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(); // Cierra el modal
-                          },
-                          child: const Text('Cerrar'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              child: const Text('Mostrar Advertencia'),
-            ),
+            
             ElevatedButton(
               onPressed: () {
                 Navigator.push(

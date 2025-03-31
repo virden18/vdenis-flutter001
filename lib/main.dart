@@ -37,6 +37,28 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _decrementCounter() {
+    setState(() {
+      _counter--;
+    });
+  }
+
+  void _restartCounter() {
+    setState(() {
+      _counter = 0;
+    });
+  }
+
+  String _message() {
+    if (_counter > 0) {
+      return 'El contador es positivo: $_counter';
+    } else if (_counter < 0) {
+      return 'El contador es negativo: $_counter';
+    } else {
+      return 'El contador es cero: $_counter';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,12 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+              _message(),
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: _counter > 0 
+                    ? Colors.green 
+                    : (_counter < 0 ? Colors.red : Colors.black),
+              ),
             ),
-            const Text('holaaa'),
             ElevatedButton(
               onPressed: () {
                 showDialog(
@@ -85,15 +109,31 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: const Text('Ir a Inicio de Sesión'),
             ),
-            const Text('yendo a login desde home'),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+  
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _incrementCounter,
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(width: 16), // Espaciado entre los botones
+          FloatingActionButton(
+            onPressed: _decrementCounter,
+            tooltip: 'Decrement',
+            child: const Icon(Icons.remove),
+          ),
+          const SizedBox(width: 16), // Espaciado entre los botones
+          FloatingActionButton(
+            onPressed: _restartCounter,
+            tooltip: 'Restart',
+            child: const Icon(Icons.refresh))
+        ],
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/auth_service.dart';
+import 'package:vdenis/views/welcome_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -67,12 +68,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     try {
                       await authService.login(username, password);
 
-                      // Muestra un mensaje de éxito
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Inicio de sesión exitoso')),
+                      // Navega a la pantalla de bienvenida
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WelcomeScreen(username: username),
+                        ),
                       );
                     } catch (e) {
-                      // Muestra un mensaje de error si ocurre una excepción
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(e.toString())),
                       );

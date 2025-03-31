@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/login_screen.dart';
+import 'package:vdenis/views/login_screen.dart';
 
 void main() {
   runApp(const MyApp());

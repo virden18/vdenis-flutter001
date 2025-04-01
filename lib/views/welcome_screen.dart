@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdenis/views/quotes_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String username;
@@ -24,7 +25,19 @@ class WelcomeScreen extends StatelessWidget {
               },
               child: const Text('Cerrar'),
             ),
-            const SizedBox(height: 16), // Espaciado entre los botones
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Acción para mirar cotizaciones
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const QuotesScreen(), // Asegúrate de crear esta pantalla
+                  ),
+                );
+              },
+              child: const Text('Mirar Cotizaciones'),
+            ),const SizedBox(height: 16), // Espaciado entre los botones
             ElevatedButton(
               onPressed: () {
                 // Aquí puedes agregar la lógica para navegar a la pantalla de cotizaciones

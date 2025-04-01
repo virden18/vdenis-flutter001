@@ -26,6 +26,21 @@ class WelcomeScreen extends StatelessWidget {
               },
               child: const Text('Cerrar'),
             ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Cotizaciones'),
+                      content: const Text('Aquí se mostraran las cotizaciones.'),
+                    );
+                  },
+                );
+              },
+              child: const Text('Listar Cotizaciones'),
+            ),
           ],
         ),
       ),

@@ -9,9 +9,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bienvenido'),
-      ),
+      appBar: AppBar(title: const Text('Bienvenido')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -39,6 +37,13 @@ class WelcomeScreen extends StatelessWidget {
                 );
               },
               child: const Text('Mirar Cotizaciones'),
+            ),const SizedBox(height: 16), // Espaciado entre los botones
+            ElevatedButton(
+              onPressed: () {
+                // Aquí puedes agregar la lógica para navegar a la pantalla de cotizaciones
+                // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => QuotesScreen()));
+              },
+              child: const Text('Mirar Cotizaciones de productos'),
             ),
           ],
         ),

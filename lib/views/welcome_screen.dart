@@ -27,9 +27,18 @@ class WelcomeScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Regresa a la pantalla anterior
+                // Aquí puedes agregar la lógica para navegar a la pantalla de cotización
+                // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => QuoteScreen()));
               },
               child: const Text('boton cotizar'),
+            ),
+            const SizedBox(height: 16), // Espaciado entre los botones
+            ElevatedButton(
+              onPressed: () {
+                // Aquí puedes agregar la lógica para navegar a la pantalla de cotizaciones
+                // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => QuotesScreen()));
+              },
+              child: const Text('Mirar Cotizaciones de productos'),
             ),
           ],
         ),

@@ -8,9 +8,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bienvenido'),
-      ),
+      appBar: AppBar(title: const Text('Bienvenido')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -25,6 +23,13 @@ class WelcomeScreen extends StatelessWidget {
                 Navigator.pop(context); // Regresa a la pantalla anterior
               },
               child: const Text('Cerrar'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Regresa a la pantalla anterior
+              },
+              child: const Text('boton cotizar'),
             ),
           ],
         ),

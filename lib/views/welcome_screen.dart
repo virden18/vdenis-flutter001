@@ -8,9 +8,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bienvenido'),
-      ),
+      appBar: AppBar(title: const Text('Bienvenido')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -26,20 +24,13 @@ class WelcomeScreen extends StatelessWidget {
               },
               child: const Text('Cerrar'),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16), // Espaciado entre los botones
             ElevatedButton(
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Cotizaciones'),
-                      content: const Text('Aquí se mostraran las cotizaciones.'),
-                    );
-                  },
-                );
+                // Aquí puedes agregar la lógica para navegar a la pantalla de cotizaciones
+                // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => QuotesScreen()));
               },
-              child: const Text('Listar Cotizaciones'),
+              child: const Text('Mirar Cotizaciones de productos'),
             ),
           ],
         ),

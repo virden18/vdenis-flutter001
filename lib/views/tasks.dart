@@ -19,9 +19,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class TasksScreen extends StatelessWidget {
+class TasksScreen extends StatefulWidget {
+  @override
+  _TasksScreenState createState() => _TasksScreenState();
+}
+
+class _TasksScreenState extends State<TasksScreen> {
   // Lista de tareas de ejemplo
-  final List<String> tasks = [
+  List<String> tasks = [
     'Comprar leche',
     'Hacer ejercicio',
     'Llamar a mamá',
@@ -29,18 +34,58 @@ class TasksScreen extends StatelessWidget {
     'Preparar presentación',
   ];
 
+  void _editTask(int index) {
+    final TextEditingController taskController =
+        TextEditingController(text: tasks[index]);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Editar tarea'),
+        content: TextField(
+          controller: taskController,
+          decoration: const InputDecoration(labelText: 'Título de la tarea'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                tasks[index] = taskController.text.trim();
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Guardar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                tasks.removeAt(index); // Elimina la tarea de la lista
+              });
+              Navigator.pop(context); // Cierra el diálogo
+            },
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de Tareas'),
+        title: const Text('Lista de Tareas'),
         centerTitle: true,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Text(
               'Tareas',
               style: TextStyle(
@@ -54,18 +99,12 @@ class TasksScreen extends StatelessWidget {
               itemCount: tasks.length,
               itemBuilder: (context, index) {
                 return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   child: ListTile(
                     title: Text(tasks[index]),
-                    trailing: Icon(Icons.arrow_forward),
+                    trailing: const Icon(Icons.edit),
                     onTap: () {
-                      // Muestra un snackbar al tocar una tarea
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Seleccionaste: ${tasks[index]}'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
+                      _editTask(index); // Llama al método para editar la tarea
                     },
                   ),
                 );
@@ -75,18 +114,18 @@ class TasksScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           // Muestra un diálogo al presionar el FAB
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text('Nueva tarea'),
-              content: Text('Aquí iría el formulario para agregar una nueva tarea'),
+              title: const Text('Nueva tarea'),
+              content: const Text('Aquí iría el formulario para agregar una nueva tarea'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('Cerrar'),
+                  child: const Text('Cerrar'),
                 ),
               ],
             ),

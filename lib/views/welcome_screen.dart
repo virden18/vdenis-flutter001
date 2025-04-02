@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/views/quotes_screen.dart';
+import 'package:vdenis/views/tasks.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String username;
@@ -21,10 +21,16 @@ class WelcomeScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TasksScreen(), // Asegúrate de crear esta pantalla
+                  ),
+                );
                 // Aquí puedes agregar la navegación a la pantalla de cotizaciones
                 // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => QuotesScreen()));
               },
-              child: const Text('Cotizaciones'),
+              child: const Text('Lista de Tareas'),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -32,37 +38,6 @@ class WelcomeScreen extends StatelessWidget {
                 Navigator.pop(context); // Regresa a la pantalla anterior
               },
               child: const Text('Cerrar'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                // Aquí puedes agregar la lógica para navegar a la pantalla de cotización
-                // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => QuoteScreen()));
-              },
-              child: const Text('boton cotizar'),
-            ),
-            const SizedBox(height: 16), // Espaciado entre los botones
-            // Acción para mirar cotizaciones
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) =>
-                            const QuotesScreen(), // Asegúrate de crear esta pantalla
-                  ),
-                );
-              },
-              child: const Text('Mirar Cotizaciones'),
-            ),
-            const SizedBox(height: 16), // Espaciado entre los botones
-            ElevatedButton(
-              onPressed: () {
-                // Aquí puedes agregar la lógica para navegar a la pantalla de cotizaciones
-                // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => QuotesScreen()));
-              },
-              child: const Text('Mirar Cotizaciones de productos'),
             ),
           ],
         ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert'; // Para codificar y decodificar JSON
 
 void main() {
   runApp(MyApp());
@@ -26,7 +28,31 @@ class TasksScreen extends StatefulWidget {
 
 class _TasksScreenState extends State<TasksScreen> {
   // Lista de tareas
-  final List<Map<String, dynamic>> tasks = [];
+  List<Map<String, dynamic>> tasks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks(); // Cargar las tareas al iniciar
+  }
+
+  // Cargar tareas desde SharedPreferences
+  Future<void> _loadTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? tasksString = prefs.getString('tasks');
+    if (tasksString != null) {
+      setState(() {
+        tasks = List<Map<String, dynamic>>.from(json.decode(tasksString));
+      });
+    }
+  }
+
+  // Guardar tareas en SharedPreferences
+  Future<void> _saveTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String tasksString = json.encode(tasks);
+    await prefs.setString('tasks', tasksString);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +162,7 @@ class _TasksScreenState extends State<TasksScreen> {
                           : 'Sin fecha',
                     });
                   });
+                  _saveTasks(); // Guardar las tareas después de agregar
                   Navigator.of(context).pop();
                 } else {
                   // Mostrar un mensaje de error si los campos están vacíos
@@ -216,16 +243,17 @@ class _TasksScreenState extends State<TasksScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                  setState(() {
-                    tasks[index] = {
-                      'titulo': titleController.text,
-                      'descripcion': descriptionController.text,
-                      'fecha': selectedDate != null
-                          ? '${selectedDate?.toLocal().toString().split(' ')[0]}'
-                          : 'Sin fecha',
-                    };
-                  });
-                  Navigator.of(context).pop();
+                setState(() {
+                  tasks[index] = {
+                    'titulo': titleController.text,
+                    'descripcion': descriptionController.text,
+                    'fecha': selectedDate != null
+                        ? '${selectedDate?.toLocal().toString().split(' ')[0]}'
+                        : 'Sin fecha',
+                  };
+                });
+                _saveTasks(); // Guardar las tareas después de editar
+                Navigator.of(context).pop();
               },
               child: const Text('Guardar'),
             ),
@@ -234,6 +262,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 setState(() {
                   tasks.removeAt(index); // Elimina la tarea de la lista
                 });
+                _saveTasks(); // Guardar las tareas después de eliminar
                 Navigator.of(context).pop(); // Cierra el diálogo
               },
               child: const Text('Eliminar'),

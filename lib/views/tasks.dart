@@ -51,13 +51,7 @@ class _TasksScreenState extends State<TasksScreen> {
                         '${task['descripcion']} - ${task['fecha'] ?? 'Sin fecha'}'),
                     trailing: Icon(Icons.arrow_forward),
                     onTap: () {
-                      // Muestra un snackbar al tocar una tarea
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Seleccionaste: ${task['titulo']}'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
+                      _showTaskOptionsModal(context, index);
                     },
                   ),
                 );
@@ -98,8 +92,8 @@ class _TasksScreenState extends State<TasksScreen> {
                 Row(
                   children: [
                     Text(selectedDate == null
-    ? 'Seleccionar fecha'
-    : 'Fecha: ${selectedDate!.toLocal()}'.split(' ')[0]),
+                        ? 'Seleccionar fecha'
+                        : 'Fecha: ${selectedDate!.toLocal()}'.split(' ')[0]),
                     Spacer(),
                     TextButton(
                       onPressed: () async {
@@ -138,8 +132,8 @@ class _TasksScreenState extends State<TasksScreen> {
                       'titulo': titleController.text,
                       'descripcion': descriptionController.text,
                       'fecha': selectedDate != null
-    ? '${selectedDate!.toLocal().toString().split(' ')[0]}'
-    : 'Sin fecha',
+                          ? '${selectedDate!.toLocal().toString().split(' ')[0]}'
+                          : 'Sin fecha',
                     });
                   });
                   Navigator.of(context).pop();
@@ -151,6 +145,98 @@ class _TasksScreenState extends State<TasksScreen> {
                 }
               },
               child: Text('Guardar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showTaskOptionsModal(BuildContext context, int index) {
+    final task = tasks[index];
+    final TextEditingController titleController =
+        TextEditingController(text: task['titulo']);
+    final TextEditingController descriptionController =
+        TextEditingController(text: task['descripcion']);
+    DateTime? selectedDate = task['fecha'] != 'Sin fecha'
+        ? DateTime.parse(task['fecha'])
+        : null;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Editar Tarea'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: 'Título'),
+                ),
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'Descripción'),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Text(selectedDate == null
+                        ? 'Seleccionar fecha'
+                        : 'Fecha: ${selectedDate?.toLocal()}'.split(' ')[0]),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            selectedDate = pickedDate;
+                          });
+                        }
+                      },
+                      child: const Text('Elegir Fecha'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                  setState(() {
+                    tasks[index] = {
+                      'titulo': titleController.text,
+                      'descripcion': descriptionController.text,
+                      'fecha': selectedDate != null
+                          ? '${selectedDate?.toLocal().toString().split(' ')[0]}'
+                          : 'Sin fecha',
+                    };
+                  });
+                  Navigator.of(context).pop();
+              },
+              child: const Text('Guardar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  tasks.removeAt(index); // Elimina la tarea de la lista
+                });
+                Navigator.of(context).pop(); // Cierra el diálogo
+              },
+              child: const Text('Eliminar'),
             ),
           ],
         );

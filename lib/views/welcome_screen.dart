@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/views/quotes_screen.dart';
 import 'package:vdenis/views/tasks.dart';
 
 class WelcomeScreen extends StatelessWidget {

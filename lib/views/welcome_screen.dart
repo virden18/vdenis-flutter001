@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/views/quotes_screen.dart';
+import 'package:vdenis/views/tasks.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String username;
@@ -24,7 +24,7 @@ class WelcomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const QuotesScreen(), // Asegúrate de crear esta pantalla
+                    builder: (context) => TasksScreen(), // Asegúrate de crear esta pantalla
                   ),
                 );
                 // Aquí puedes agregar la navegación a la pantalla de cotizaciones

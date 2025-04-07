@@ -116,29 +116,31 @@ class _TasksScreenState extends State<TasksScreen> {
                 ),
                 SizedBox(height: 10),
                 Row(
-                  children: [
-                    Text(selectedDate == null
-                        ? 'Seleccionar fecha'
-                        : 'Fecha: ${selectedDate!.toLocal()}'.split(' ')[0]),
-                    Spacer(),
-                    TextButton(
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (pickedDate != null) {
-                          setState(() {
-                            selectedDate = pickedDate;
-                          });
-                        }
-                      },
-                      child: Text('Elegir Fecha'),
-                    ),
-                  ],
-                ),
+  children: [
+    Text(selectedDate == null
+        ? 'Seleccionar fecha'
+        : 'Fecha: ${selectedDate!.toLocal().toString().split(' ')[0]}'),
+    Spacer(),
+    TextButton(
+      onPressed: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: selectedDate ?? DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+        );
+        if (pickedDate != null) {
+          setState(() {
+            selectedDate = pickedDate;
+          });
+        }
+      },
+      child: Text(selectedDate == null
+          ? 'Elegir Fecha'
+          : '${selectedDate!.toLocal().toString().split(' ')[0]}'),
+    ),
+  ],
+),
               ],
             ),
           ),
@@ -208,29 +210,31 @@ class _TasksScreenState extends State<TasksScreen> {
                 ),
                 const SizedBox(height: 10),
                 Row(
-                  children: [
-                    Text(selectedDate == null
-                        ? 'Seleccionar fecha'
-                        : 'Fecha: ${selectedDate?.toLocal()}'.split(' ')[0]),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate ?? DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (pickedDate != null) {
-                          setState(() {
-                            selectedDate = pickedDate;
-                          });
-                        }
-                      },
-                      child: const Text('Elegir Fecha'),
-                    ),
-                  ],
-                ),
+  children: [
+    Text(selectedDate == null
+        ? 'Seleccionar fecha'
+        : 'Fecha: ${selectedDate!.toLocal().toString().split(' ')[0]}'),
+    Spacer(),
+    TextButton(
+      onPressed: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: selectedDate ?? DateTime.now(),
+          firstDate: DateTime(2000),
+          lastDate: DateTime(2100),
+        );
+        if (pickedDate != null) {
+          setState(() {
+            selectedDate = pickedDate;
+          });
+        }
+      },
+      child: Text(selectedDate == null
+          ? 'Elegir Fecha'
+          : '${selectedDate!.toLocal().toString().split(' ')[0]}'),
+    ),
+  ],
+),
               ],
             ),
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/views/tasks.dart';
+import 'package:vdenis/views/tasks_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String username;

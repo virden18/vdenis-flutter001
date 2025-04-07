@@ -3,4 +3,6 @@ class Task {
   final String type;
 
   Task({required this.title, this.type = 'normal'});
+
+  
 }

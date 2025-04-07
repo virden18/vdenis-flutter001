@@ -83,7 +83,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
                 );
               },
               child: const Text('Ir a Inicio de Sesión'),
@@ -96,18 +98,21 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
+            heroTag: 'increment',
             onPressed: _incrementCounter,
             tooltip: 'Increment',
             child: const Icon(Icons.add),
           ),
           const SizedBox(width: 16), // Espaciado entre los botones
           FloatingActionButton(
+            heroTag: 'decrement',
             onPressed: _decrementCounter,
             tooltip: 'Decrement',
             child: const Icon(Icons.remove),
           ),
           const SizedBox(width: 16), // Espaciado entre los botones
           FloatingActionButton(
+            heroTag: 'restart',
             onPressed: _restartCounter,
             tooltip: 'Restart',
             child: const Icon(Icons.refresh))

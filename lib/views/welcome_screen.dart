@@ -24,11 +24,9 @@ class WelcomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TasksScreen(), // Asegúrate de crear esta pantalla
+                    builder: (context) => TasksScreen(),
                   ),
                 );
-                // Aquí puedes agregar la navegación a la pantalla de cotizaciones
-                // Por ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => QuotesScreen()));
               },
               child: const Text('Lista de Tareas'),
             ),

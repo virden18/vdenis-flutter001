@@ -40,12 +40,13 @@ class TaskService {
   }
 
   // Obtener pasos simulados para una tarea según su título
-  List<String> obtenerPasos(String titulo) {
+  List<String> obtenerPasos(String titulo, DateTime fechaLimite) {
+    String fechaString = fechaLimite.toLocal().toString().split(' ')[0];
     print('Obteniendo pasos para la tarea: $titulo');
     return [
-      'Paso 1: Planificar $titulo',
-      'Paso 2: Ejecutar $titulo',
-      'Paso 3: Revisar $titulo',
+      'Paso 1: Planificar $titulo antes de $fechaString',
+      'Paso 2: Ejecutar $titulo antes de $fechaString',
+      'Paso 3: Revisar $titulo antes de $fechaString',
     ];
   }
 }

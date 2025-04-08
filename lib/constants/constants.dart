@@ -5,3 +5,4 @@ const String TASK_TYPE_NORMAL = 'normal';
 const String TASK_TYPE_URGENT = 'urgente';
 const String TASK_DESCRIPTION = 'Descripción: \n';
 const String PASOS_TITULO = 'Pasos para completar: ';
+const String FECHA_LIMITE = 'Fecha límite: ';

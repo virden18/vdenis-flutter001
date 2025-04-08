@@ -70,6 +70,7 @@ class TasksScreenState extends State<TasksScreen> {
               child: Text(EMPTY_LIST, style: TextStyle(fontSize: 18)),
             )
           : ListView.builder(
+              
               controller: _scrollController, // Asigna el controlador
               itemCount: tasks.length + (isLoading ? 1 : 0),
               itemBuilder: (context, index) {
@@ -202,6 +203,7 @@ class TasksScreenState extends State<TasksScreen> {
                         : TASK_TYPE_NORMAL,
                     description: descriptionController.text,
                     date: dateSelected ?? DateTime.now(),
+                    fechaLimite: DateTime.now().add(const Duration(days: 1)), 
                   );
                   if (index != null) {
                     _taskService.updateTask(index, newTask); // Actualiza la tarea existente

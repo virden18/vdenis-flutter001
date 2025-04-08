@@ -17,15 +17,20 @@ class TaskService {
     return _taskRepository.getTasks();
   }
 
+  void getTaskById(int index) {
+    print('Obteniendo tarea por ID: $index'); // Imprime el índice de la tarea a obtener
+    _taskRepository.getTaskById(index); 
+  }
+
   // Actualizar una tarea existente
   void updateTask(int index, Task updatedTask) {
     print('Actualizando tarea en el índice: $index'); // Imprime el índice de la tarea actualizada
-     _taskRepository.updateTask(index, updatedTask); // Actualiza la tarea en el repositorio
+     _taskRepository.updateTask(index, updatedTask); 
   }
 
   // Eliminar una tarea
   void deleteTask(int index) {
     print('Eliminando tarea en el índice: $index'); // Imprime el índice de la tarea a eliminar
-    _taskRepository.deleteTask(index); // Elimina la tarea del repositorio
+    _taskRepository.deleteTask(index); 
   }
 }

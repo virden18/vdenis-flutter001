@@ -35,26 +35,32 @@ class TasksScreenState extends State<TasksScreen> {
   }
 
   void _loadMoreTasks() async {
-  setState(() {
-    isLoading = true; // Cambia el estado a cargando
-  });
+    setState(() {
+      isLoading = true; // Cambia el estado a cargando
+    });
 
-  await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
 
-  final newTasks = List.generate(10, (index) => Task(
-      title: 'Tarea ${_nextTaskId + index}',
-      type: (index % 2) == 0 ? TASK_TYPE_NORMAL : TASK_TYPE_URGENT, // Intercalado
-      description: 'Descripción de tarea ${_nextTaskId + index}',
-      date: DateTime.now().add(Duration(days: index)),
-    ),
-  );
+    final newTasks = List.generate(10, (index) => Task(
+        title: 'Tarea ${_nextTaskId + index}',
+        type: (index % 2) == 0 ? TASK_TYPE_NORMAL : TASK_TYPE_URGENT, // Intercalado
+        description: 'Descripción de tarea ${_nextTaskId + index}',
+        date: DateTime.now().add(Duration(days: index)),
+      ),
+    );
 
-  setState(() {
-    tasks.addAll(newTasks);
-    _nextTaskId += newTasks.length; // Actualiza el ID inicial para nuevas tareas
-    isLoading = false;
-  });
-}
+    setState(() {
+      tasks.addAll(newTasks);
+      _nextTaskId += newTasks.length; // Actualiza el ID inicial para nuevas tareas
+      isLoading = false;
+    });
+  }
+
+  void _deleteTask(int index) {
+    setState(() {
+      tasks.removeAt(index); // Elimina la tarea de la lista
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,19 +88,22 @@ class TasksScreenState extends State<TasksScreen> {
                   );
                 }
                 return buildTaskCard(
-                  tasks[index], 
-                  context, 
+                  tasks[index],
+                  context,
                   index,
                   onEdit: (taskIndex) {
                     _showTaskModal(index: taskIndex); // Muestra el modal para editar la tarea
-                  }
+                  },
+                  onDelete: (taskIndex) {
+                    _deleteTask(taskIndex); // Llama a la función para eliminar la tarea
+                  },
                 ); // Usa el helper
               },
             ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'add_task',
         onPressed: () {
-            _showTaskModal();
+          _showTaskModal();
         },
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         child: const Icon(Icons.add, color: Colors.black),
@@ -220,7 +229,7 @@ class TasksScreenState extends State<TasksScreen> {
               },
               child: const Text(
                 'Guardar',
-                 style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black),
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/views/task_to_complete_screen.dart';
 
 Widget buildTaskCard(
   Task task,
@@ -48,7 +49,12 @@ Widget buildTaskCard(
                   style: const TextStyle(color: Colors.grey),
                 ),
               ],
-            )
+            ),
+            if (task.pasos != null && task.pasos!.isNotEmpty)
+              Text(
+                task.pasos!.first,
+                style: const TextStyle(color: Colors.grey),
+              ),
           ],
         ),
         trailing: Row(
@@ -74,6 +80,13 @@ Widget buildTaskCard(
             ),
           ],
         ),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+            builder: (context) => TaskToCompleteScreen(task: task),
+            ),
+          );
+        },
       ),
     ),
   );

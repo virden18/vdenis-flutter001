@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdenis/views/quotes_screen.dart';
 import 'package:vdenis/views/tasks_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -29,6 +30,18 @@ class WelcomeScreen extends StatelessWidget {
                 );
               },
               child: const Text('Lista de Tareas'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const QuotesScreen(), // Cambia a la pantalla de configuración
+                  ),
+                );
+              },
+              child: const Text('Cotizaciones de Monedas'),
             ),
             const SizedBox(height: 16),
             ElevatedButton(

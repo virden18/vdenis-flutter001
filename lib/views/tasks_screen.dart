@@ -2,26 +2,66 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/task_service.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/views/helpers/task_card_helper.dart';
 
 class TasksScreen extends StatefulWidget {
+  const TasksScreen({super.key});
+
   @override
   TasksScreenState createState() => TasksScreenState();
 }
 
 class TasksScreenState extends State<TasksScreen> {
-  final TaskService _taskService = TaskService(); // Instancia del servicio
-  late List<Task> tasks; // Lista de tareas
+  final TaskService _taskService = TaskService();
+  final ScrollController _scrollController = ScrollController();
+  late List<Task> tasks;
+  late int _nextTaskId; // ID inicial para nuevas tareas
+  bool isLoading = false; // Variable para controlar el estado de carga
 
   @override
   void initState() {
     super.initState();
-    tasks = []; // Carga inicial de tareas
+    tasks = _taskService.getTasks(); // Obtiene la lista de tareas
+    _scrollController.addListener(_onScroll); // Carga inicial de tareas
+    _nextTaskId = _taskService.getTasks().length + 1; // Inicializa el ID inicial para nuevas tareas
   }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !isLoading) {
+      _loadMoreTasks(); // Carga más tareas al llegar al final
+    }
+  }
+
+  void _loadMoreTasks() async {
+  setState(() {
+    isLoading = true; // Cambia el estado a cargando
+  });
+
+  await Future.delayed(const Duration(seconds: 1));
+
+  final newTasks = List.generate(10, (index) => Task(
+      title: 'Tarea ${_nextTaskId + index}',
+      type: (index % 2) == 0 ? TASK_TYPE_NORMAL : TASK_TYPE_URGENT, // Intercalado
+      description: 'Descripción de tarea ${_nextTaskId + index}',
+      date: DateTime.now().add(Duration(days: index)),
+    ),
+  );
+
+  setState(() {
+    tasks.addAll(newTasks);
+    _nextTaskId += newTasks.length; // Actualiza el ID inicial para nuevas tareas
+    isLoading = false;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(TITLE_APPBAR),
         centerTitle: true,
       ),
@@ -30,154 +70,158 @@ class TasksScreenState extends State<TasksScreen> {
               child: Text(EMPTY_LIST, style: TextStyle(fontSize: 18)),
             )
           : ListView.builder(
-              itemCount: tasks.length,
+              controller: _scrollController, // Asigna el controlador
+              itemCount: tasks.length + (isLoading ? 1 : 0),
               itemBuilder: (context, index) {
-                final task = tasks[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: ListTile(
-                    title: Text(task.title),
-                    subtitle: Text(TASK_TYPE_LABEL + task.type),
-                    trailing: task.type == TASK_TYPE_URGENT
-                        ? const Icon(
-                            Icons.warning,
-                            color: Colors.red,
-                          )
-                        : task.type == TASK_TYPE_NORMAL
-                            ? const Icon(
-                                Icons.task,
-                                color: Colors.blue,
-                              )
-                            : const SizedBox(),
-                    onTap: () {
-                      _showTaskOptionsModal(context, task, index);
-                    },
-                  ),
-                );
+                if (index == tasks.length) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                return buildTaskCard(
+                  tasks[index], 
+                  context, 
+                  index,
+                  onEdit: (taskIndex) {
+                    _showTaskModal(index: taskIndex); // Muestra el modal para editar la tarea
+                  }
+                ); // Usa el helper
               },
             ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'add_task',
         onPressed: () {
-          _showTaskModal(context);
+            _showTaskModal();
         },
-        child: const Icon(Icons.add),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        child: const Icon(Icons.add, color: Colors.black),
       ),
     );
   }
 
-  void _showTaskModal(BuildContext context) {
-    final TextEditingController titleController = TextEditingController();
-    final TextEditingController typeController = TextEditingController();
+  void _showTaskModal({int? index}) {
+    final task = index != null ? tasks[index] : null; // Obtiene la tarea actual si existe
+    final TextEditingController titleController = TextEditingController(
+      text: task != null ? task.title : '', // Muestra el título de la tarea actual
+    );
+    final TextEditingController typeController = TextEditingController(
+      text: task != null ? task.type : '', // Muestra el tipo de la tarea actual
+    );
+    final TextEditingController descriptionController = TextEditingController(
+      text: task != null ? task.description : '', // Muestra la descripción de la tarea actual
+    );
+    final TextEditingController dateController = TextEditingController(
+      text: task != null
+          ? task.date.toLocal().toString().split(' ')[0]
+          : '', // Muestra la fecha de la tarea actual
+    );
+    DateTime? dateSelected = task?.date;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Agregar Tarea'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(labelText: 'Título'),
+          title: Text(index != null ? 'Editar Tarea' : 'Agregar Tarea'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Título',
+                  border: OutlineInputBorder(),
                 ),
-                TextField(
-                  controller: typeController,
-                  decoration: const InputDecoration(labelText: 'Tipo'),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: typeController,
+                decoration: const InputDecoration(
+                  labelText: 'Tipo',
+                  border: OutlineInputBorder(),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Descripción',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: dateController,
+                readOnly: true,
+                decoration: const InputDecoration(
+                  labelText: 'Fecha',
+                  border: OutlineInputBorder(),
+                  hintText: 'Selecciona la fecha',
+                ),
+                onTap: () async {
+                  DateTime? newDate = await showDatePicker(
+                    context: context,
+                    initialDate: dateSelected ?? DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (newDate != null) {
+                    setState(() {
+                      dateSelected = newDate;
+                      dateController.text =
+                          newDate.toLocal().toString().split(' ')[0];
+                    });
+                  }
+                },
+              ),
+            ],
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancelar'),
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
-                if (titleController.text.isNotEmpty) {
+                if (titleController.text.isNotEmpty &&
+                    descriptionController.text.isNotEmpty) {
                   final newTask = Task(
-                                      title: titleController.text,
-                                      type: typeController.text,
-                                    );
-                  _taskService.createTask(newTask); // Agrega la tarea al servicio
+                    title: titleController.text,
+                    type: typeController.text.isNotEmpty
+                        ? typeController.text
+                        : TASK_TYPE_NORMAL,
+                    description: descriptionController.text,
+                    date: dateSelected ?? DateTime.now(),
+                  );
+                  if (index != null) {
+                    _taskService.updateTask(index, newTask); // Actualiza la tarea existente
+                  } else {
+                    _taskService.createTask(newTask); // Crea una nueva tarea
+                  }
+
                   setState(() {
                     tasks = _taskService.getTasks(); // Actualiza la lista de tareas
                   });
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Por favor, completa todos los campos')),
+                    const SnackBar(
+                      content: Text('Por favor, completa todos los campos'),
+                    ),
                   );
                 }
               },
-              child: const Text('Guardar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showTaskOptionsModal(BuildContext context, Task task, int index) {
-    final TextEditingController titleController =
-        TextEditingController(text: task.title);
-    final TextEditingController typeController =
-        TextEditingController(text: task.type);
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Editar Tarea'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(labelText: 'Título'),
-                ),
-                TextField(
-                  controller: typeController,
-                  decoration: const InputDecoration(labelText: 'Tipo'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final updatedTask = Task(
-                  title: titleController.text,
-                );
-                _taskService.updateTask(index, updatedTask); // Actualiza la tarea en el servicio
-                setState(() {
-                  tasks = _taskService.getTasks(); // Actualiza la lista de tareas
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text('Guardar'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _taskService.deleteTask(index); // Elimina la tarea del servicio
-                setState(() {
-                  tasks = _taskService.getTasks(); // Actualiza la lista de tareas
-                });
-                Navigator.of(context).pop();
-              },
-              child: const Text('Eliminar'),
+              child: const Text(
+                'Guardar',
+                 style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         );

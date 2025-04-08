@@ -128,11 +128,12 @@ class TaskRepository {
 
   // Obtener pasos simulados para una tarea según su título
   static List<String> obtenerPasos(String titulo, DateTime fechaLimite) {
+    String fechaString = '${fechaLimite.day}/${fechaLimite.month}/${fechaLimite.year}';
     print('Obteniendo pasos para la tarea: $titulo');
     return [
-      'Paso 1: Planificar $titulo',
-      'Paso 2: Ejecutar $titulo',
-      'Paso 3: Revisar $titulo',
+      'Paso 1: Planificar $titulo antes de $fechaString',
+      'Paso 2: Ejecutar $titulo antes de $fechaString',
+      'Paso 3: Revisar $titulo antes de $fechaString',
     ];
   }
 }

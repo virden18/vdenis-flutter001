@@ -41,13 +41,7 @@ class TasksScreenState extends State<TasksScreen> {
 
     await Future.delayed(const Duration(seconds: 1));
 
-    final newTasks = List.generate(10, (index) => Task(
-        title: 'Tarea ${_nextTaskId + index}',
-        type: (index % 2) == 0 ? TASK_TYPE_NORMAL : TASK_TYPE_URGENT, // Intercalado
-        description: 'Descripción de tarea ${_nextTaskId + index}',
-        date: DateTime.now().add(Duration(days: index)),
-      ),
-    );
+    final newTasks = _taskService.loadMoreTasks(_nextTaskId, 10); // Carga más tareas
 
     setState(() {
       tasks.addAll(newTasks);

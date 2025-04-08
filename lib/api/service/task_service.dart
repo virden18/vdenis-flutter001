@@ -33,4 +33,19 @@ class TaskService {
     print('Eliminando tarea en el índice: $index'); // Imprime el índice de la tarea a eliminar
     _taskRepository.deleteTask(index); 
   }
+
+  // Cargar más tareas
+  List<Task> loadMoreTasks(int nextTaskId, int count) {
+    return _taskRepository.loadMoreTasks(nextTaskId, count);
+  }
+
+  // Obtener pasos simulados para una tarea según su título
+  List<String> obtenerPasos(String titulo) {
+    print('Obteniendo pasos para la tarea: $titulo');
+    return [
+      'Paso 1: Planificar $titulo',
+      'Paso 2: Ejecutar $titulo',
+      'Paso 3: Revisar $titulo',
+    ];
+  }
 }

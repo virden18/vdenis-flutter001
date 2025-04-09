@@ -27,4 +27,8 @@ class Task {
   String fechaLimiteToString() {
     return '${fechaLimite.day}/${fechaLimite.month}/${fechaLimite.year}';
   }
+
+  String fechaToString() {
+    return '${date.day}/${date.month}/${date.year}';
+  }
 }

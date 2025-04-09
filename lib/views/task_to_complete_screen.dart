@@ -3,17 +3,27 @@ import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
 
 class TaskToCompleteScreen extends StatelessWidget {
-  final Task task;
+  final List<Task> tasks;
+  final int initialIndex;
 
-  const TaskToCompleteScreen({super.key, required this.task});
+  const TaskToCompleteScreen({super.key, required this.tasks, required this.initialIndex});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: construirTarjetaDeportiva(task, context),
-      ),
+      body: PageView.builder(
+        controller: PageController(initialPage: initialIndex),
+        itemCount: tasks.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+            child: construirTarjetaDeportiva(
+              tasks[index],
+              context,
+            ),
+          );
+        },
+      )
     );
   }
 
@@ -27,15 +37,17 @@ class TaskToCompleteScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Imagen aleatoria
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-            child: Image.network(
-              'https://picsum.photos/200/300?random=${task.title.hashCode}',
-              height: 400,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+          Padding(padding: const EdgeInsets.all(10),
+            child: 
+              ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                child: Image.network(
+                  'https://picsum.photos/200/300?random=${task.title.hashCode}',
+                  height: 400,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),

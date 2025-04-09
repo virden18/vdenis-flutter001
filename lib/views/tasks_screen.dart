@@ -13,7 +13,7 @@ class TasksScreen extends StatefulWidget {
 
 class TasksScreenState extends State<TasksScreen> {
   final TaskService _taskService = TaskService();
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();// Instancia del servicio de asistente
   late List<Task> tasks;
   late int _nextTaskId; // ID inicial para nuevas tareas
   bool isLoading = false; // Variable para controlar el estado de carga
@@ -23,7 +23,7 @@ class TasksScreenState extends State<TasksScreen> {
     super.initState();
     tasks = _taskService.getTasks(); // Obtiene la lista de tareas
     _scrollController.addListener(_onScroll); // Carga inicial de tareas
-    _nextTaskId = _taskService.getTasks().length + 1; // Inicializa el ID inicial para nuevas tareas
+    _nextTaskId = _taskService.getTasks().length + 1; // Inicializa el ID inicial para nuevas tareas 
   }
 
   void _onScroll() {
@@ -83,6 +83,7 @@ class TasksScreenState extends State<TasksScreen> {
                   );
                 }
                 return buildTaskCard(
+                  tasks,
                   tasks[index],
                   context,
                   index,
@@ -204,6 +205,7 @@ class TasksScreenState extends State<TasksScreen> {
                     description: descriptionController.text,
                     date: dateSelected ?? DateTime.now(),
                     fechaLimite: DateTime.now().add(const Duration(days: 1)), 
+                    pasos: _taskService.obtenerPasos(titleController.text, DateTime.now().add(const Duration(days: 1))) // Obtiene los pasos de la tarea
                   );
                   if (index != null) {
                     _taskService.updateTask(index, newTask); // Actualiza la tarea existente

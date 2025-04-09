@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vdenis/views/contador_screen.dart';
 import 'package:vdenis/views/quotes_screen.dart';
 import 'package:vdenis/views/tasks_screen.dart';
 
@@ -37,11 +38,23 @@ class WelcomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const QuotesScreen(), // Cambia a la pantalla de configuración
+                    builder: (context) => const QuotesScreen(),
                   ),
                 );
               },
               child: const Text('Cotizaciones de Monedas'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ContadorScreen(title: 'Contador'),
+                  ),
+                );
+              },
+              child: const Text('Contador'),
             ),
             const SizedBox(height: 16),
             ElevatedButton(

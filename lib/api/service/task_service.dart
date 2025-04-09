@@ -1,9 +1,12 @@
+import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/data/asistant_repository.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/data/task_repository.dart';
 
 class TaskService {
   
   final TaskRepository _taskRepository = TaskRepository(); // Instancia del repositorio
+  final AssistantRepository _assistantRepository = AssistantRepository(); // Instancia del repositorio de asistente
 
   // Crear una nueva tarea
   void createTask(Task task) {
@@ -14,7 +17,9 @@ class TaskService {
   // Leer todas las tareas
   List<Task> getTasks() {
     print('Obteniendo tareas'); 
-    return _taskRepository.getTasks();
+    List<Task> tasks = _taskRepository.getTasks();
+    inicializarPasos(tasks);
+    return tasks;
   }
 
   void getTaskById(int index) {
@@ -36,18 +41,32 @@ class TaskService {
 
   // Cargar más tareas
   List<Task> loadMoreTasks(int nextTaskId, int count) {
-    return _taskRepository.loadMoreTasks(nextTaskId, count);
+    return List.generate(
+      count,
+      (index) => Task(
+        title: 'Tarea ${nextTaskId + index}',
+        type: (index % 2) == 0 ? TASK_TYPE_NORMAL : TASK_TYPE_URGENT,
+        description: 'Descripción de tarea ${nextTaskId + index}',
+        date: DateTime.now().add(Duration(days: index)),
+        fechaLimite: DateTime.now().add(Duration(days: index + 1)), 
+        pasos: TaskService().obtenerPasos('Tarea ${nextTaskId + index}', DateTime.now().add(Duration(days: index + 1))),
+      ),
+    );
   }
 
   // Obtener pasos simulados para una tarea según su título
   List<String> obtenerPasos(String titulo, DateTime fechaLimite) {
     String fechaString = '${fechaLimite.day}/${fechaLimite.month}/${fechaLimite.year}';
+    return _assistantRepository.obtenerPasos(titulo, fechaString); // Llama al método del repositorio
+  }
 
-    print('Obteniendo pasos para la tarea: $titulo');
-    return [
-      'Paso 1: Planificar $titulo antes de $fechaString',
-      'Paso 2: Ejecutar $titulo antes de $fechaString',
-      'Paso 3: Revisar $titulo antes de $fechaString',
-    ];
+  void inicializarPasos(List<Task> tasks) {
+    for (Task task in tasks) {
+      if (task.getPasos == null || task.getPasos!.isEmpty) {
+        for (String paso in _assistantRepository.getListaPasos()) {
+          task.getPasos!.add('$paso${task.getTitle} antes de ${task.fechaLimiteToString()}');
+        }
+      }
+    }
   }
 }

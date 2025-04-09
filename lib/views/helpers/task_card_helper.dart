@@ -4,6 +4,7 @@ import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/views/task_to_complete_screen.dart';
 
 Widget buildTaskCard(
+  List<Task> tasks,
   Task task,
   BuildContext context,
   int index, {
@@ -83,9 +84,12 @@ Widget buildTaskCard(
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-            builder: (context) => TaskToCompleteScreen(task: task),
-            ),
-          );
+              builder: (context) => TaskToCompleteScreen(
+              tasks: tasks, // Lista de tareas
+              initialIndex: index, // Índice de la tarea seleccionada
+    ),
+  ),
+);
         },
       ),
     ),

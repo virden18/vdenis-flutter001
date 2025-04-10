@@ -214,7 +214,6 @@ class TasksScreenState extends State<TasksScreen> {
                   }
 
                   setState(() {
-                    _taskService.updatedTaskList(tasks);
                     tasks = _taskService.getTasks(); // Actualiza la lista de tareas
                   });
                   Navigator.of(context).pop();

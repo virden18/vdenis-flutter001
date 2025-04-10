@@ -41,7 +41,7 @@ class TaskService {
 
   // Cargar más tareas
   List<Task> loadMoreTasks(int nextTaskId, int count) {
-    return List.generate(
+    List<Task> newTasks = List.generate(
       count,
       (index) => Task(
         title: 'Tarea ${nextTaskId + index}',
@@ -52,6 +52,8 @@ class TaskService {
         pasos: TaskService().getTaskWithSteps('Tarea ${nextTaskId + index}', DateTime.now().add(Duration(days: index + 1))),
       ),
     );
+    _updateTaskList(newTasks); // Actualiza la lista de tareas con las nuevas tareas generadas
+    return newTasks;
   }
 
   // Obtener pasos simulados para una tarea según su título
@@ -70,7 +72,7 @@ class TaskService {
     }
   }
 
-  void updatedTaskList (List<Task> tasks) {
+  void _updateTaskList (List<Task> tasks) {
     for (Task task in tasks) {
       _taskRepository.addTask(task);
     } 

@@ -6,5 +6,5 @@ const String TASK_TYPE_URGENT = 'urgente';
 const String TASK_DESCRIPTION = 'Descripción: ';
 const String PASOS_TITULO = 'Pasos para completar: ';
 const String FECHA_LIMITE = 'Fecha límite: ';
-const String TAREA_ELIMINADA = 'Tarea eliminada:';
+const String TAREA_ELIMINADA = 'Tarea eliminada';
 const int LIMITE_PASOS = 2;

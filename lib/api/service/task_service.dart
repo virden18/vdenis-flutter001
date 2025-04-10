@@ -18,7 +18,7 @@ class TaskService {
   List<Task> getTasks() {
     print('Obteniendo tareas'); 
     List<Task> tasks = _taskRepository.getTasks();
-    inicializarPasos(tasks);
+    _inicializarPasos(tasks);
     return tasks;
   }
 
@@ -35,7 +35,7 @@ class TaskService {
 
   // Eliminar una tarea
   void deleteTask(int index) {
-    print('Eliminando tarea en el índice: $index'); // Imprime el índice de la tarea a eliminar
+    print('$TAREA_ELIMINADA $index'); // Imprime el índice de la tarea a eliminar
     _taskRepository.deleteTask(index); 
   }
 
@@ -47,26 +47,32 @@ class TaskService {
         title: 'Tarea ${nextTaskId + index}',
         type: (index % 2) == 0 ? TASK_TYPE_NORMAL : TASK_TYPE_URGENT,
         description: 'Descripción de tarea ${nextTaskId + index}',
-        date: DateTime.now().add(Duration(days: index)),
+        deadLine: DateTime.now().add(Duration(days: index)),
         fechaLimite: DateTime.now().add(Duration(days: index + 1)), 
-        pasos: TaskService().obtenerPasos('Tarea ${nextTaskId + index}', DateTime.now().add(Duration(days: index + 1))),
+        pasos: TaskService().getTaskWithSteps('Tarea ${nextTaskId + index}', DateTime.now().add(Duration(days: index + 1))),
       ),
     );
   }
 
   // Obtener pasos simulados para una tarea según su título
-  List<String> obtenerPasos(String titulo, DateTime fechaLimite) {
+  List<String> getTaskWithSteps(String titulo, DateTime fechaLimite) {
     String fechaString = '${fechaLimite.day}/${fechaLimite.month}/${fechaLimite.year}';
-    return _assistantRepository.obtenerPasos(titulo, fechaString); // Llama al método del repositorio
+    List<String> pasosSimulados = _assistantRepository.obtenerPasos(titulo, fechaString).take(LIMITE_PASOS).toList(); // Limita los pasos simulados obtenidos
+    _taskRepository.setListaPasos(pasosSimulados); // Establece la lista de pasos en el repositorio
+    return pasosSimulados; // Devuelve la lista de pasos simulados
   }
 
-  void inicializarPasos(List<Task> tasks) {
+  void _inicializarPasos(List<Task> tasks) {
     for (Task task in tasks) {
       if (task.getPasos == null || task.getPasos!.isEmpty) {
-        for (String paso in _assistantRepository.getListaPasos()) {
-          task.getPasos!.add('$paso${task.getTitle} antes de ${task.fechaLimiteToString()}');
-        }
+        getTaskWithSteps(task.getTitle, task.getFechaLimite);
       }
     }
+  }
+
+  void updatedTaskList (List<Task> tasks) {
+    for (Task task in tasks) {
+      _taskRepository.addTask(task);
+    } 
   }
 }

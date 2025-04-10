@@ -2,16 +2,16 @@ class Task {
   final String title;
   final String type;
   final String description;
-  final DateTime date;
+  final DateTime deadLine;
   final DateTime fechaLimite;
-  final List<String>? pasos;
+  List<String>? pasos;
 
   // Constructor
   Task({
     required this.title,
     this.type = 'normal',
     required this.description,
-    required this.date,
+    required this.deadLine,
     required this.fechaLimite,
     this.pasos = const [],
   });
@@ -20,7 +20,7 @@ class Task {
   String get getTitle => title;
   String get getType => type;
   String get getDescription => description;
-  DateTime get getDate => date;
+  DateTime get getDate => deadLine;
   DateTime get getFechaLimite => fechaLimite;
   List<String>? get getPasos => pasos;
 
@@ -29,6 +29,12 @@ class Task {
   }
 
   String fechaToString() {
-    return '${date.day}/${date.month}/${date.year}';
+    return '${deadLine.day}/${deadLine.month}/${deadLine.year}';
+  }
+
+  void setPasos(List<String> pasos) {
+    if (this.pasos == null || this.pasos!.isEmpty) {
+      this.pasos = pasos;
+    }
   }
 }

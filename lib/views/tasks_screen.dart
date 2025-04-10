@@ -62,12 +62,12 @@ class TasksScreenState extends State<TasksScreen> {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(TITLE_APPBAR),
+        title: const Text(TITULO_APPBAR),
         centerTitle: true,
       ),
       body: tasks.isEmpty
           ? const Center(
-              child: Text(EMPTY_LIST, style: TextStyle(fontSize: 18)),
+              child: Text(LISTA_VACIA, style: TextStyle(fontSize: 18)),
             )
           : ListView.builder(
               
@@ -120,10 +120,10 @@ class TasksScreenState extends State<TasksScreen> {
     );
     final TextEditingController dateController = TextEditingController(
       text: task != null
-          ? task.date.toLocal().toString().split(' ')[0]
+          ? task.fechaToString()
           : '', // Muestra la fecha de la tarea actual
     );
-    DateTime? dateSelected = task?.date;
+    DateTime? dateSelected = task?.deadLine;
 
     showDialog(
       context: context,
@@ -203,9 +203,9 @@ class TasksScreenState extends State<TasksScreen> {
                         ? typeController.text
                         : TASK_TYPE_NORMAL,
                     description: descriptionController.text,
-                    date: dateSelected ?? DateTime.now(),
+                    deadLine: dateSelected ?? DateTime.now(),
                     fechaLimite: DateTime.now().add(const Duration(days: 1)), 
-                    pasos: _taskService.obtenerPasos(titleController.text, DateTime.now().add(const Duration(days: 1))) // Obtiene los pasos de la tarea
+                    pasos: _taskService.getTaskWithSteps(titleController.text, DateTime.now().add(const Duration(days: 1))) // Obtiene los pasos de la tarea
                   );
                   if (index != null) {
                     _taskService.updateTask(index, newTask); // Actualiza la tarea existente
@@ -214,6 +214,7 @@ class TasksScreenState extends State<TasksScreen> {
                   }
 
                   setState(() {
+                    _taskService.updatedTaskList(tasks);
                     tasks = _taskService.getTasks(); // Actualiza la lista de tareas
                   });
                   Navigator.of(context).pop();

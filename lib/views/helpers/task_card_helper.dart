@@ -41,19 +41,19 @@ Widget buildTaskCard(
             Row(
               children: [
                 Text(
-                  'Tipo: ${task.type}',
+                  '$TIPO_TAREA ${task.type}',
                   style: const TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(width: 7),
                 Text(
-                  task.date.toLocal().toString().split(' ')[0],
+                  task.fechaToString(),
                   style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),
             if (task.pasos != null && task.pasos!.isNotEmpty)
               Text(
-                task.pasos!.first,
+                task.getPasos![0],
                 style: const TextStyle(color: Colors.grey),
               ),
           ],
@@ -87,9 +87,9 @@ Widget buildTaskCard(
               builder: (context) => TaskToCompleteScreen(
               tasks: tasks, // Lista de tareas
               initialIndex: index, // Índice de la tarea seleccionada
-    ),
-  ),
-);
+              ),
+            ),
+          );
         },
       ),
     ),

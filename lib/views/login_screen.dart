@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => WelcomeScreen(),
+                          builder: (context) => WelcomeScreen(username: username,),
                         ),
                       );
                     } catch (e) {

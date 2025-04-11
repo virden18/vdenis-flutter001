@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/views/contador_screen.dart';
 import 'package:vdenis/views/login_screen.dart';
 import 'package:vdenis/views/tasks_screen.dart';
-import 'package:vdenis/views/welcome_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -23,17 +22,6 @@ class AppDrawer extends StatelessWidget {
                 fontSize: 24,
               ),
             ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Inicio'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => WelcomeScreen()
-                )
-              );
-            },
           ),
           ListTile(
             leading: const Icon(Icons.task),

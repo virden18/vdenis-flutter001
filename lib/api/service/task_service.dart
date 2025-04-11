@@ -47,8 +47,8 @@ class TaskService {
         title: 'Tarea ${nextTaskId + index}',
         type: (index % 2) == 0 ? taskTypeNormal : taskTypeUrgent,
         description: 'Descripción de tarea ${nextTaskId + index}',
-        deadLine: DateTime.now().add(Duration(days: index)),
-        fechaLimite: DateTime.now().add(Duration(days: index + 1)), 
+        date: DateTime.now().add(Duration(days: index)),
+        deadLine: DateTime.now().add(Duration(days: index + 1)), 
         pasos: TaskService().getTaskWithSteps('Tarea ${nextTaskId + index}', DateTime.now().add(Duration(days: index + 1))),
       ),
     );

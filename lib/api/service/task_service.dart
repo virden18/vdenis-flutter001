@@ -52,7 +52,6 @@ class TaskService {
         pasos: TaskService().getTaskWithSteps('Tarea ${nextTaskId + index}', DateTime.now().add(Duration(days: index + 1))),
       ),
     );
-    _updateTaskList(newTasks); // Actualiza la lista de tareas con las nuevas tareas generadas
     return newTasks;
   }
 
@@ -71,10 +70,8 @@ class TaskService {
       }
     }
   }
-
-  void _updateTaskList (List<Task> tasks) {
-    for (Task task in tasks) {
-      _taskRepository.addTask(task);
-    } 
+  
+  int getCantidadTareas() {
+    return _taskRepository.getLength();
   }
 }

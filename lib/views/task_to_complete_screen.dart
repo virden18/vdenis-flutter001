@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/views/helpers/common_widgets_helper.dart';
 
 class TaskToCompleteScreen extends StatelessWidget {
   final List<Task> tasks;
@@ -10,13 +11,19 @@ class TaskToCompleteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(tasks[initialIndex].getTitle), // Muestra el título de la tarea actual
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: PageView.builder(
         controller: PageController(initialPage: initialIndex),
         itemCount: tasks.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
             child: construirTarjetaDeportiva(
               tasks[index],
               context,
@@ -29,9 +36,7 @@ class TaskToCompleteScreen extends StatelessWidget {
 
   Widget construirTarjetaDeportiva(Task task, BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: CommonWidgetsHelper.buildRoundedBorder(),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 80),
       elevation: 8,
       child: Column(

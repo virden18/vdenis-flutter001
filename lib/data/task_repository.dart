@@ -123,4 +123,8 @@ class TaskRepository {
   String fechaToString(DateTime fecha) {
     return '${fecha.day}/${fecha.month}/${fecha.year}';
   }
+
+  int getLength() {
+    return tasks.length;
+  }
 }

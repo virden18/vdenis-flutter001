@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/task_service.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
-import 'package:vdenis/views/helpers/app_drawer.dart';
 import 'package:vdenis/views/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/helpers/task_card_helper.dart';
 
@@ -67,7 +66,6 @@ class TasksScreenState extends State<TasksScreen> {
         title: Text('$tituloAppBar: ${_taskService.getCantidadTareas()}'),
         centerTitle: true,
       ),
-      drawer: AppDrawer(),
       body: tasks.isEmpty
           ? const Center(
               child: Text(listaVacia, style: TextStyle(fontSize: 18)),
@@ -125,7 +123,7 @@ class TasksScreenState extends State<TasksScreen> {
           ? task.fechaToString()
           : '', // Muestra la fecha de la tarea actual
     );
-    DateTime? dateSelected = task?.deadLine;
+    DateTime? dateSelected = task?.date;
 
     showDialog(
       context: context,
@@ -184,8 +182,8 @@ class TasksScreenState extends State<TasksScreen> {
                         ? typeController.text
                         : taskTypeNormal,
                     description: descriptionController.text,
-                    deadLine: dateSelected ?? DateTime.now(),
-                    fechaLimite: DateTime.now().add(const Duration(days: 1)), 
+                    date: dateSelected ?? DateTime.now(),
+                    deadLine: DateTime.now().add(const Duration(days: 1)), 
                     pasos: _taskService.getTaskWithSteps(titleController.text, DateTime.now().add(const Duration(days: 1))) // Obtiene los pasos de la tarea
                   );
                   if (index != null) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/task_service.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/views/helpers/app_drawer.dart';
+import 'package:vdenis/views/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/helpers/task_card_helper.dart';
 
 class TasksScreen extends StatefulWidget {
@@ -62,15 +64,15 @@ class TasksScreenState extends State<TasksScreen> {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(TITULO_APPBAR),
+        title: Text('$TITULO_APPBAR: ${_taskService.getCantidadTareas()}'),
         centerTitle: true,
       ),
+      drawer: AppDrawer(),
       body: tasks.isEmpty
           ? const Center(
               child: Text(LISTA_VACIA, style: TextStyle(fontSize: 18)),
             )
           : ListView.builder(
-              
               controller: _scrollController, // Asigna el controlador
               itemCount: tasks.length + (isLoading ? 1 : 0),
               itemBuilder: (context, index) {
@@ -133,30 +135,12 @@ class TasksScreenState extends State<TasksScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Título',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: typeController,
-                decoration: const InputDecoration(
-                  labelText: 'Tipo',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descripción',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
+              CommonWidgetsHelper.buildTextFieldController(titleController, 'Título'),
+              CommonWidgetsHelper.buildSpacing(height: 16),
+              CommonWidgetsHelper.buildTextFieldController(typeController, 'Tipo'),
+              CommonWidgetsHelper.buildSpacing(height: 16),
+              CommonWidgetsHelper.buildTextFieldController(descriptionController, 'Descripción'),
+              CommonWidgetsHelper.buildSpacing(height: 16),
               TextField(
                 controller: dateController,
                 readOnly: true,
@@ -188,10 +172,7 @@ class TasksScreenState extends State<TasksScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.black),
-              ),
+              child: CommonWidgetsHelper.buildButtonStyle('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -225,10 +206,7 @@ class TasksScreenState extends State<TasksScreen> {
                   );
                 }
               },
-              child: const Text(
-                'Guardar',
-                style: TextStyle(color: Colors.black),
-              ),
+              child: CommonWidgetsHelper.buildButtonStyle('Guardar'),
             ),
           ],
         );

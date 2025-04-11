@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/views/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/task_to_complete_screen.dart';
 
 Widget buildTaskCard(
@@ -32,9 +33,7 @@ Widget buildTaskCard(
       ); 
     },
     child: Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: CommonWidgetsHelper.buildRoundedBorder(),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Center( // Centra horizontalmente el contenido del Card
         child: ListTile(
@@ -45,23 +44,18 @@ Widget buildTaskCard(
               Text(task.description),
               const SizedBox(height: 4),
               Row(
-                                children: [
-                  Text(
-                    '$TIPO_TAREA ${task.type}',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  const SizedBox(width: 7),
-                  Text(
+                children: [
+                  CommonWidgetsHelper.buildInfoLines(
+                    '$TIPO_TAREA${task.type}',
                     task.fechaToString(),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
+                  )
                 ],
               ),
               if (task.pasos != null && task.pasos!.isNotEmpty)
                 Text(
                   task.getPasos![0],
                   style: const TextStyle(color: Colors.grey),
-                                  ),
+                ),
             ],
           ),
           trailing: Row(

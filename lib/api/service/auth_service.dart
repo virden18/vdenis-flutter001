@@ -1,4 +1,6 @@
 class AuthService {
+  late String _authenticatedUser; // Propiedad privada para almacenar el usuario autenticado
+
   Future<void> login(String username, String password) async {
     if (username.isEmpty || password.isEmpty) {
       print('AuthService: Credenciales inválidas');
@@ -8,9 +10,15 @@ class AuthService {
       print('AuthService: Attempting login');
       print('Username: $username');
       print('Password: $password');
-      // Simula una respuesta del servidor
+
+      // Simula una respuesta exitosa del servidor
+      _authenticatedUser = username; // Guarda el usuario autenticado
       return;
     }
-    
+  }
+
+  // Método para obtener el usuario autenticado
+  String getAuthenticatedUser() {
+    return _authenticatedUser;
   }
 }

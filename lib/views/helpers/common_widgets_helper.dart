@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/constants/constants.dart';
 
 class CommonWidgetsHelper {
   static Widget buildBoldAppBarTitle(String title) {
@@ -25,12 +24,15 @@ class CommonWidgetsHelper {
 
   // Método para construir hasta 3 líneas de información
   static Widget buildInfoLines(String line1, [String? line2, String? line3]) {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(line1),
-        if (line2 != null) Text(line2),
-        if (line3 != null) Text(line3),
+        Text(line1, style: const TextStyle( color: Colors.grey),),
+        buildSpacing(width: 10),
+        if (line2 != null) Text(line2,
+          style: const TextStyle(color: Colors.grey),),
+        if (line3 != null) Text(line3, 
+          style: const TextStyle( color: Colors.grey),),
       ],
     );
   }
@@ -57,22 +59,6 @@ class CommonWidgetsHelper {
     );
   }
 
-  // Método para construir un diseño básico con ListTile
-  static Widget buildBasicTaskTile({
-    required String title,
-    required String type,
-    required String firstStep,
-  }) {
-    return ListTile(
-      title: buildBoldTitle(title),
-      subtitle: buildInfoLines(
-        '$TIPO_TAREA $type',
-        '$PASOS_TITULO $firstStep',
-      ),
-      shape: buildRoundedBorder(),
-    );
-  }
-
   static Widget buildTextFieldController (TextEditingController controller, String labelText) {
     return TextField(
       controller: controller,
@@ -83,7 +69,7 @@ class CommonWidgetsHelper {
     );
   }
 
-  static Widget buildElevatedButtonStyle (String title) {
+  static Widget buildButtonStyle (String title) {
     return Text (
       title,
       style: const TextStyle(

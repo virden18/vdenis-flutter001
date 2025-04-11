@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/views/contador_screen.dart';
+import 'package:vdenis/views/helpers/app_drawer.dart';
 import 'package:vdenis/views/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/quotes_screen.dart';
 import 'package:vdenis/views/tasks_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
-  final String username;
-
-  const WelcomeScreen({super.key, required this.username});
+  const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: CommonWidgetsHelper.buildBoldAppBarTitle('Bienvenido')),
+      appBar: AppBar(
+        title: CommonWidgetsHelper.buildBoldAppBarTitle('Bienvenido'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary),
+      drawer: AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CommonWidgetsHelper.buildBoldTitle('¡Bienvenido, $username!'),
+            CommonWidgetsHelper.buildBoldTitle('¡Bienvenido!'),
             CommonWidgetsHelper.buildSpacing(height: 16),
             ElevatedButton(
               onPressed: () {
@@ -48,7 +50,7 @@ class WelcomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ContadorScreen(title: 'Contador'),
+                    builder: (context) => const ContadorScreen(),
                   ),
                 );
               },

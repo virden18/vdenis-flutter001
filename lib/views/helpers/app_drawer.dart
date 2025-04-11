@@ -5,8 +5,7 @@ import 'package:vdenis/views/tasks_screen.dart';
 import 'package:vdenis/views/welcome_screen.dart';
 
 class AppDrawer extends StatelessWidget {
-
-  AppDrawer({super.key});
+  const AppDrawer({super.key});
   @override
   Widget build(BuildContext context) {
     return Drawer(

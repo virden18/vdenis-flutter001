@@ -6,9 +6,9 @@ class MockService {
     await Future.delayed(const Duration(seconds: 2));
 
     // Simula el envío de credenciales al servidor
-    print('MockService: Login attempt');
-    print('Username: $username');
-    print('Password: $password');
+    //print('MockService: Login attempt');
+    //print('Username: $username');
+    //print('Password: $password');
 
     // Simula una respuesta exitosa
     return;

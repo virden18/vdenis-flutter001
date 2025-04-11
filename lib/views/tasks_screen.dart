@@ -64,13 +64,13 @@ class TasksScreenState extends State<TasksScreen> {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('$TITULO_APPBAR: ${_taskService.getCantidadTareas()}'),
+        title: Text('$tituloAppBar: ${_taskService.getCantidadTareas()}'),
         centerTitle: true,
       ),
       drawer: AppDrawer(),
       body: tasks.isEmpty
           ? const Center(
-              child: Text(LISTA_VACIA, style: TextStyle(fontSize: 18)),
+              child: Text(listaVacia, style: TextStyle(fontSize: 18)),
             )
           : ListView.builder(
               controller: _scrollController, // Asigna el controlador
@@ -182,7 +182,7 @@ class TasksScreenState extends State<TasksScreen> {
                     title: titleController.text,
                     type: typeController.text.isNotEmpty
                         ? typeController.text
-                        : TASK_TYPE_NORMAL,
+                        : taskTypeNormal,
                     description: descriptionController.text,
                     deadLine: dateSelected ?? DateTime.now(),
                     fechaLimite: DateTime.now().add(const Duration(days: 1)), 

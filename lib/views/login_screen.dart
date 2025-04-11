@@ -59,14 +59,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
+                onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     // Si el formulario es válido, intenta iniciar sesión
                     final username = usernameController.text.trim();
                     final password = passwordController.text.trim();
 
                     try {
-                      await authService.login(username, password);
+                      authService.login(username, password);
 
                       // Navega a la pantalla de bienvenida
                       Navigator.push(

@@ -10,32 +10,32 @@ class TaskService {
 
   // Crear una nueva tarea
   void createTask(Task task) {
-    print('Creando tarea: ${task.title}'); // Imprime el título de la tarea creada
+    //print('Creando tarea: ${task.title}'); // Imprime el título de la tarea creada
     _taskRepository.addTask(task);// Agrega la tarea al repositorio
   }
 
   // Leer todas las tareas
   List<Task> getTasks() {
-    print('Obteniendo tareas'); 
+    //print('Obteniendo tareas'); 
     List<Task> tasks = _taskRepository.getTasks();
     _inicializarPasos(tasks);
     return tasks;
   }
 
   void getTaskById(int index) {
-    print('Obteniendo tarea por ID: $index'); // Imprime el índice de la tarea a obtener
+    //print('Obteniendo tarea por ID: $index'); // Imprime el índice de la tarea a obtener
     _taskRepository.getTaskById(index); 
   }
 
   // Actualizar una tarea existente
   void updateTask(int index, Task updatedTask) {
-    print('Actualizando tarea en el índice: $index'); // Imprime el índice de la tarea actualizada
+    //print('Actualizando tarea en el índice: $index'); // Imprime el índice de la tarea actualizada
      _taskRepository.updateTask(index, updatedTask); 
   }
 
   // Eliminar una tarea
   void deleteTask(int index) {
-    print('$TAREA_ELIMINADA $index'); // Imprime el índice de la tarea a eliminar
+    //print('$TAREA_ELIMINADA $index'); // Imprime el índice de la tarea a eliminar
     _taskRepository.deleteTask(index); 
   }
 
@@ -45,7 +45,7 @@ class TaskService {
       count,
       (index) => Task(
         title: 'Tarea ${nextTaskId + index}',
-        type: (index % 2) == 0 ? TASK_TYPE_NORMAL : TASK_TYPE_URGENT,
+        type: (index % 2) == 0 ? taskTypeNormal : taskTypeUrgent,
         description: 'Descripción de tarea ${nextTaskId + index}',
         deadLine: DateTime.now().add(Duration(days: index)),
         fechaLimite: DateTime.now().add(Duration(days: index + 1)), 
@@ -58,7 +58,7 @@ class TaskService {
   // Obtener pasos simulados para una tarea según su título
   List<String> getTaskWithSteps(String titulo, DateTime fechaLimite) {
     String fechaString = '${fechaLimite.day}/${fechaLimite.month}/${fechaLimite.year}';
-    List<String> pasosSimulados = _assistantRepository.obtenerPasos(titulo, fechaString).take(LIMITE_PASOS).toList(); // Limita los pasos simulados obtenidos
+    List<String> pasosSimulados = _assistantRepository.obtenerPasos(titulo, fechaString).take(limitePasos).toList(); // Limita los pasos simulados obtenidos
     _taskRepository.setListaPasos(pasosSimulados); // Establece la lista de pasos en el repositorio
     return pasosSimulados; // Devuelve la lista de pasos simulados
   }

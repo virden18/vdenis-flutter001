@@ -77,7 +77,7 @@ class TaskToCompleteScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 // Fecha límite
                 Text(
-                  FECHA_LIMITE + task.fechaLimiteToString(),
+                  fechaLimite + task.fechaLimiteToString(),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -86,7 +86,7 @@ class TaskToCompleteScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 // Descripción
                 Text(
-                  TASK_DESCRIPTION,
+                  taskDescription,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

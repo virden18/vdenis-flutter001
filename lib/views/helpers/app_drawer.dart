@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/views/contador_screen.dart';
+import 'package:vdenis/views/presentation/misc/contador_screen.dart';
 import 'package:vdenis/views/login_screen.dart';
-import 'package:vdenis/views/tasks_screen.dart';
+import 'package:vdenis/views/presentation/task/tasks_screen.dart';
+import 'package:vdenis/views/presentation/question/start_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -42,6 +43,17 @@ class AppDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ContadorScreen()
+                )
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.question_mark),
+            title: const Text('Juego de preguntas'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => StartScreen()
                 )
               );
             },

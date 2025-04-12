@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/views/helpers/common_widgets_helper.dart';
-import 'package:vdenis/views/task_to_complete_screen.dart';
+import 'package:vdenis/views/presentation/task/task_to_complete_screen.dart';
 
 Widget buildTaskCard(
   List<Task> tasks,

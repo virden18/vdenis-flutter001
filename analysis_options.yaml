@@ -23,6 +23,7 @@ linter:
   rules:
     prefer_const_constructors: true
     avoid_print: true
+    constant_identifier_names: true
     always_declare_return_types: true
     always_use_package_imports: true
 

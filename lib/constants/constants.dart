@@ -8,3 +8,10 @@ const String pasosTitulo = 'Pasos para completar: ';
 const String fechaLimite = 'Fecha límite: ';
 const String tareaEliminada = 'Tarea eliminada';
 const int limitePasos = 2;
+
+//Constantes Juego de Preguntas
+const String titleApp = 'Juego de Preguntas';
+const String welcomeMessage = '¡Bienvenido al Juego de Preguntas!';
+const String startGame = 'Iniciar Juego';
+const String finalScore = 'Puntuación Final: ';
+const String playAgain = 'Jugar de nuevo';

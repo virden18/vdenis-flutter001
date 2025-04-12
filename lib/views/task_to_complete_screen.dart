@@ -23,7 +23,7 @@ class TaskToCompleteScreen extends StatelessWidget {
         itemCount: tasks.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
             child: construirTarjetaDeportiva(
               tasks[index],
               context,
@@ -37,9 +37,10 @@ class TaskToCompleteScreen extends StatelessWidget {
   Widget construirTarjetaDeportiva(Task task, BuildContext context) {
     return Card(
       shape: CommonWidgetsHelper.buildRoundedBorder(),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 80),
+      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
       elevation: 8,
       child: Column(
+         
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(padding: const EdgeInsets.all(10),
@@ -55,7 +56,7 @@ class TaskToCompleteScreen extends StatelessWidget {
               ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

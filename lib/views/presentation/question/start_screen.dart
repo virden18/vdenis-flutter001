@@ -18,7 +18,7 @@ class StartScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(welcomeMessage, style: TextStyle(fontSize: 20)),
+            const Text(welcomeMessage, style: TextStyle(fontSize: 20)),
             CommonWidgetsHelper.buildSpacing(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -27,7 +27,7 @@ class StartScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GameScreen()),
+                  MaterialPageRoute(builder: (context) => const GameScreen()),
                 );
               },
               child: CommonWidgetsHelper.buildButtonStyle(startGame),

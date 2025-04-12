@@ -61,6 +61,7 @@ class GameScreenState extends State<GameScreen> {
 
   void loadNextQuestion(int selectedIndex) {
     Future.delayed(const Duration(seconds: 1), () {
+      if (!mounted) return; 
       if (isCorrectAnswer == true) {
         userScore++;
       }

@@ -12,7 +12,7 @@ class WelcomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: CommonWidgetsHelper.buildBoldAppBarTitle('Bienvenido'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary),
-      drawer: AppDrawer(),
+      drawer: const AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

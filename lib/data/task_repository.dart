@@ -1,4 +1,4 @@
-import '../domain/task.dart';
+import 'package:vdenis/domain/task.dart';
 
 class TaskRepository { 
   final List<Task> tasks;

@@ -54,7 +54,7 @@ class ResultScreen extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const StartScreen()),
-                  (route) => false,
+                  (route) => true,
                 );
               },
               style: ElevatedButton.styleFrom(

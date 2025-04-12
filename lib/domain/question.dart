@@ -8,4 +8,8 @@ class Question {
     required this.answerOptions,
     required this.correctAnswerIndex,
   });
+
+  String getQuestionText() => questionText;
+  List<String> getAnswerOptions() => answerOptions;
+  int getCorrectAnswerIndex() => correctAnswerIndex;
 }

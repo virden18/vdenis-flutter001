@@ -8,7 +8,7 @@ class StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(titleApp), backgroundColor: Colors.blue,),
+      appBar: AppBar(title: Text(titleAppQuestions), backgroundColor: Colors.blue,),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

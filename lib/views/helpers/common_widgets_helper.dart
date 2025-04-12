@@ -6,7 +6,7 @@ class CommonWidgetsHelper {
       title,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 27,
+        fontSize: 25,
       ),
     );
   }

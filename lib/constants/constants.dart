@@ -13,5 +13,6 @@ const int limitePasos = 2;
 const String titleAppQuestions = 'Juego de Preguntas';
 const String welcomeMessage = '¡Bienvenido al Juego de Preguntas!';
 const String startGame = 'Iniciar Juego';
-const String finalScore = 'Puntuación Final: ';
+const String finalScoreQuestions = 'Puntuación Final: ';
 const String playAgain = 'Jugar de nuevo';
+const String results = 'Resultados';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/constants/constants.dart';
-import 'package:vdenis/views/presentation/task/tasks_screen.dart';
+import 'package:vdenis/views/helpers/common_widgets_helper.dart';
+import 'package:vdenis/views/presentation/question/game_screen.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
@@ -8,13 +9,17 @@ class StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(titleAppQuestions), backgroundColor: Colors.blue,),
+      appBar: AppBar(
+        title: CommonWidgetsHelper.buildBoldAppBarTitle(titleAppQuestions), 
+        centerTitle: true, 
+        backgroundColor: Colors.blue,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(welcomeMessage, style: TextStyle(fontSize: 20)),
-            SizedBox(height: 20),
+            CommonWidgetsHelper.buildSpacing(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -22,10 +27,10 @@ class StartScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TasksScreen()),
+                  MaterialPageRoute(builder: (context) => GameScreen()),
                 );
               },
-              child: Text(startGame, style: TextStyle(color: Colors.white),),
+              child: CommonWidgetsHelper.buildButtonStyle(startGame),
             ),
           ],
         ),

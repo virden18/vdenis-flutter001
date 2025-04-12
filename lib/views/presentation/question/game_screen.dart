@@ -3,6 +3,7 @@ import 'package:vdenis/api/service/question_service.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/question.dart';
 import 'package:vdenis/views/helpers/common_widgets_helper.dart';
+import 'package:vdenis/views/presentation/question/results_screen.dart';
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -31,8 +32,22 @@ class GameScreenState extends State<GameScreen> {
     setState(() {
       selectedAnswerIndex = selectedIndex;
       isCorrectAnswer =
-          questionsList[currentQuestionIndex].correctAnswerIndex == selectedIndex;
+          questionsList[currentQuestionIndex].correctAnswerIndex ==
+          selectedIndex;
     });
+    
+    final String snackBarMessage =
+        isCorrectAnswer == true ? '¡Correcto!' : 'Incorrecto...';
+    final Color snackBarColor =
+        isCorrectAnswer == true ? Colors.green : Colors.red;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarMessage),
+        backgroundColor: snackBarColor,
+        duration: const Duration(seconds: 1),
+      ),
+    );
 
     loadNextQuestion(selectedIndex);
   }
@@ -61,7 +76,13 @@ class GameScreenState extends State<GameScreen> {
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => GameScreen()),
+          MaterialPageRoute(
+            builder:
+                (context) => ResultScreen(
+                  finalScore: userScore,
+                  totalQuestions: questionsList.length,
+                ),
+          ),
         );
       }
     });
@@ -73,7 +94,7 @@ class GameScreenState extends State<GameScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(titleAppQuestions),
+        title: CommonWidgetsHelper.buildBoldAppBarTitle(titleAppQuestions),
         backgroundColor: Colors.blue,
         centerTitle: true,
       ),
@@ -100,7 +121,6 @@ class GameScreenState extends State<GameScreen> {
               ),
               const SizedBox(height: 24),
               Column(
-                
                 children: List.generate(
                   currentQuestion.answerOptions.length,
                   (index) => Padding(
@@ -133,7 +153,9 @@ class GameScreenState extends State<GameScreen> {
                           ),
                         ),
                       ),
-                      child: CommonWidgetsHelper.buildButtonStyle(currentQuestion.answerOptions[index]),
+                      child: CommonWidgetsHelper.buildButtonStyle(
+                        currentQuestion.answerOptions[index],
+                      ),
                     ),
                   ),
                 ),

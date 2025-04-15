@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:vdenis/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/presentation/misc/contador_screen.dart';
 import 'package:vdenis/views/login_screen.dart';
+import 'package:vdenis/views/presentation/quote/quote_screen.dart';
 import 'package:vdenis/views/presentation/task/tasks_screen.dart';
 import 'package:vdenis/views/presentation/question/start_screen.dart';
 
@@ -16,13 +18,7 @@ class AppDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
             ),
-            child: const Text(
-              'Menú de Navegación',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
+            child: CommonWidgetsHelper.buildTitle('Menu de Navegación')
           ),
           ListTile(
             leading: const Icon(Icons.task),
@@ -54,6 +50,17 @@ class AppDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const StartScreen()
+                )
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.money),
+            title: const Text('Cotizaciones'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const QuoteScreen()
                 )
               );
             },

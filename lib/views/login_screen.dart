@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/auth_service.dart';
+import 'package:vdenis/views/presentation/quote/quote_screen.dart';
 import 'package:vdenis/views/welcome_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => WelcomeScreen(username: username,),
+                          builder: (context) => WelcomeScreen(username: username),
                         ),
                       );
                     } catch (e) {

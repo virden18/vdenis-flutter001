@@ -16,3 +16,9 @@ const String startGame = 'Iniciar Juego';
 const String finalScoreQuestions = 'Puntuación Final: ';
 const String playAgain = 'Jugar de nuevo';
 const String results = 'Resultados';
+
+//Constantes Quotes
+const String titleApp = 'Cotizaciones Financieras';
+const String loadingMessage = 'Cargando cotizaciones...';
+const String emptyList = 'No hay cotizaciones';
+const String errorMessage = 'Error al cargar cotizaciones';

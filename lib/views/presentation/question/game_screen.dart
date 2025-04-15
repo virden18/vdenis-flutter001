@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/question_service.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/question.dart';
-import 'package:vdenis/views/helpers/common_widgets_helper.dart';
+import 'package:vdenis/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/presentation/question/results_screen.dart';
 
 class GameScreen extends StatefulWidget {
@@ -95,7 +95,7 @@ class GameScreenState extends State<GameScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: CommonWidgetsHelper.buildBoldAppBarTitle(titleAppQuestions),
+        title: CommonWidgetsHelper.buildBoldTitle(titleAppQuestions),
         backgroundColor: Colors.blue,
         centerTitle: true,
       ),

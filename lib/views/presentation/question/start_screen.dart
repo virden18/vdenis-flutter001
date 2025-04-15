@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/constants/constants.dart';
-import 'package:vdenis/views/helpers/common_widgets_helper.dart';
+import 'package:vdenis/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/presentation/question/game_screen.dart';
 
 class StartScreen extends StatelessWidget {
@@ -10,7 +10,7 @@ class StartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: CommonWidgetsHelper.buildBoldAppBarTitle(titleAppQuestions), 
+        title: CommonWidgetsHelper.buildBoldTitle(titleAppQuestions), 
         centerTitle: true, 
         backgroundColor: Colors.blue,
       ),

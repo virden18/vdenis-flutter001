@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/views/helpers/app_drawer.dart';
-import 'package:vdenis/views/helpers/common_widgets_helper.dart';
+import 'package:vdenis/components/app_drawer.dart';
+import 'package:vdenis/helpers/common_widgets_helper.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String username;
@@ -10,14 +10,14 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: CommonWidgetsHelper.buildBoldAppBarTitle('Bienvenido'),
+        title: CommonWidgetsHelper.buildBoldTitle('Bienvenido'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary),
       drawer: const AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CommonWidgetsHelper.buildBoldTitle('¡Bienvenido, $username!'),
+            CommonWidgetsHelper.buildTitle('¡Bienvenido, $username!'),
           ],
         ),
       ),

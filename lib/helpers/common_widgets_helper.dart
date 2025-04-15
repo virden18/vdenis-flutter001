@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 
 class CommonWidgetsHelper {
-  static Widget buildBoldAppBarTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 25,
-      ),
-    );
-  }
-
-  // Método para construir un título en negrita con tamaño 20
   static Widget buildBoldTitle(String title) {
     return Text(
       title,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 22,
+        fontSize: 18,
+      ),
+    );
+  }
+
+  // Método para construir un título en negrita con tamaño 20
+  static Widget buildTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
       ),
     );
   }

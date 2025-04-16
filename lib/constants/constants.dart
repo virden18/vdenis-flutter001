@@ -27,4 +27,13 @@ class Constants {
   static const int pageSize = 12;
   static const String nombreEmpresa = 'Empresa: ';
   static const String dateFormat = 'dd/MM/yyyy HH:mm';
+
+  // constantes Noticias
+  static const String tituloAppNoticias = 'Noticias Técnicas';
+  static const String mensajeCargando = 'Cargando noticias...';
+  static const String listaVaciaNoticias = 'No hay noticias disponibles';
+  static const String mensajeError = 'Error al cargar noticias';
+  static const String formatoFecha = 'dd/MM/yyyy HH:mm';
+  static const int tamanoPaginaConst = 10;
+  static const double espaciadoAlto = 10;
 }

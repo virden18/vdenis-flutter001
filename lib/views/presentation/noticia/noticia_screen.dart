@@ -56,12 +56,10 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       _isLoading = true;
     });
 
-    final newNoticias = _noticiaService.loadMoreNoticias(
-      page: _currentPage,
-    );
+    final newNoticias = _noticiaService.loadMoreNoticias(page: _currentPage);
     await Future.delayed(
       const Duration(seconds: 2), // Simula un retraso de red
-    ); 
+    );
     setState(() {
       _noticias.addAll(newNoticias);
       _currentPage += _pageSize;
@@ -83,7 +81,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
       appBar: AppBar(
         title: const Text(Constants.tituloAppNoticias),
         centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.blueGrey,
       ),
       backgroundColor: Colors.grey[200], // Fondo de pantalla
       body:
@@ -95,14 +93,9 @@ class NoticiaScreenState extends State<NoticiaScreen> {
               ? const Center(
                 child: Text(Constants.listaVacia),
               ) // Mensaje si la lista está vacía
-              : ListView.separated(
+              : ListView.builder(
                 controller: _scrollController,
-                padding: const EdgeInsets.all(8.0),
                 itemCount: _noticias.length + (_isLoading ? 1 : 0),
-                separatorBuilder:
-                    (context, index) => const SizedBox(
-                      height: Constants.espaciadoAlto,
-                    ), // Separación entre Cards
                 itemBuilder: (context, index) {
                   if (index == _noticias.length) {
                     return const Center(
@@ -114,9 +107,7 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                   }
 
                   final noticia = _noticias[index];
-                  return NoticiaCardHelper.buildNoticiaCard(
-                    noticia,
-                  ); // Construcción del Card
+                  return NoticiaCardHelper.buildNoticiaCard(noticia);
                 },
               ),
     );

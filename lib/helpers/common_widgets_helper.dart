@@ -27,11 +27,13 @@ class CommonWidgetsHelper {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(line1, style: const TextStyle( color: Colors.grey),),
-        buildSpacing(width: 10),
+        buildSpacing(width: 2),
         if (line2 != null) Text(line2,
           style: const TextStyle(color: Colors.grey),),
+          buildSpacing(width: 2),
         if (line3 != null) Text(line3, 
           style: const TextStyle( color: Colors.grey),),
+          buildSpacing(width: 2),
       ],
     );
   }

@@ -1,4 +1,3 @@
-import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/data/quote_repository.dart';
 import 'package:vdenis/domain/quote.dart';
 

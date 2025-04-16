@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vdenis/api/service/quote_service.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/quote.dart';
+import 'package:vdenis/helpers/common_widgets_helper.dart';
 
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
@@ -38,7 +40,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
     super.dispose();
   }
 
-   void _onScroll() {
+  void _onScroll() {
     if (_scrollController.position.pixels ==
             _scrollController.position.maxScrollExtent &&
         !_isLoading) {
@@ -54,10 +56,15 @@ class _QuoteScreenState extends State<QuoteScreen> {
     });
 
     try {
-      final newQuotes = await _quoteService.getPaginacion(_currentPage, Constants.pageSize);
+      final newQuotes = await _quoteService.getPaginacion(
+        _currentPage,
+        Constants.pageSize,
+      );
       setState(() {
         _quoteService.updateQuotes(newQuotes); // Añade las nuevas cotizaciones
-        _currentPage += newQuotes.length; // Incrementa el número de página para la próxima carga
+        _currentPage +=
+            newQuotes
+                .length; // Incrementa el número de página para la próxima carga
         _isLoading = false; // Marca como carga finalizada
       });
     } catch (e) {
@@ -76,10 +83,16 @@ class _QuoteScreenState extends State<QuoteScreen> {
 
     try {
       // Llama al servicio para obtener la siguiente página
-      final newQuotes = await _quoteService.getPaginacion(_currentPage, Constants.pageSize);
+      final newQuotes = await _quoteService.getPaginacion(
+        _currentPage,
+        Constants.pageSize,
+      );
       setState(() {
-        _quoteService.updateQuotes(newQuotes);// Añade las nuevas cotizaciones a la lista existente
-        _currentPage = _quoteService.getLength(); // Incrementa el número de página
+        _quoteService.updateQuotes(
+          newQuotes,
+        ); // Añade las nuevas cotizaciones a la lista existente
+        _currentPage =
+            _quoteService.getLength(); // Incrementa el número de página
         _isFetchingMore = false; // Marca como carga finalizada
         _quotes = _quoteService.getQuotes();
       });
@@ -98,10 +111,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${Constants.titleApp}: ${_quoteService.getLength()}' ),
-        backgroundColor: Colors.blueGrey,),
+        title: Text('${Constants.titleApp}: ${_quoteService.getLength()}'),
+        backgroundColor: Colors.blueGrey,
+      ),
       body:
-          _buildBody(), // Llama a una función separada para construir el cuerpo
+          _buildBody(),
+          backgroundColor: Colors.grey[200], // Llama a una función separada para construir el cuerpo
     );
   }
 
@@ -141,16 +156,52 @@ class _QuoteScreenState extends State<QuoteScreen> {
                 )
                 : const SizedBox.shrink();
           }
-          
+
           final quote = _quotes[index];
-          return ListTile(
-            title: Text(quote.companyName),
-            subtitle: Text('Precio: \$${quote.stockPrice.toStringAsFixed(2)}'),
-            trailing: Text(
-              '${quote.changePercentage.toStringAsFixed(1)}%',
-              style: TextStyle(
-                color: quote.changePercentage >= 0 ? Colors.green : Colors.red,
-                fontWeight: FontWeight.bold,
+          final bool isPositiveChange = quote.changePercentage >= 0;
+          final Color changeColor =
+              isPositiveChange ? Colors.green : Colors.red;
+          final DateFormat formatter = DateFormat(Constants.dateFormat);
+          final String formattedDate = formatter.format(quote.lastUpdated);
+
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+            elevation: 3,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    quote.companyName,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  CommonWidgetsHelper.buildSpacing(height: 4),
+                  Text(
+                    'Price: \$${quote.stockPrice.toStringAsFixed(2)}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  CommonWidgetsHelper.buildSpacing(height: 4),
+                  Text(
+                    'Change: ${quote.changePercentage.toStringAsFixed(1)}%',
+                    style: TextStyle(
+                      color: changeColor, // Apply dynamic color
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  CommonWidgetsHelper.buildSpacing(height: 8),
+                  Text(
+                    'Last Updated: $formattedDate', // Display formatted date
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600], // Softer color for the date
+                    ),
+                  ),
+                ],
               ),
             ),
           );

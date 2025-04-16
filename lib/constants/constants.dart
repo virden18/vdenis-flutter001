@@ -26,4 +26,5 @@ class Constants {
   static const String errorMessage = 'Error al cargar cotizaciones';
   static const int pageSize = 12;
   static const String nombreEmpresa = 'Empresa: ';
+  static const String dateFormat = 'dd/MM/yyyy HH:mm';
 }

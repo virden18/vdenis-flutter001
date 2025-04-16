@@ -1,7 +1,7 @@
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/data/noticia_repository.dart';
 import 'package:vdenis/domain/noticia.dart';
-import 'dart:math';
+
 
 class NoticiaService {
   final NoticiaRepository _noticiaRepository = NoticiaRepository();
@@ -19,44 +19,24 @@ class NoticiaService {
       throw ArgumentError('El tamaño de página debe ser mayor a 0.');
     }
 
-    final random = Random();
-
-    List<Noticia> newTasks = List.generate(
+    final DateTime today = DateTime.now();
+    List<Noticia> newNoticias = List.generate(
       pageSize,
       (index) {
-        final titulo = 'Noticia ${page + index}';
-        final descripcion = 'Descripción de la noticia ${page + index}';
-        final fuente = 'Fuente ${page + index}';
-
-        // Validaciones para los campos
-        if (titulo.isEmpty || descripcion.isEmpty || fuente.isEmpty) {
-          throw ArgumentError('El título, descripción y fuente no pueden estar vacíos.');
-        }
-
-        // Generar una fecha aleatoria
-        final dia = random.nextInt(30);
-        final mes = random.nextInt(12);
-        final anho = 2020 + random.nextInt(4);
-        final hora = random.nextInt(24); 
-        final minutos = random.nextInt(60);
-        final segundos = random.nextInt(60); 
-
-        return Noticia(
-          titulo: titulo,
-          descripcion: descripcion,
-          fuente: fuente,
-          publicadaEl: DateTime(
-            anho,
-            mes,
-            dia,
-            hora,
-            minutos,
-            segundos,
-          ).add(Duration(days: -index)),
-        );
+        return _noticiaRepository.generarNoticiaAleatoria();
       },
     );
 
-    return newTasks;
+    for (Noticia noticia in newNoticias) {
+      if (noticia.titulo.isEmpty || noticia.descripcion.isEmpty || noticia.fuente.isEmpty) {
+        throw ('titulo, descripcion, y fuente no pueden estar vacíos');
+      }
+      
+      if (noticia.publicadaEl.isAfter(today)) {
+        throw ('La fecha de publicación no puede ser una fecha futura.');
+      } 
+    }
+
+    return newNoticias;
   }
 }

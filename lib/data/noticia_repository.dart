@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class NoticiaRepository {
@@ -5,96 +7,119 @@ class NoticiaRepository {
 
   NoticiaRepository() : noticias = [] {
     noticias.addAll([
-      Noticia (
-        titulo: 'Noticia 1',
-        descripcion: 'Descripción de la noticia 1',
-        fuente: 'Fuente 1',
-        publicadaEl: DateTime(2025, 04, 07),
-        ),
       Noticia(
-        titulo: 'Noticia 2',
-        descripcion: 'Descripción de la noticia 2',
-        fuente: 'Fuente 2',
+        titulo: 'Descubrimiento Científico',
+        descripcion: 'Científicos descubren una nueva partícula subatómica.',
+        fuente: 'Ciencia Hoy',
+        publicadaEl: DateTime(2025, 04, 07),
+      ),
+      Noticia(
+        titulo: 'Avance Médico',
+        descripcion: 'Un nuevo tratamiento promete curar enfermedades raras.',
+        fuente: 'Salud Global',
         publicadaEl: DateTime(2025, 04, 06),
       ),
       Noticia(
-        titulo: 'Noticia 3',
-        descripcion: 'Descripción de la noticia 3',
-        fuente: 'Fuente 3',
+        titulo: 'Tecnología Innovadora',
+        descripcion: 'Se lanza un dispositivo que revoluciona la comunicación.',
+        fuente: 'Tech News',
         publicadaEl: DateTime(2025, 04, 05),
       ),
       Noticia(
-        titulo: 'Noticia 4',
-        descripcion: 'Descripción de la noticia 4',
-        fuente: 'Fuente 4',
+        titulo: 'Crisis Climática',
+        descripcion: 'Expertos advierten sobre el aumento del nivel del mar.',
+        fuente: 'Medio Ambiente',
         publicadaEl: DateTime(2025, 04, 04),
       ),
       Noticia(
-        titulo: 'Noticia 5',
-        descripcion: 'Descripción de la noticia 5',
-        fuente: 'Fuente 5',
+        titulo: 'Evento Deportivo',
+        descripcion: 'El equipo local gana el campeonato nacional.',
+        fuente: 'Deportes Hoy',
         publicadaEl: DateTime(2025, 04, 03),
       ),
       Noticia(
-        titulo: 'Noticia 6',
-        descripcion: 'Descripción de la noticia 6',
-        fuente: 'Fuente 6',
+        titulo: 'Arte y Cultura',
+        descripcion: 'Una exposición de arte moderno atrae a miles de visitantes.',
+        fuente: 'Cultura Viva',
         publicadaEl: DateTime(2025, 04, 02),
       ),
       Noticia(
-        titulo: 'Noticia 7',
-        descripcion: 'Descripción de la noticia 7',
-        fuente: 'Fuente 7',
+        titulo: 'Economía Global',
+        descripcion: 'Los mercados financieros experimentan una fuerte caída.',
+        fuente: 'Economía Hoy',
         publicadaEl: DateTime(2025, 04, 01),
       ),
       Noticia(
-        titulo: 'Noticia 8',
-        descripcion: 'Descripción de la noticia 8',
-        fuente: 'Fuente 8',
+        titulo: 'Exploración Espacial',
+        descripcion: 'Una nueva misión espacial busca vida en Marte.',
+        fuente: 'Espacio y Ciencia',
         publicadaEl: DateTime(2025, 03, 31),
       ),
       Noticia(
-        titulo: 'Noticia 9',
-        descripcion: 'Descripción de la noticia 9',
-        fuente: 'Fuente 9',
+        titulo: 'Innovación en Energía',
+        descripcion: 'Se desarrolla una batería que dura 10 años.',
+        fuente: 'Energía Renovable',
         publicadaEl: DateTime(2025, 03, 30),
       ),
       Noticia(
-        titulo: 'Noticia 10',
-        descripcion: 'Descripción de la noticia 10',
-        fuente: 'Fuente 10',
+        titulo: 'Educación',
+        descripcion: 'Un nuevo método de enseñanza mejora el aprendizaje.',
+        fuente: 'Educación Hoy',
         publicadaEl: DateTime(2025, 03, 29),
       ),
       Noticia(
-        titulo: 'Noticia 11',
-        descripcion: 'Descripción de la noticia 11',
-        fuente: 'Fuente 11',
+        titulo: 'Moda y Estilo',
+        descripcion: 'Una nueva tendencia de moda se vuelve viral.',
+        fuente: 'Estilo Diario',
         publicadaEl: DateTime(2025, 03, 28),
       ),
       Noticia(
-        titulo: 'Noticia 12',
-        descripcion: 'Descripción de la noticia 12',
-        fuente: 'Fuente 12',
+        titulo: 'Avance en Robótica',
+        descripcion: 'Un robot realiza tareas complejas en tiempo récord.',
+        fuente: 'Robótica Avanzada',
         publicadaEl: DateTime(2025, 03, 27),
       ),
       Noticia(
-        titulo: 'Noticia 13',
-        descripcion: 'Descripción de la noticia 13',
-        fuente: 'Fuente 13',
+        titulo: 'Descubrimiento Arqueológico',
+        descripcion: 'Se encuentra una ciudad perdida bajo el desierto.',
+        fuente: 'Historia Viva',
         publicadaEl: DateTime(2025, 03, 26),
       ),
       Noticia(
-        titulo: 'Noticia 14',
-        descripcion: 'Descripción de la noticia 14',
-        fuente: 'Fuente 14',
+        titulo: 'Música y Entretenimiento',
+        descripcion: 'Un concierto reúne a miles de fanáticos.',
+        fuente: 'Música Hoy',
         publicadaEl: DateTime(2025, 03, 25),
       ),
       Noticia(
-        titulo: 'Noticia 15',
-        descripcion: 'Descripción de la noticia 15',
-        fuente: 'Fuente 15',
+        titulo: 'Avance en Inteligencia Artificial',
+        descripcion: 'Un nuevo modelo de IA supera las expectativas.',
+        fuente: 'Tech AI',
         publicadaEl: DateTime(2025, 03, 24),
       ),
     ]);
+  }
+
+  // Método para generar noticias aleatorias
+  Noticia generarNoticiaAleatoria() {
+    final random = Random();
+    final titulo = Constants.titulosNoticias[random.nextInt(Constants.titulosNoticias.length)];
+    final fuente = Constants.fuentesNoticias[random.nextInt(Constants.fuentesNoticias.length)];
+    final descripcion = Constants.descripcionesNoticias[random.nextInt(Constants.descripcionesNoticias.length)];
+    final publicadaEl = DateTime(
+      2020 + random.nextInt(4), // año
+      1 + random.nextInt(12), // mes
+      1 + random.nextInt(28), // dia
+      random.nextInt(24), // hora
+      random.nextInt(60), // minuto
+      random.nextInt(60), // segundo
+    );
+
+    return Noticia(
+      titulo: titulo,
+      descripcion: descripcion,
+      fuente: fuente,
+      publicadaEl: publicadaEl,
+    );
   }
 }

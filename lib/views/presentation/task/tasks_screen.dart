@@ -3,7 +3,7 @@ import 'package:vdenis/api/service/task_service.dart';
 import 'package:vdenis/domain/task.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/helpers/common_widgets_helper.dart';
-import 'package:vdenis/components/task_card.dart';
+import 'package:vdenis/helpers/task_card.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});

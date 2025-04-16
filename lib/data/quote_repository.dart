@@ -1,9 +1,13 @@
+import 'dart:math';
+
+import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/quote.dart';
 
 class QuoteRepository {
-  Future<List<Quote>> getQuotes() async {
-    await Future.delayed(const Duration(seconds: 2));
-    return [
+  final List<Quote> _quotes;
+  
+  QuoteRepository() : _quotes = [] {
+    _quotes.addAll([
       Quote(
         companyName: 'Apple',
         stockPrice: 150.25,
@@ -64,6 +68,50 @@ class QuoteRepository {
         changePercentage: -0.5,
         lastUpdated: DateTime(2025, 2, 28),
       ),
-    ];
+    ]);
+  }
+  
+  List<Quote> getQuotes() {
+    return _quotes;
+  }
+
+  final _random = Random();
+
+  Future<List<Quote>> getQuotesPag(int page, int pageSize) async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    List<Quote> generatedQuotes = [];
+    int startIndex = page;
+
+    for (int i = 0; i < pageSize; i++) {
+      String companyName = '${Constants.nombreEmpresa} $startIndex';
+      startIndex++;
+
+
+      // Genera datos aleatorios para la cotización
+      double stockPrice = 50.0 + _random.nextDouble() * 3000.0; // Precio entre 50 y 3050
+      double changePercentage = -5.0 + (_random.nextDouble() * 10.0) ; // Cambio entre -5.0% y +5.0%
+      DateTime lastUpdated = DateTime.now().subtract(Duration(days: _random.nextInt(30))); // Fecha en los últimos 30 días
+
+      generatedQuotes.add(
+        Quote(
+          companyName: companyName,
+          stockPrice: double.parse(stockPrice.toStringAsFixed(2)), // Redondea a 2 decimales
+          changePercentage: double.parse(changePercentage.toStringAsFixed(2)), // Redondea a 2 decimales
+          lastUpdated: lastUpdated,
+        ),
+      );
+    }
+    return generatedQuotes;
+  }
+
+  void updateQuotes(List<Quote> quotes) {
+    for (Quote quote in quotes) {
+      _quotes.add(quote);
+    }   
+  }
+
+  int getLength() {
+    return _quotes.length;
   }
 }

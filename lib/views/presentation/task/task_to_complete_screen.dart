@@ -78,7 +78,7 @@ class TaskToCompleteScreen extends StatelessWidget {
                 CommonWidgetsHelper.buildSpacing(height: 8),
                 // Fecha límite
                 Text(
-                  fechaLimite + task.fechaLimiteToString(),
+                  Constants.fechaLimite + task.fechaLimiteToString(),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -87,7 +87,7 @@ class TaskToCompleteScreen extends StatelessWidget {
                 CommonWidgetsHelper.buildSpacing(height: 8),
                 // Descripción
                 const Text(
-                  taskDescription,
+                  Constants.taskDescription,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

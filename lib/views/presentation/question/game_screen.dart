@@ -95,7 +95,7 @@ class GameScreenState extends State<GameScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: CommonWidgetsHelper.buildBoldTitle(titleAppQuestions),
+        title: CommonWidgetsHelper.buildBoldTitle(Constants.titleAppQuestions),
         backgroundColor: Colors.blue,
         centerTitle: true,
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/auth_service.dart';
-import 'package:vdenis/views/presentation/quote/quote_screen.dart';
 import 'package:vdenis/views/welcome_screen.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -98,11 +98,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
       });
     } catch (e) {
       setState(() {
-        _isFetchingMore = false; // Marca como carga finalizada (con error)
-        // Podrías mostrar un Snackbar o un mensaje diferente para errores al cargar más
-        // _error = "Error al cargar más datos: ${e.toString()}";
-        print("Error fetching more quotes: $e"); // Imprime el error en consola
-        // Opcionalmente, podrías intentar de nuevo o mostrar un botón para reintentar
+        _isFetchingMore = false; 
+        //print("Error fetching more quotes: $e"); // Imprime el error en consola
       });
     }
   }
@@ -111,7 +108,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${Constants.titleApp}: ${_quoteService.getLength()}'),
+        title: const Text(Constants.titleApp),
         backgroundColor: Colors.blueGrey,
       ),
       body:
@@ -181,12 +178,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
                   ),
                   CommonWidgetsHelper.buildSpacing(height: 4),
                   Text(
-                    'Price: \$${quote.stockPrice.toStringAsFixed(2)}',
+                    'Precio: \$${quote.stockPrice.toStringAsFixed(2)}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   CommonWidgetsHelper.buildSpacing(height: 4),
                   Text(
-                    'Change: ${quote.changePercentage.toStringAsFixed(1)}%',
+                    'Cambio: ${quote.changePercentage.toStringAsFixed(1)}%',
                     style: TextStyle(
                       color: changeColor, // Apply dynamic color
                       fontWeight: FontWeight.bold,
@@ -195,7 +192,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                   ),
                   CommonWidgetsHelper.buildSpacing(height: 8),
                   Text(
-                    'Last Updated: $formattedDate', // Display formatted date
+                    'Ultima actualización: $formattedDate', // Display formatted date
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600], // Softer color for the date

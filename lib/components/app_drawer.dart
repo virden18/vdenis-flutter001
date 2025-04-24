@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/presentation/misc/contador_screen.dart';
 import 'package:vdenis/views/login_screen.dart';
+import 'package:vdenis/views/presentation/noticia/noticia_screen.dart';
 import 'package:vdenis/views/presentation/quote/quote_screen.dart';
 import 'package:vdenis/views/presentation/task/tasks_screen.dart';
 import 'package:vdenis/views/presentation/question/start_screen.dart';
@@ -61,6 +62,17 @@ class AppDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const QuoteScreen()
+                )
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.newspaper),
+            title: const Text('Noticias'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NoticiaScreen()
                 )
               );
             },

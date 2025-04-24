@@ -1,125 +1,148 @@
-import 'dart:math';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class NoticiaRepository {
-  final List<Noticia> noticias;
+  final List<Noticia> noticias = [];
+  final Dio _dio = Dio();
 
-  NoticiaRepository() : noticias = [] {
-    noticias.addAll([
-      Noticia(
-        titulo: 'Descubrimiento Científico',
-        descripcion: 'Científicos descubren una nueva partícula subatómica.',
-        fuente: 'Ciencia Hoy',
-        publicadaEl: DateTime(2025, 04, 07),
-      ),
-      Noticia(
-        titulo: 'Avance Médico',
-        descripcion: 'Un nuevo tratamiento promete curar enfermedades raras.',
-        fuente: 'Salud Global',
-        publicadaEl: DateTime(2025, 04, 06),
-      ),
-      Noticia(
-        titulo: 'Tecnología Innovadora',
-        descripcion: 'Se lanza un dispositivo que revoluciona la comunicación.',
-        fuente: 'Tech News',
-        publicadaEl: DateTime(2025, 04, 05),
-      ),
-      Noticia(
-        titulo: 'Crisis Climática',
-        descripcion: 'Expertos advierten sobre el aumento del nivel del mar.',
-        fuente: 'Medio Ambiente',
-        publicadaEl: DateTime(2025, 04, 04),
-      ),
-      Noticia(
-        titulo: 'Evento Deportivo',
-        descripcion: 'El equipo local gana el campeonato nacional.',
-        fuente: 'Deportes Hoy',
-        publicadaEl: DateTime(2025, 04, 03),
-      ),
-      Noticia(
-        titulo: 'Arte y Cultura',
-        descripcion: 'Una exposición de arte moderno atrae a miles de visitantes.',
-        fuente: 'Cultura Viva',
-        publicadaEl: DateTime(2025, 04, 02),
-      ),
-      Noticia(
-        titulo: 'Economía Global',
-        descripcion: 'Los mercados financieros experimentan una fuerte caída.',
-        fuente: 'Economía Hoy',
-        publicadaEl: DateTime(2025, 04, 01),
-      ),
-      Noticia(
-        titulo: 'Exploración Espacial',
-        descripcion: 'Una nueva misión espacial busca vida en Marte.',
-        fuente: 'Espacio y Ciencia',
-        publicadaEl: DateTime(2025, 03, 31),
-      ),
-      Noticia(
-        titulo: 'Innovación en Energía',
-        descripcion: 'Se desarrolla una batería que dura 10 años.',
-        fuente: 'Energía Renovable',
-        publicadaEl: DateTime(2025, 03, 30),
-      ),
-      Noticia(
-        titulo: 'Educación',
-        descripcion: 'Un nuevo método de enseñanza mejora el aprendizaje.',
-        fuente: 'Educación Hoy',
-        publicadaEl: DateTime(2025, 03, 29),
-      ),
-      Noticia(
-        titulo: 'Moda y Estilo',
-        descripcion: 'Una nueva tendencia de moda se vuelve viral.',
-        fuente: 'Estilo Diario',
-        publicadaEl: DateTime(2025, 03, 28),
-      ),
-      Noticia(
-        titulo: 'Avance en Robótica',
-        descripcion: 'Un robot realiza tareas complejas en tiempo récord.',
-        fuente: 'Robótica Avanzada',
-        publicadaEl: DateTime(2025, 03, 27),
-      ),
-      Noticia(
-        titulo: 'Descubrimiento Arqueológico',
-        descripcion: 'Se encuentra una ciudad perdida bajo el desierto.',
-        fuente: 'Historia Viva',
-        publicadaEl: DateTime(2025, 03, 26),
-      ),
-      Noticia(
-        titulo: 'Música y Entretenimiento',
-        descripcion: 'Un concierto reúne a miles de fanáticos.',
-        fuente: 'Música Hoy',
-        publicadaEl: DateTime(2025, 03, 25),
-      ),
-      Noticia(
-        titulo: 'Avance en Inteligencia Artificial',
-        descripcion: 'Un nuevo modelo de IA supera las expectativas.',
-        fuente: 'Tech AI',
-        publicadaEl: DateTime(2025, 03, 24),
-      ),
-    ]);
+  NoticiaRepository() {
+    _initializeNoticias();
   }
 
-  // Método para generar noticias aleatorias
-  Noticia generarNoticiaAleatoria() {
-    final random = Random();
-    final titulo = Constants.titulosNoticias[random.nextInt(Constants.titulosNoticias.length)];
-    final fuente = Constants.fuentesNoticias[random.nextInt(Constants.fuentesNoticias.length)];
-    final descripcion = Constants.descripcionesNoticias[random.nextInt(Constants.descripcionesNoticias.length)];
-    final publicadaEl = DateTime(
-      2020 + random.nextInt(4), // año
-      1 + random.nextInt(12), // mes
-      1 + random.nextInt(28), // dia
-      random.nextInt(24), // hora
-      random.nextInt(60), // minuto
-      random.nextInt(60), // segundo
+  Future<void> _initializeNoticias() async {
+    try {
+      final List<Noticia> apiNoticias = await fetchNoticiasDesdeApi();
+      noticias.addAll(apiNoticias);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error al inicializar las noticias: $e');
+      }
+    }
+  }
+
+  Future<List<Noticia>> fetchNoticiasDesdeApi() async {
+    try {
+      final response = await _dio.get(Constants.newsUrl);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> articles = response.data as List<dynamic>;
+
+        if (articles.isEmpty) {
+          return [];
+        }
+
+        return articles.map((json) => Noticia.fromJson(json)).toList();
+      } else {
+        throw Exception('Error al obtener las noticias: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw _handleDioError(e, 'obtener las noticias');
+    }
+  }
+
+  Future<void> createNoticia(Noticia noticia) async {
+    try {
+      final response = await _dio.post(
+        Constants.newsUrl,
+        data: {
+          "titulo": noticia.titulo,
+          "descripcion": noticia.descripcion,
+          "fuente": noticia.fuente,
+          "publicadaEl": noticia.publicadaEl.toIso8601String(),
+          "urlImagen": noticia.urlImagen,
+        },
+      );
+
+      if (response.statusCode == 201) {
+        if (kDebugMode) {
+          print('Noticia creada exitosamente.');
+        }
+      } else {
+        throw Exception('Error al crear la noticia: ${response.statusCode}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error al realizar la solicitud: $e');
+      }
+      throw _handleDioError(e, 'crear la noticia');
+    }
+  }
+
+  Future<void> updateNoticia(String id, Noticia noticia) async {
+  try {
+    final response = await _dio.put(
+      "${Constants.newsUrl}/$id",
+      data: {
+        "titulo": noticia.titulo,
+        "descripcion": noticia.descripcion,
+        "fuente": noticia.fuente,
+        "publicadaEl": noticia.publicadaEl.toIso8601String(),
+        "urlImagen": noticia.urlImagen,
+      },
     );
 
-    return Noticia(
-      titulo: titulo,
-      descripcion: descripcion,
-      fuente: fuente,
-      publicadaEl: publicadaEl,
-    );
+    if (response.statusCode == 200) {
+      if (kDebugMode) {
+        print('Noticia actualizada exitosamente.');
+      }
+    } else {
+      throw Exception('Error al actualizar la noticia: ${response.statusCode}');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error al actualizar la noticia: $e');
+    }
+    throw _handleDioError(e, 'actualizar la noticia');
+  }
+}
+
+Future<void> deleteNoticia(String id) async {
+  try {
+    final response = await _dio.delete("${Constants.newsUrl}/$id");
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      if (kDebugMode) {
+        print('Noticia eliminada exitosamente.');
+      }
+    } else {
+      throw Exception('Error al eliminar la noticia: ${response.statusCode}');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error al eliminar la noticia: $e');
+    }
+    throw _handleDioError(e, 'eliminar la noticia');
+  }
+}
+
+  /// Método auxiliar para manejar errores de Dio y generar excepciones descriptivas
+  Exception _handleDioError(dynamic error, String operation) {
+    // Verificar si es un error de Dio con respuesta
+    if (error is DioException && error.response != null) {
+      final statusCode = error.response!.statusCode;
+      
+      // Si es un error 4xx, extraer información más detallada
+      if (statusCode != null && statusCode >= 400 && statusCode < 500) {
+        String errorMessage;
+        
+        // Intentar extraer un mensaje de error del cuerpo de la respuesta
+        if (error.response!.data is Map) {
+          errorMessage = error.response!.data['message'] ?? 
+                         error.response!.data['error'] ?? 
+                         'Error $statusCode';
+        } else if (error.response!.data is String && error.response!.data.isNotEmpty) {
+          errorMessage = error.response!.data;
+        } else {
+          errorMessage = 'Error del cliente: $statusCode';
+        }
+        
+        return Exception('Error $statusCode al $operation: $errorMessage');
+      }
+    }
+    
+    // Para otros tipos de errores, mantener el comportamiento genérico
+    return Exception('Error al $operation: $error');
   }
 }

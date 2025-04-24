@@ -1,3 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class Constants {
   static const String tituloAppBar = 'Mis Tareas';
   static const String listaVacia = 'No hay tareas';
@@ -29,6 +31,7 @@ class Constants {
   static const String dateFormat = 'dd/MM/yyyy HH:mm';
 
   // constantes Noticias
+  static String get newsUrl => dotenv.env['API_URL'] ?? 'https://crudcrud.com/api/7fa1230a97f842fda251c0aa0980d2f2/noticias';
   static const String tituloAppNoticias = 'Noticias Técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVaciaNoticias = 'No hay noticias disponibles';
@@ -36,60 +39,5 @@ class Constants {
   static const String formatoFecha = 'dd/MM/yyyy HH:mm';
   static const int tamanoPaginaConst = 10;
   static const double espaciadoAlto = 10;
-  static const List<String> titulosNoticias = [
-    'Descubrimiento Científico',
-    'Avance Médico',
-    'Tecnología Innovadora',
-    'Crisis Climática',
-    'Evento Deportivo',
-    'Arte y Cultura',
-    'Economía Global',
-    'Exploración Espacial',
-    'Innovación en Energía',
-    'Educación',
-    'Moda y Estilo',
-    'Avance en Robótica',
-    'Descubrimiento Arqueológico',
-    'Música y Entretenimiento',
-    'Avance en Inteligencia Artificial',
-  ];
-  static const List<String> fuentesNoticias = [
-    'Ciencia Hoy',
-    'Salud Global',
-    'Tech News',
-    'Medio Ambiente',
-    'Deportes Hoy',
-    'Cultura Viva',
-    'Economía Hoy',
-    'Espacio y Ciencia',
-    'Energía Renovable',
-    'Educación Hoy',
-    'Estilo Diario',
-    'Robótica Avanzada',
-    'Historia Viva',
-    'Música Hoy',
-    'Tech AI',
-  ];
-  static const List<String> descripcionesNoticias = [
-  'Un descubrimiento que cambiará el rumbo de la ciencia.',
-  'Un avance médico que promete salvar millones de vidas.',
-  'Una tecnología innovadora que redefine la comunicación.',
-  'Expertos alertan sobre los efectos del cambio climático.',
-  'El equipo local celebra una victoria histórica.',
-  'Una exposición de arte que cautiva a miles de personas.',
-  'Los mercados financieros enfrentan una caída inesperada.',
-  'Una misión espacial que busca respuestas en Marte.',
-  'Una batería revolucionaria que podría cambiar el mundo.',
-  'Un método educativo que transforma el aprendizaje.',
-  'Una tendencia de moda que está arrasando en redes sociales.',
-  'Un robot que realiza tareas complejas con precisión.',
-  'Un hallazgo arqueológico que revela secretos del pasado.',
-  'Un concierto que reúne a miles de fanáticos emocionados.',
-  'Un modelo de inteligencia artificial que supera expectativas.',
-  'Una innovación energética que promete un futuro más limpio.',
-  'Un evento deportivo que quedará en la historia.',
-  'Un descubrimiento en biología que abre nuevas posibilidades.',
-  'Un avance en robótica que redefine la automatización.',
-  'Una película que está rompiendo récords en taquilla.',
-];
+  static const String urlImagen = 'https://picsum.photos/200/300';
 }

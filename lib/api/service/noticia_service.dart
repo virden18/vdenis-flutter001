@@ -1,216 +1,136 @@
 import 'package:vdenis/data/noticia_repository.dart';
 import 'package:vdenis/domain/noticia.dart';
-
-class NoticiaServiceException implements Exception {
-  final String message;
-  final String userFriendlyMessage;
-  final dynamic originalError;
-
-  NoticiaServiceException({
-    required this.message,
-    required this.userFriendlyMessage,
-    this.originalError,
-  });
-
-  @override
-  String toString() => message;
-}
+import 'package:vdenis/exceptions/api_exception.dart';
+import 'package:vdenis/helpers/error_helper.dart';
 
 class NoticiaService {
   final NoticiaRepository _repository = NoticiaRepository();
 
+  /// Carga noticias desde el repositorio
   Future<List<Noticia>> loadMoreNoticias() async {
     try {
       final List<Noticia> noticias = await _repository.fetchNoticiasDesdeApi();
 
-      if (noticias.isEmpty) {
-        throw NoticiaServiceException(
-          message: 'No hay más noticias disponibles.',
-          userFriendlyMessage:
-              'No encontramos noticias para mostrar. Por favor, intenta más tarde.',
-        );
+      if (noticias.isEmpty ) {
+        return [];
       }
 
+      // Validar cada noticia
       for (final noticia in noticias) {
-        if (noticia.titulo.isEmpty ||
-            noticia.fuente.isEmpty ||
-            noticia.descripcion.isEmpty) {
-          throw NoticiaServiceException(
-            message:
-                'El título, descripción o fuente de la noticia no pueden estar vacíos.',
-            userFriendlyMessage:
-                'Algunas noticias tienen información incompleta. Contacta con el administrador.',
+        if (noticia.titulo.isEmpty || noticia.fuente.isEmpty || noticia.descripcion.isEmpty) {
+          throw ApiException(
+            'Algunas noticias tienen información incompleta.',
+            statusCode: 400
           );
         }
       }
+      
       return noticias;
     } catch (e) {
-      if (e is NoticiaServiceException) {
-        rethrow; // Ya está formateado, simplemente lo relanzamos
-      }
-
-      // Interpretación de errores del repositorio
-      String userFriendlyMessage;
-
-      if (e.toString().contains('Error 404')) {
-        userFriendlyMessage =
-            'No se pudo encontrar el recurso solicitado. Por favor, verifica la conexión.';
-      } else if (e.toString().contains('Error 401') ||
-          e.toString().contains('Error 403')) {
-        userFriendlyMessage =
-            'No tienes acceso a esta información. Contacta con el administrador.';
-      } else if (e.toString().contains('DioException') &&
-          e.toString().contains('SocketException')) {
-        userFriendlyMessage =
-            'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
-      } else if (e.toString().contains('timeout')) {
-        userFriendlyMessage =
-            'La conexión tardó demasiado tiempo. Inténtalo de nuevo más tarde.';
+      if (e is ApiException) {
+        // Propagar la excepción si ya es ApiException
+        rethrow;
       } else {
-        userFriendlyMessage =
-            'Ocurrió un error al cargar las noticias. Por favor, intenta de nuevo.';
+        // Convertir otras excepciones a ApiException con mensaje amigable
+        final errorMessage = ErrorHelper.getServiceErrorMessage(e.toString());
+        throw ApiException(
+          errorMessage,
+          statusCode: _getStatusCodeFromError(e.toString())
+        );
       }
-
-      throw NoticiaServiceException(
-        message: 'Error en el servicio de noticias: $e',
-        userFriendlyMessage: userFriendlyMessage,
-        originalError: e,
-      );
     }
   }
 
-  Future<void> createNoticia(Noticia noticia) async {
+  /// Crea una nueva noticia
+  Future<Noticia> createNoticia(Noticia noticia) async {
     try {
-      // Validación antes de enviar al repositorio
-      if (noticia.titulo.isEmpty ||
-          noticia.descripcion.isEmpty ||
-          noticia.fuente.isEmpty) {
-        throw NoticiaServiceException(
-          message: 'Campos requeridos vacíos',
-          userFriendlyMessage:
-              'Por favor, completa todos los campos requeridos.',
+      // Validación local
+      if (noticia.titulo.isEmpty || noticia.descripcion.isEmpty || noticia.fuente.isEmpty) {
+        throw ApiException(
+          'Por favor, completa todos los campos requeridos.',
+          statusCode: 400
         );
       }
 
-      await _repository.createNoticia(noticia);
+      return await _repository.createNoticia(noticia);
     } catch (e) {
-      if (e is NoticiaServiceException) {
+      if (e is ApiException) {
         rethrow;
-      }
-
-      // Interpretación de errores de creación
-      String userFriendlyMessage;
-
-      if (e.toString().contains('Error 400')) {
-        userFriendlyMessage =
-            'Los datos proporcionados no son válidos. Revisa la información.';
-      } else if (e.toString().contains('Error 401') ||
-          e.toString().contains('Error 403')) {
-        userFriendlyMessage =
-            'No tienes permisos para crear noticias. Contacta con el administrador.';
-      } else if (e.toString().contains('SocketException')) {
-        userFriendlyMessage =
-            'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
       } else {
-        userFriendlyMessage =
-            'Ocurrió un error al crear la noticia. Por favor, intenta de nuevo.';
+        final errorMessage = ErrorHelper.getServiceErrorMessage(e.toString());
+        throw ApiException(
+          errorMessage,
+          statusCode: _getStatusCodeFromError(e.toString())
+        );
       }
-
-      throw NoticiaServiceException(
-        message: 'Error al crear noticia: $e',
-        userFriendlyMessage: userFriendlyMessage,
-        originalError: e,
-      );
     }
   }
 
+  /// Actualiza una noticia existente
   Future<void> updateNoticia(String id, Noticia noticia) async {
     try {
-      // Validación antes de enviar al repositorio
-      if (noticia.titulo.isEmpty ||
-          noticia.descripcion.isEmpty ||
-          noticia.fuente.isEmpty) {
-        throw NoticiaServiceException(
-          message: 'Campos requeridos vacíos',
-          userFriendlyMessage:
-              'Por favor, completa todos los campos requeridos.',
+      // Validación local
+      if (noticia.titulo.isEmpty || noticia.descripcion.isEmpty || noticia.fuente.isEmpty) {
+        throw ApiException(
+          'Por favor, completa todos los campos requeridos.',
+          statusCode: 400
         );
       }
 
       await _repository.updateNoticia(id, noticia);
     } catch (e) {
-      if (e is NoticiaServiceException) {
+      if (e is ApiException) {
         rethrow;
-      }
-
-      // Interpretación de errores de actualización
-      String userFriendlyMessage;
-
-      if (e.toString().contains('Error 400')) {
-        userFriendlyMessage =
-            'Los datos proporcionados no son válidos. Revisa la información.';
-      } else if (e.toString().contains('Error 401') ||
-          e.toString().contains('Error 403')) {
-        userFriendlyMessage =
-            'No tienes permisos para actualizar noticias. Contacta con el administrador.';
-      } else if (e.toString().contains('Error 404')) {
-        userFriendlyMessage =
-            'No se encontró la noticia. Puede haber sido eliminada.';
-      } else if (e.toString().contains('SocketException')) {
-        userFriendlyMessage =
-            'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
       } else {
-        userFriendlyMessage =
-            'Ocurrió un error al actualizar la noticia. Por favor, intenta de nuevo.';
+        final errorMessage = ErrorHelper.getServiceErrorMessage(e.toString());
+        throw ApiException(
+          errorMessage,
+          statusCode: _getStatusCodeFromError(e.toString())
+        );
       }
-
-      throw NoticiaServiceException(
-        message: 'Error al actualizar noticia: $e',
-        userFriendlyMessage: userFriendlyMessage,
-        originalError: e,
-      );
     }
   }
 
+  /// Elimina una noticia
   Future<void> deleteNoticia(String id) async {
     try {
       if (id.isEmpty) {
-        throw NoticiaServiceException(
-          message: 'ID de noticia no válido',
-          userFriendlyMessage:
-              'No se puede eliminar la noticia porque el ID no es válido.',
+        throw ApiException(
+          'No se puede eliminar la noticia porque el ID no es válido.',
+          statusCode: 400
         );
       }
 
       await _repository.deleteNoticia(id);
     } catch (e) {
-      if (e is NoticiaServiceException) {
+      if (e is ApiException) {
         rethrow;
-      }
-
-      // Interpretación de errores de eliminación
-      String userFriendlyMessage;
-
-      if (e.toString().contains('Error 404')) {
-        userFriendlyMessage =
-            'No se encontró la noticia. Puede haber sido eliminada previamente.';
-      } else if (e.toString().contains('Error 401') ||
-          e.toString().contains('Error 403')) {
-        userFriendlyMessage =
-            'No tienes permisos para eliminar esta noticia. Contacta con el administrador.';
-      } else if (e.toString().contains('SocketException')) {
-        userFriendlyMessage =
-            'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
       } else {
-        userFriendlyMessage =
-            'Ocurrió un error al eliminar la noticia. Por favor, intenta de nuevo.';
+        final errorMessage = ErrorHelper.getServiceErrorMessage(e.toString());
+        throw ApiException(
+          errorMessage,
+          statusCode: _getStatusCodeFromError(e.toString())
+        );
       }
-
-      throw NoticiaServiceException(
-        message: 'Error al eliminar noticia: $e',
-        userFriendlyMessage: userFriendlyMessage,
-        originalError: e,
-      );
     }
+  }
+
+  /// Método auxiliar para determinar el código de estado basado en el mensaje de error
+  int _getStatusCodeFromError(String errorMessage) {
+    errorMessage = errorMessage.toLowerCase();
+    
+    if (errorMessage.contains('error 404')) {
+      return 404;
+    } else if (errorMessage.contains('error 401') || errorMessage.contains('error 403')) {
+      return 403;
+    } else if (errorMessage.contains('error 400')) {
+      return 400;
+    } else if (errorMessage.contains('timeout')) {
+      return 408;
+    } else if (errorMessage.contains('socketexception')) {
+      return 0; // Error de conectividad
+    }
+    
+    return 500; // Error de servidor por defecto
   }
 }

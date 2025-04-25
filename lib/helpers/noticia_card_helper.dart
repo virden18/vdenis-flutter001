@@ -4,9 +4,20 @@ import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class NoticiaCardHelper {
-  static Widget buildNoticiaCard(Noticia noticia, {void Function(Noticia)? onTap}) {
+  static Widget buildNoticiaCard(
+    Noticia noticia, {
+    void Function(Noticia)? onTap,
+    void Function(Noticia)? onEdit,
+    void Function(Noticia)? onDelete,
+  }) {
     final DateFormat formatter = DateFormat(Constants.formatoFecha);
     final String formattedDate = formatter.format(noticia.publicadaEl);
+    
+    // Determinar el texto de categoría a mostrar
+    final String categoriaText = noticia.categoriaId != null && 
+                                 noticia.categoriaId != Constants.defaultCategoriaId
+        ? 'Categoría: ${noticia.categoriaId}'
+        : 'Sin categoría';
 
     return Column(
       children: [
@@ -64,12 +75,25 @@ class NoticiaCardHelper {
                                           color: Colors.grey,
                                         ),
                                       ),
-                                      Text(
-                                        formattedDate,
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            formattedDate,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            categoriaText,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -91,31 +115,37 @@ class NoticiaCardHelper {
                         child: Image.network(
                           noticia.urlImagen,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey.shade200,
+                              child: const Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
                   ],
                 ),
+                // Reemplazar los botones existentes con botones de edición y eliminación
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    // Botón de edición
                     IconButton(
-                      icon: const Icon(Icons.star_border),
-                      onPressed: () {
-                        // Acción para marcar como favorito
-                      },
+                      icon: const Icon(Icons.edit, color: Colors.blueGrey),
+                      tooltip: 'Editar noticia',
+                      onPressed: onEdit != null ? () => onEdit(noticia) : null,
                     ),
+                    // Botón de eliminación
                     IconButton(
-                      icon: const Icon(Icons.share),
-                      onPressed: () {
-                        // Acción para compartir
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      onPressed: () {
-                        // Acción para mostrar más opciones
-                      },
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      tooltip: 'Eliminar noticia',
+                      onPressed: onDelete != null ? () => onDelete(noticia) : null,
                     ),
                   ],
                 ),

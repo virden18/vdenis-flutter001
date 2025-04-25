@@ -35,4 +35,26 @@ class ErrorHelper {
 
     return {'message': message, 'color': color};
   }
+
+  static String getTimeoutMessage() {
+  return 'El servidor tardó demasiado en responder. Por favor, intenta de nuevo más tarde.';
+}
+
+static String getServiceErrorMessage(String errorString) {
+  errorString = errorString.toLowerCase();
+  
+  if (errorString.contains('error 404')) {
+    return 'No se encontró el recurso solicitado.';
+  } else if (errorString.contains('error 401') || errorString.contains('error 403')) {
+    return 'No tienes permisos para realizar esta acción.';
+  } else if (errorString.contains('error 400')) {
+    return 'Los datos proporcionados no son válidos.';
+  } else if (errorString.contains('timeout')) {
+    return 'La conexión tardó demasiado tiempo. Inténtalo de nuevo más tarde.';
+  } else if (errorString.contains('socketexception')) {
+    return 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
+  }
+  
+  return 'Ocurrió un error inesperado. Por favor, intenta de nuevo.';
+}
 }

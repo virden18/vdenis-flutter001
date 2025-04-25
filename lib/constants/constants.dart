@@ -32,7 +32,7 @@ class Constants {
 
   // constantes Noticias y Categorias
   static String get baseUrl =>
-      dotenv.env['_URL'] ?? 'https://default-url.com';
+      dotenv.env['API_URL'] ?? 'https://default-url.com';
   static String get newsUrl => '$baseUrl/noticias';
   static String get categoriasUrl => '$baseUrl/categorias';
   static const String tituloAppNoticias = 'Noticias Técnicas';
@@ -44,7 +44,8 @@ class Constants {
   static const double espaciadoAlto = 10;
   static const String urlImagen = 'https://picsum.photos/200/300';
   static const String urlCategoria = 'https://picsum.photos/seed/economia/600/400';
-
+  static const String defaultCategoriaId = 'default';
+  
   static const int timeoutSeconds = 10; 
   static const String errorUnauthorized = 'No autorizado';
   static const String errorNotFound = 'Noticias no encontradas';

@@ -1,0 +1,52 @@
+[
+    {
+        "nombre": "Economía",
+        "descripcion": "Noticias sobre mercados financieros, indicadores económicos, empresas y negocios",
+        "imagenUrl": "https://picsum.photos/seed/economia/600/400"
+    },
+    {
+        "nombre": "Tecnología",
+        "descripcion": "Información sobre avances tecnológicos, empresas de tech, gadgets y tendencias digitales",
+        "imagenUrl": "https://picsum.photos/seed/tecnologia/600/400"
+    },
+    {
+        "nombre": "Deportes",
+        "descripcion": "Actualidad deportiva, resultados, fichajes y eventos destacados del mundo del deporte",
+        "imagenUrl": "https://picsum.photos/seed/deportes/600/400"
+    },
+    {
+        "nombre": "Política",
+        "descripcion": "Actualidad política nacional e internacional, elecciones y decisiones gubernamentales",
+        "imagenUrl": "https://picsum.photos/seed/politica/600/400"
+    },
+    {
+        "nombre": "Salud",
+        "descripcion": "Información sobre medicina, bienestar, investigaciones científicas y consejos para una vida saludable",
+        "imagenUrl": "https://picsum.photos/seed/salud/600/400"
+    },
+    {
+        "nombre": "Cultura",
+        "descripcion": "Noticias sobre arte, literatura, cine, música y otras expresiones culturales",
+        "imagenUrl": "https://picsum.photos/seed/cultura/600/400"
+    },
+    {
+        "nombre": "Ciencia",
+        "descripcion": "Descubrimientos científicos, avances en investigación y noticias del mundo académico",
+        "imagenUrl": "https://picsum.photos/seed/ciencia/600/400"
+    },
+    {
+        "nombre": "Medio Ambiente",
+        "descripcion": "Información sobre ecología, cambio climático, conservación y sostenibilidad",
+        "imagenUrl": "https://picsum.photos/seed/medioambiente/600/400"
+    },
+    {
+        "nombre": "Internacional",
+        "descripcion": "Noticias de actualidad mundial, conflictos, diplomacia y relaciones internacionales",
+        "imagenUrl": "https://picsum.photos/seed/internacional/600/400"
+    },
+    {
+        "nombre": "Educación",
+        "descripcion": "Novedades en el sector educativo, tendencias pedagógicas y oportunidades de formación",
+        "imagenUrl": "https://picsum.photos/seed/educacion/600/400"
+    }
+]

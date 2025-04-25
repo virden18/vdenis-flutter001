@@ -34,7 +34,7 @@ class CategoriaService {
   }
 
   /// Edita una categoría existente
-  Future<void> editarCategoria(String id, Categoria categoria) async {
+  Future<void> actualizarCategoria(String id, Categoria categoria) async {
     try {
       await _repository.editarCategoria(id, categoria.toJson());
     } catch (e) {
@@ -60,4 +60,5 @@ class CategoriaService {
       }
     }
   }
+
 }

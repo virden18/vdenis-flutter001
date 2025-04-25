@@ -146,13 +146,19 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                                     color: Colors.grey,
                                   ),
                         ),
+                        // Modificar el trailing en el ListTile para incluir botón de edición junto al de eliminar
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            // Botón de editar
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () => _editarCategoria(categoria),
+                            ),
+                            // Botón de eliminar (ya existente)
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed:
-                                  () => _confirmarEliminarCategoria(categoria),
+                              onPressed: () => _confirmarEliminarCategoria(categoria),
                             ),
                           ],
                         ),
@@ -312,8 +318,8 @@ class CategoriaScreenState extends State<CategoriaScreen> {
         final categoriaActualizada = Categoria(
           id: categoria.id,
           nombre: categoriaEditadaData['nombre'],
-          descripcion: categoria.descripcion,
-          imagenUrl: categoria.imagenUrl,
+          descripcion: categoriaEditadaData['descripcion'], // Usar el nuevo valor
+          imagenUrl: categoriaEditadaData['imagenUrl'] ?? categoria.imagenUrl,
         );
 
         await _categoriaService.actualizarCategoria(

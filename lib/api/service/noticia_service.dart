@@ -11,11 +11,8 @@ class NoticiaService {
     try {
       final List<Noticia> noticias = await _repository.fetchNoticiasDesdeApi();
 
-      if (noticias.isEmpty) {
-        throw ApiException(
-          'No encontramos noticias para mostrar. Por favor, intenta más tarde.',
-          statusCode: 404
-        );
+      if (noticias.isEmpty ) {
+        return [];
       }
 
       // Validar cada noticia

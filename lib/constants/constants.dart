@@ -52,4 +52,8 @@ class Constants {
   static const String errorServer = 'Error del servidor';
   static const String errorNoCategory = 'Categoría no encontrada';
   static const String errorTimeout = 'Tiempo de espera agotado';
+
+  static const String successCreated = 'Noticia/Categoría creada';
+  static const String successUpdated = 'Noticia/Categoría actualizada';
+  static const String successDeleted = 'Noticia/Categoría eliminada';
 }

@@ -98,7 +98,9 @@ class NoticiaScreenState extends State<NoticiaScreen> {
             ),
         ],
       ),
-      body: Container(color: Colors.grey[200], child: _buildBodyContent()),
+      body: Container(
+        color: Colors.grey[200], 
+        child: _buildBodyContent()),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showNoticiaForm(),
         backgroundColor: Colors.blueGrey,

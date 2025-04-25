@@ -42,7 +42,7 @@ class NoticiaRepository {
     }
   }
 
-  Future<void> createNoticia(Noticia noticia) async {
+  Future<Noticia> createNoticia(Noticia noticia) async {
     try {
       final response = await _dio.post(
         Constants.newsUrl,
@@ -59,6 +59,18 @@ class NoticiaRepository {
         if (kDebugMode) {
           print('Noticia creada exitosamente.');
         }
+
+        // Crear una nueva noticia con el ID asignado por el servidor
+      final createdNoticia = Noticia(
+        id: response.data['_id'] ?? noticia.id, // Usar el ID del servidor
+        titulo: noticia.titulo,
+        descripcion: noticia.descripcion,
+        fuente: noticia.fuente,
+        publicadaEl: noticia.publicadaEl,
+        urlImagen: noticia.urlImagen,
+      );
+
+      return createdNoticia;
       } else {
         throw Exception('Error al crear la noticia: ${response.statusCode}');
       }

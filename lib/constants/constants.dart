@@ -30,8 +30,11 @@ class Constants {
   static const String nombreEmpresa = 'Empresa: ';
   static const String dateFormat = 'dd/MM/yyyy HH:mm';
 
-  // constantes Noticias
-  static String get newsUrl => dotenv.env['API_URL'] ?? 'https://crudcrud.com/api/7fa1230a97f842fda251c0aa0980d2f2/noticias';
+  // constantes Noticias y Categorias
+  static String get baseUrl =>
+      dotenv.env['_URL'] ?? 'https://default-url.com';
+  static String get newsUrl => '$baseUrl/noticias';
+  static String get categoriasUrl => '$baseUrl/categorias';
   static const String tituloAppNoticias = 'Noticias Técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
   static const String listaVaciaNoticias = 'No hay noticias disponibles';
@@ -40,4 +43,12 @@ class Constants {
   static const int tamanoPaginaConst = 10;
   static const double espaciadoAlto = 10;
   static const String urlImagen = 'https://picsum.photos/200/300';
+  static const String urlCategoria = 'https://picsum.photos/seed/economia/600/400';
+
+  static const int timeoutSeconds = 10; 
+  static const String errorUnauthorized = 'No autorizado';
+  static const String errorNotFound = 'Noticias no encontradas';
+  static const String errorServer = 'Error del servidor';
+  static const String errorNoCategory = 'Categoría no encontrada';
+  static const String errorTimeout = 'Tiempo de espera agotado';
 }

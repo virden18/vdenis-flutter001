@@ -35,11 +35,6 @@ class NoticiaScreenState extends State<NoticiaScreen> {
   }
 
   @override
-  void didUpdateWidget(covariant NoticiaScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    build(context);
-  }
-  @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
@@ -182,11 +177,13 @@ class NoticiaScreenState extends State<NoticiaScreen> {
                       final scaffoldMessenger = ScaffoldMessenger.of(context);
 
                       try {
-                        await _noticiaService.createNoticia(nuevaNoticia);
+                        // Enviar la nueva noticia al servidor y recibir la versión con ID correcto
+                        final createdNoticia = await _noticiaService.createNoticia(nuevaNoticia);
 
                         setState(() {
-                          _noticiasList.add(nuevaNoticia);
-                          didUpdateWidget(const NoticiaScreen());
+                          
+                          _noticiasList.add(createdNoticia);
+                      
                         });
 
                         navigator.pop();

@@ -79,7 +79,7 @@ class NoticiaService {
     }
   }
 
-  Future<void> createNoticia(Noticia noticia) async {
+  Future<Noticia> createNoticia(Noticia noticia) async {
     try {
       // Validación antes de enviar al repositorio
       if (noticia.titulo.isEmpty ||
@@ -92,7 +92,7 @@ class NoticiaService {
         );
       }
 
-      await _repository.createNoticia(noticia);
+      return await _repository.createNoticia(noticia);
     } catch (e) {
       if (e is NoticiaServiceException) {
         rethrow;

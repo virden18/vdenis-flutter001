@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:vdenis/views/login_screen.dart';
+import 'package:vdenis/views/presentation/categoria/categoria_screen.dart';
 
 void main() async {
   // Inicializar dotenv antes de ejecutar la app
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: LoginScreen(),
+      home: CategoriaScreen(),
     );
   }
 }

@@ -9,14 +9,17 @@ class NoticiaCardHelper {
     void Function(Noticia)? onTap,
     void Function(Noticia)? onEdit,
     void Function(Noticia)? onDelete,
+    String? categoriaNombre, // Nuevo parámetro opcional
   }) {
     final DateFormat formatter = DateFormat(Constants.formatoFecha);
     final String formattedDate = formatter.format(noticia.publicadaEl);
     
-    // Determinar el texto de categoría a mostrar
+    // Determinar el texto de categoría a mostrar usando el nombre si está disponible
     final String categoriaText = noticia.categoriaId != null && 
                                  noticia.categoriaId != Constants.defaultCategoriaId
-        ? 'Categoría: ${noticia.categoriaId}'
+        ? categoriaNombre != null 
+            ? 'Categoría: $categoriaNombre' 
+            : 'Categoría: ${noticia.categoriaId}'
         : 'Sin categoría';
 
     return Column(

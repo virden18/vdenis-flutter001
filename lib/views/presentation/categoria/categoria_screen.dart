@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/api/service/categoria_service.dart';
+import 'package:vdenis/data/categoria_repository.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
@@ -13,7 +13,7 @@ class CategoriaScreen extends StatefulWidget {
 }
 
 class CategoriaScreenState extends State<CategoriaScreen> {
-  final CategoriaService _categoriaService = CategoriaService();
+  final CategoriaRepository _categoriaService = CategoriaRepository();
   List<Categoria> categorias = [];
   bool isLoading = false;
   bool hasError = false;
@@ -32,7 +32,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
 
     try {
       final fetchedCategorias = await _categoriaService.getCategorias();
-      
+
       // Verificar si el widget sigue montado antes de actualizar el estado
       if (mounted) {
         setState(() {
@@ -70,7 +70,10 @@ class CategoriaScreenState extends State<CategoriaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Categorías')),
+      appBar: AppBar(
+        title: const Text('Categorías'),
+        backgroundColor: Colors.blueGrey,
+      ),
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -158,7 +161,8 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                             // Botón de eliminar (ya existente)
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _confirmarEliminarCategoria(categoria),
+                              onPressed:
+                                  () => _confirmarEliminarCategoria(categoria),
                             ),
                           ],
                         ),
@@ -176,6 +180,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
         tooltip: 'Agregar Categoría',
         child: const Icon(Icons.add),
       ),
+      backgroundColor: Colors.grey[200],
     );
   }
 
@@ -318,7 +323,8 @@ class CategoriaScreenState extends State<CategoriaScreen> {
         final categoriaActualizada = Categoria(
           id: categoria.id,
           nombre: categoriaEditadaData['nombre'],
-          descripcion: categoriaEditadaData['descripcion'], // Usar el nuevo valor
+          descripcion:
+              categoriaEditadaData['descripcion'], // Usar el nuevo valor
           imagenUrl: categoriaEditadaData['imagenUrl'] ?? categoria.imagenUrl,
         );
 

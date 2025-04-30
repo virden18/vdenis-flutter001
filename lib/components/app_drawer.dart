@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vdenis/bloc/contador_bloc/contador_bloc.dart';
 import 'package:vdenis/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/presentation/misc/contador_screen.dart';
 import 'package:vdenis/views/login_screen.dart';
@@ -19,7 +21,7 @@ class AppDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
             ),
-            child: CommonWidgetsHelper.buildTitle('Menu de Navegación')
+            child: CommonWidgetsHelper.buildTitle('Menu de Navegación'),
           ),
           ListTile(
             leading: const Icon(Icons.task),
@@ -27,11 +29,9 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const TasksScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const TasksScreen()),
               );
-            }
+            },
           ),
           ListTile(
             leading: const Icon(Icons.countertops),
@@ -39,8 +39,13 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ContadorScreen()
-                )
+                MaterialPageRoute(
+                  builder:
+                      (context) => BlocProvider(
+                        create: (context) => ContadorBloc(),
+                        child: const ContadorScreen(),
+                      ),
+                ),
               );
             },
           ),
@@ -50,8 +55,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const StartScreen()
-                )
+                MaterialPageRoute(builder: (context) => const StartScreen()),
               );
             },
           ),
@@ -61,8 +65,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const QuoteScreen()
-                )
+                MaterialPageRoute(builder: (context) => const QuoteScreen()),
               );
             },
           ),
@@ -72,8 +75,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const NoticiaScreen()
-                )
+                MaterialPageRoute(builder: (context) => const NoticiaScreen()),
               );
             },
           ),
@@ -83,8 +85,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()
-                )
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
             },
           ),

@@ -42,7 +42,7 @@ class TasksScreenState extends State<TasksScreen> {
 
     await Future.delayed(const Duration(seconds: 1));
 
-    final newTasks = _taskService.loadMoreTasks(_nextTaskId, Constants.limiteTareas); // Carga más tareas
+    final newTasks = _taskService.loadMoreTasks(_nextTaskId, TaskConstants.limiteTareas); // Carga más tareas
 
     setState(() {
       tasks.addAll(newTasks);
@@ -63,12 +63,12 @@ class TasksScreenState extends State<TasksScreen> {
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('$Constants.tituloAppBar: ${_taskService.getCantidadTareas()}'),
+        title: Text('$TaskConstants.tituloAppBar: ${_taskService.getCantidadTareas()}'),
         centerTitle: true,
       ),
       body: tasks.isEmpty
           ? const Center(
-              child: Text(Constants.listaVacia, style: TextStyle(fontSize: 18)),
+              child: Text(TaskConstants.listaVacia, style: TextStyle(fontSize: 18)),
             )
           : ListView.builder(
               controller: _scrollController, // Asigna el controlador
@@ -180,7 +180,7 @@ class TasksScreenState extends State<TasksScreen> {
                     title: titleController.text,
                     type: typeController.text.isNotEmpty
                         ? typeController.text
-                        : Constants.taskTypeNormal,
+                        : TaskConstants.taskTypeNormal,
                     description: descriptionController.text,
                     date: dateSelected ?? DateTime.now(),
                     deadLine: DateTime.now().add(const Duration(days: 1)), 

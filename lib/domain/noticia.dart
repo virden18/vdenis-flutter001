@@ -30,7 +30,7 @@ class Noticia {
           ? DateTime.parse(json['publicadaEl'])
           : DateTime.now(),
       urlImagen: json['urlImagen'] ?? '',
-      categoriaId: json['categoriaId'] ?? Constants.defaultCategoriaId,
+      categoriaId: json['categoriaId'] ?? NewsConstants.defaultCategoriaId,
     );
   }
 
@@ -43,7 +43,7 @@ class Noticia {
       'fuente': fuente,
       'publicadaEl': publicadaEl.toIso8601String(),
       'urlImagen': urlImagen,
-      'categoriaId': categoriaId ?? Constants.defaultCategoriaId,
+      'categoriaId': categoriaId ?? NewsConstants.defaultCategoriaId,
     };
   }
 }

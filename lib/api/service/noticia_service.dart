@@ -11,8 +11,8 @@ class NoticiaService {
 
   NoticiaService() 
       : _dio = Dio(BaseOptions(
-          connectTimeout: const Duration(seconds: Constants.timeoutSeconds),
-          receiveTimeout: const Duration(seconds: Constants.timeoutSeconds),
+          connectTimeout: const Duration(seconds: AppConstants.timeoutSeconds),
+          receiveTimeout: const Duration(seconds: AppConstants.timeoutSeconds),
         )) {
     _initializeNoticias();
   }
@@ -30,7 +30,7 @@ class NoticiaService {
 
   Future<List<Noticia>> fetchNoticiasDesdeApi() async {
     try {
-      final response = await _dio.get(Constants.newsUrl);
+      final response = await _dio.get(NewsConstants.newsUrl);
 
       if (response.statusCode == 200) {
         final List<dynamic> articles = response.data as List<dynamic>;
@@ -55,7 +55,7 @@ class NoticiaService {
   Future<Noticia> createNoticia(Noticia noticia) async {
     try {
       final response = await _dio.post(
-        Constants.newsUrl,
+        NewsConstants.newsUrl,
         data: {
           "titulo": noticia.titulo,
           "descripcion": noticia.descripcion,
@@ -101,7 +101,7 @@ class NoticiaService {
   Future<void> updateNoticia(String id, Noticia noticia) async {
     try {
       final response = await _dio.put(
-        "${Constants.newsUrl}/$id",
+        "${NewsConstants.newsUrl}/$id",
         data: {
           "titulo": noticia.titulo,
           "descripcion": noticia.descripcion,
@@ -133,7 +133,7 @@ class NoticiaService {
 
   Future<void> deleteNoticia(String id) async {
     try {
-      final response = await _dio.delete("${Constants.newsUrl}/$id");
+      final response = await _dio.delete("${NewsConstants.newsUrl}/$id");
 
       if (response.statusCode == 200 || response.statusCode == 204) {
         if (kDebugMode) {

@@ -10,7 +10,7 @@ class StartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: CommonWidgetsHelper.buildBoldTitle(Constants.titleAppQuestions), 
+        title: CommonWidgetsHelper.buildBoldTitle(QuestionConstants.titleAppQuestions), 
         centerTitle: true, 
         backgroundColor: Colors.blue,
       ),
@@ -18,7 +18,7 @@ class StartScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(Constants.welcomeMessage, style: TextStyle(fontSize: 20)),
+            const Text(QuestionConstants.welcomeMessage, style: TextStyle(fontSize: 20)),
             CommonWidgetsHelper.buildSpacing(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -30,7 +30,7 @@ class StartScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const GameScreen()),
                 );
               },
-              child: CommonWidgetsHelper.buildButtonStyle(Constants.startGame),
+              child: CommonWidgetsHelper.buildButtonStyle(QuestionConstants.startGame),
             ),
           ],
         ),

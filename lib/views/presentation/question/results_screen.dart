@@ -12,7 +12,7 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String scoreText = '$Constants.finalScoreQuestions$finalScore/$totalQuestions';
+    final String scoreText = '$QuestionConstants.finalScoreQuestions$finalScore/$totalQuestions';
     final String feedbackMessage = finalScore > (totalQuestions / 2)
         ? '¡Buen trabajo!'
         : '¡Sigue practicando!';
@@ -29,7 +29,7 @@ class ResultScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: CommonWidgetsHelper.buildBoldTitle(Constants.results),
+        title: CommonWidgetsHelper.buildBoldTitle(QuestionConstants.results),
         backgroundColor: Colors.blue,
       ),
       body: Center(
@@ -60,7 +60,7 @@ class ResultScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: buttonColor,
               ),
-              child: CommonWidgetsHelper.buildButtonStyle(Constants.playAgain),
+              child: CommonWidgetsHelper.buildButtonStyle(QuestionConstants.playAgain),
             ),
           ],
         ),

@@ -9,13 +9,13 @@ class CategoriaService {
 
   CategoriaService()
       : _dio = Dio(BaseOptions(
-          baseUrl: Constants.categoriasUrl,
-          connectTimeout: const Duration(seconds: Constants.timeoutSeconds),
-          receiveTimeout: const Duration(seconds: Constants.timeoutSeconds),
+          baseUrl: NewsConstants.categoriasUrl,
+          connectTimeout: const Duration(seconds: AppConstants.timeoutSeconds),
+          receiveTimeout: const Duration(seconds: AppConstants.timeoutSeconds),
         ));
 
   /// Método para centralizar el manejo de errores
-  ApiException _handleDioError(dynamic error, String operation) {
+  ApiException _handleDioError(dynamic error) {
     if (error is DioException) {
       if (error.type == DioExceptionType.connectionTimeout ||
           error.type == DioExceptionType.receiveTimeout) {
@@ -32,13 +32,13 @@ class CategoriaService {
         );
       }
       return ApiException(
-        'Error al $operation: ${error.message}',
+        error.message ?? 'Error desconocido',
         statusCode: 500,
       );
     }
     
     return ApiException(
-      'Error desconocido al $operation: $error',
+      error,
       statusCode: 500,
     );
   }
@@ -46,7 +46,7 @@ class CategoriaService {
   /// Obtiene la lista de categorías de la API
   Future<List<Categoria>> getCategorias() async {
     try {
-      final response = await _dio.get(Constants.categoriasUrl);
+      final response = await _dio.get(NewsConstants.categoriasUrl);
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
         return data.map((json) => Categoria.fromJson(json)).toList();
@@ -58,7 +58,7 @@ class CategoriaService {
         );
       }
     } catch (e) {
-      throw _handleDioError(e, 'obtener categorías');
+      throw _handleDioError(e);
     }
   }
 
@@ -66,7 +66,7 @@ class CategoriaService {
   Future<void> crearCategoria(Map<String, dynamic> categoria) async {
     try {
       final response = await _dio.post(
-        Constants.categoriasUrl,
+        NewsConstants.categoriasUrl,
         data: categoria,
       );
 
@@ -78,7 +78,7 @@ class CategoriaService {
         );
       }
     } catch (e) {
-      throw _handleDioError(e, 'crear la categoría');
+      throw _handleDioError(e);
     }
   }
 
@@ -88,7 +88,7 @@ class CategoriaService {
     Map<String, dynamic> categoria,
   ) async {
     try {
-      final url = '${Constants.categoriasUrl}/$id';
+      final url = '${NewsConstants.categoriasUrl}/$id';
       final response = await _dio.put(url, data: categoria);
 
       if (response.statusCode != 200) {
@@ -99,14 +99,14 @@ class CategoriaService {
         );
       }
     } catch (e) {
-      throw _handleDioError(e, 'editar la categoría');
+      throw _handleDioError(e);
     }
   }
 
   /// Elimina una categoría de la API
   Future<void> eliminarCategoria(String id) async {
     try {
-      final url = '${Constants.categoriasUrl}/$id';
+      final url = '${NewsConstants.categoriasUrl}/$id';
       final response = await _dio.delete(url);
 
       if (response.statusCode != 200 && response.statusCode != 204) {
@@ -117,7 +117,7 @@ class CategoriaService {
         );
       }
     } catch (e) {
-      throw _handleDioError(e, 'eliminar la categoría');
+      throw _handleDioError(e);
     }
   }
 }

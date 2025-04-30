@@ -5,11 +5,6 @@ import 'package:vdenis/helpers/error_helper.dart';
 
 class MessageHelper {
   /// Muestra un SnackBar con estilo consistente en toda la aplicación
-  /// 
-  /// [context] - El BuildContext actual
-  /// [message] - El mensaje a mostrar
-  /// [isSuccess] - Si es un mensaje de éxito (verde)
-  /// [statusCode] - Código de estado HTTP para determinar color y mensaje
   static void showSnackBar(
     BuildContext context,
     String message, {

@@ -84,7 +84,7 @@ class QuoteRepository {
     int startIndex = page;
 
     for (int i = 0; i < pageSize; i++) {
-      String companyName = '${Constants.nombreEmpresa} $startIndex';
+      String companyName = '${QuoteConstants.nombreEmpresa} $startIndex';
       startIndex++;
 
 

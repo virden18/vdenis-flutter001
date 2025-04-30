@@ -50,6 +50,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
 
   // Función para la carga inicial de cotizaciones
   Future<void> _fetchInitialQuotes() async {
+    if (!mounted) return; // Verificación inicial de mounted
+    
     setState(() {
       _isLoading = true; // Marca como cargando
       _error = null; // Resetea errores previos
@@ -58,8 +60,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
     try {
       final newQuotes = await _quoteService.getPaginacion(
         _currentPage,
-        Constants.pageSize,
+        QuoteConstants.pageSize,
       );
+      
+      if (!mounted) return; // Verificación después de la operación async
+      
       setState(() {
         _quoteService.updateQuotes(newQuotes); // Añade las nuevas cotizaciones
         _currentPage +=
@@ -68,6 +73,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
         _isLoading = false; // Marca como carga finalizada
       });
     } catch (e) {
+      if (!mounted) return; // Verificación después de la operación async en caso de error
+      
       setState(() {
         _isLoading = false; // Marca como carga finalizada (con error)
         _error = "Error al cargar datos: ${e.toString()}"; // Guarda el error
@@ -77,6 +84,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
 
   // Función para cargar las siguientes páginas de cotizaciones
   Future<void> _fetchMoreQuotes() async {
+    if (!mounted) return; // Verificación inicial de mounted
+    
     setState(() {
       _isFetchingMore = true; // Marca como cargando más datos
     });
@@ -85,8 +94,11 @@ class _QuoteScreenState extends State<QuoteScreen> {
       // Llama al servicio para obtener la siguiente página
       final newQuotes = await _quoteService.getPaginacion(
         _currentPage,
-        Constants.pageSize,
+        QuoteConstants.pageSize,
       );
+      
+      if (!mounted) return; // Verificación después de la operación async
+      
       setState(() {
         _quoteService.updateQuotes(
           newQuotes,
@@ -97,6 +109,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
         _quotes = _quoteService.getQuotes();
       });
     } catch (e) {
+      if (!mounted) return; // Verificación después de la operación async en caso de error
+      
       setState(() {
         _isFetchingMore = false; 
         //print("Error fetching more quotes: $e"); // Imprime el error en consola
@@ -108,7 +122,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(Constants.titleApp),
+        title: const Text(QuoteConstants.titleApp),
         backgroundColor: Colors.blueGrey,
       ),
       body:
@@ -158,7 +172,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
           final bool isPositiveChange = quote.changePercentage >= 0;
           final Color changeColor =
               isPositiveChange ? Colors.green : Colors.red;
-          final DateFormat formatter = DateFormat(Constants.dateFormat);
+          final DateFormat formatter = DateFormat(AppConstants.formatoFecha);
           final String formattedDate = formatter.format(quote.lastUpdated);
 
           return Card(

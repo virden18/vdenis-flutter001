@@ -45,7 +45,7 @@ class TaskService {
       count,
       (index) => Task(
         title: 'Tarea ${nextTaskId + index}',
-        type: (index % 2) == 0 ? Constants.taskTypeNormal : Constants.taskTypeUrgent,
+        type: (index % 2) == 0 ? TaskConstants.taskTypeNormal : TaskConstants.taskTypeUrgent,
         description: 'Descripción de tarea ${nextTaskId + index}',
         date: DateTime.now().add(Duration(days: index)),
         deadLine: DateTime.now().add(Duration(days: index + 1)), 
@@ -58,7 +58,7 @@ class TaskService {
   // Obtener pasos simulados para una tarea según su título
   List<String> getTaskWithSteps(String titulo, DateTime fechaLimite) {
     String fechaString = '${fechaLimite.day}/${fechaLimite.month}/${fechaLimite.year}';
-    List<String> pasosSimulados = _assistantRepository.obtenerPasos(titulo, fechaString).take(Constants.limitePasos).toList(); // Limita los pasos simulados obtenidos
+    List<String> pasosSimulados = _assistantRepository.obtenerPasos(titulo, fechaString).take(TaskConstants.limitePasos).toList(); // Limita los pasos simulados obtenidos
     _taskRepository.setListaPasos(pasosSimulados); // Establece la lista de pasos en el repositorio
     return pasosSimulados; // Devuelve la lista de pasos simulados
   }

@@ -28,7 +28,7 @@ Widget buildTaskCard(
       onDelete(index);  // Llama a la función para eliminar la tarea
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-        content: Text(Constants.tareaEliminada),
+        content: Text(TaskConstants.tareaEliminada),
         ),
       ); 
     },
@@ -46,7 +46,7 @@ Widget buildTaskCard(
               Row(
                 children: [
                   CommonWidgetsHelper.buildInfoLines(
-                    '$Constants.tipoTarea${task.type}',
+                    '$TaskConstants.tipoTarea${task.type}',
                     task.fechaToString(),
                   )
                 ],
@@ -61,12 +61,12 @@ Widget buildTaskCard(
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              task.type == Constants.taskTypeUrgent
+              task.type == TaskConstants.taskTypeUrgent
                   ? const Icon(
                       Icons.warning,
                       color: Colors.red,
                     )
-                  : task.type == Constants.taskTypeNormal
+                  : task.type == TaskConstants.taskTypeNormal
                       ? const Icon(
                           Icons.task,
                           color: Colors.blue,

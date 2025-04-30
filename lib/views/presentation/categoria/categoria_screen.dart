@@ -243,7 +243,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
                 if (nombreController.text.isNotEmpty &&
                     descripcionController.text.isNotEmpty) {
                   if (imagenUrlController.text.isEmpty) {
-                    imagenUrlController.text = Constants.urlCategoria;
+                    imagenUrlController.text = NewsConstants.urlCategoria;
                   }
                   Navigator.pop(context, {
                     'nombre': nombreController.text.toString(),
@@ -274,7 +274,7 @@ class CategoriaScreenState extends State<CategoriaScreen> {
           id: '',
           nombre: nuevaCategoriaData['nombre'],
           descripcion: nuevaCategoriaData['descripcion'],
-          imagenUrl: nuevaCategoriaData['imagenUrl'] ?? Constants.urlCategoria,
+          imagenUrl: nuevaCategoriaData['imagenUrl'] ?? NewsConstants.urlCategoria,
         );
 
         await _categoriaService.crearCategoria(

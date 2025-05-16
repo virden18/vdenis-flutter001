@@ -7,6 +7,7 @@ class AppConstants {
   
   static const int timeoutSeconds = 10;
   static const String formatoFecha = 'dd/MM/yyyy HH:mm';
+  static const String errorTimeout = 'Tiempo de espera agotado'; 
 }
 
 // Constantes para la pantalla de Tareas
@@ -66,6 +67,7 @@ class ErrorConstants {
   static const String errorServer = 'Error del servidor';
   static const String errorNoCategory = 'Categoría no encontrada';
   static const String errorTimeout = 'Tiempo de espera agotado';
+  static const String errorNoInternet = 'Sin conexión a Internet';
 }
 
 // Constantes para mensajes de éxito

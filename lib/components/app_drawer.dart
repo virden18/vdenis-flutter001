@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/contador_bloc/contador_bloc.dart';
+import 'package:vdenis/bloc/contador/contador_bloc.dart';
 import 'package:vdenis/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/presentation/misc/contador_screen.dart';
 import 'package:vdenis/views/login_screen.dart';

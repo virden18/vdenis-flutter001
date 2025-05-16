@@ -1,4 +1,4 @@
-// category.dart
+
 class Categoria {
   final String? id; // ID asignado por la API (opcional, para operaciones CRUD)
   final String nombre; // Nombre de la categoría (por ejemplo, "Inteligencia Artificial")

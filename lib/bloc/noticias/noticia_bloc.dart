@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/noticias_bloc/noticia_event.dart';
-import 'package:vdenis/bloc/noticias_bloc/noticia_state.dart';
+import 'package:vdenis/bloc/noticias/noticia_event.dart';
+import 'package:vdenis/bloc/noticias/noticia_state.dart';
 import 'package:vdenis/data/categoria_repository.dart';
 import 'package:vdenis/data/noticia_repository.dart';
 import 'package:vdenis/exceptions/api_exception.dart';

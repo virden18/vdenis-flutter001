@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/noticias_bloc/noticia_bloc.dart';
-import 'package:vdenis/bloc/noticias_bloc/noticia_event.dart';
-import 'package:vdenis/bloc/noticias_bloc/noticia_state.dart';
+import 'package:vdenis/bloc/noticias/noticia_bloc.dart';
+import 'package:vdenis/bloc/noticias/noticia_event.dart';
+import 'package:vdenis/bloc/noticias/noticia_state.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/data/categoria_repository.dart';
 import 'package:vdenis/data/noticia_repository.dart';

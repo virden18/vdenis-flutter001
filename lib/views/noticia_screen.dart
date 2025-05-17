@@ -6,7 +6,6 @@ import 'package:vdenis/bloc/noticias/noticia_event.dart';
 import 'package:vdenis/bloc/noticias/noticia_state.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/data/categoria_repository.dart';
-import 'package:vdenis/data/noticia_repository.dart';
 import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/domain/noticia.dart';
 import 'package:vdenis/helpers/error_helper.dart';
@@ -20,10 +19,7 @@ class NoticiaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NoticiaBloc(
-        noticiaRepository: NoticiaRepository(),
-        categoriaRepository: CategoriaRepository(),
-      )..add(const LoadNoticias()),
+      create: (context) => NoticiaBloc()..add(const NoticiasLoadEvent()),
       child: const NoticiaView(),
     );
   }
@@ -34,12 +30,12 @@ class NoticiaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<NoticiaBloc, NoticiaState>(
+    return BlocConsumer<NoticiaBloc, NoticiasState>(
       listener: (context, state) {
-        if (state is NoticiaError) {
+        if (state is NoticiasError) {
           MessageHelper.showSnackBar(
             context,
-            state.message,
+            state.errorMessage,
             statusCode: state.statusCode,
           );
         }
@@ -61,7 +57,7 @@ class NoticiaView extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, NoticiaState state) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, NoticiasState state) {
     return AppBar(
       title: const Text(NewsConstants.tituloAppNoticias),
       backgroundColor: Colors.blueGrey,
@@ -72,25 +68,25 @@ class NoticiaView extends StatelessWidget {
           onPressed: () async {
             // Capturar el contexto actual antes de la operación async
             final currentContext = context;
-            
+
             final result = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const CategoriaScreenDos(),
               ),
             );
-            
+
             // Verificar que el contexto siga montado
             if (!currentContext.mounted) return;
-            
+
             // Recargar categorías al volver
             if (result == true) {
-              currentContext.read<NoticiaBloc>().add(const LoadCategorias());
-              currentContext.read<NoticiaBloc>().add(const LoadNoticias());
+              // Just load noticias as that will include categories
+              currentContext.read<NoticiaBloc>().add(const NoticiasLoadEvent());
             }
           },
         ),
-        if (state is NoticiaLoaded)
+        if (state is NoticiasLoaded)
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Center(
@@ -115,8 +111,8 @@ class NoticiaView extends StatelessWidget {
     return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
-  Widget _buildBodyContent(BuildContext context, NoticiaState state) {
-    if (state is NoticiaInitial || state is NoticiaLoading) {
+  Widget _buildBodyContent(BuildContext context, NoticiasState state) {
+    if (state is NoticiasInitial || state is NoticiasLoading) {
       return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -127,8 +123,10 @@ class NoticiaView extends StatelessWidget {
           ],
         ),
       );
-    } else if (state is NoticiaError) {
-      final errorMessage = ErrorHelper.getErrorMessageAndColor(state.statusCode);
+    } else if (state is NoticiasError) {
+      final errorMessage = ErrorHelper.getErrorMessageAndColor(
+        state.statusCode,
+      );
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +135,7 @@ class NoticiaView extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                context.read<NoticiaBloc>().add(const LoadNoticias());
+                context.read<NoticiaBloc>().add(const NoticiasLoadEvent());
               },
               child: const Text(
                 'Reintentar',
@@ -147,8 +145,8 @@ class NoticiaView extends StatelessWidget {
           ],
         ),
       );
-    } else if (state is NoticiaLoaded) {
-      final noticias = state.noticias;
+    } else if (state is NoticiasLoaded) {
+      final noticias = state.noticiasList;
       if (noticias.isEmpty) {
         return const Center(
           child: Text(
@@ -157,15 +155,17 @@ class NoticiaView extends StatelessWidget {
           ),
         );
       } else {
-        return _buildNoticiasList(context, noticias, state.categoriasCache);
+        // Since NoticiasLoaded doesn't have categoriasCache, we'll create an empty map
+        Map<String, String> categoriasCache = {};
+        return _buildNoticiasList(context, noticias, categoriasCache);
       }
     }
-    
+
     return const Center(child: Text('Estado no reconocido'));
   }
 
   Widget _buildNoticiasList(
-    BuildContext context, 
+    BuildContext context,
     List<Noticia> noticias,
     Map<String, String> categoriasCache,
   ) {
@@ -175,8 +175,8 @@ class NoticiaView extends StatelessWidget {
         final currentContext = context;
         // Verificar que el contexto siga montado
         if (!currentContext.mounted) return;
-        
-        currentContext.read<NoticiaBloc>().add(const LoadNoticias());
+
+        currentContext.read<NoticiaBloc>().add(const NoticiasLoadEvent());
       },
       child: ListView.builder(
         itemCount: noticias.length,
@@ -190,7 +190,8 @@ class NoticiaView extends StatelessWidget {
             onDelete: (noticia) {
               _confirmarEliminarNoticia(context, noticia);
             },
-            categoriaNombre: categoriasCache[noticia.categoriaId] ?? 'Sin categoría',
+            categoriaNombre:
+                categoriasCache[noticia.categoriaId] ?? 'Sin categoría',
           );
         },
       ),
@@ -198,41 +199,44 @@ class NoticiaView extends StatelessWidget {
   }
 
   Future<void> _confirmarEliminarNoticia(
-    BuildContext context, 
+    BuildContext context,
     Noticia noticia,
   ) async {
     // Capturar el contexto antes de la operación async
     final currentContext = context;
-    
+
     final confirmar = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmar eliminación'),
-        content: Text(
-          '¿Estás seguro de que deseas eliminar la noticia "${noticia.titulo}"?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text(
-              'Eliminar',
-              style: TextStyle(color: Colors.white),
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Confirmar eliminación'),
+            content: Text(
+              '¿Estás seguro de que deseas eliminar la noticia "${noticia.titulo}"?',
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: const Text(
+                  'Eliminar',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
     );
 
     // Verificar que el contexto siga montado
     if (!currentContext.mounted) return;
 
     if (confirmar == true) {
-      currentContext.read<NoticiaBloc>().add(DeleteNoticia(noticia));
+      currentContext.read<NoticiaBloc>().add(
+        NoticiasDeleteEvent(noticia.id ?? ''),
+      );
       MessageHelper.showSnackBar(
         currentContext,
         SuccessConstants.successDeleted,
@@ -245,9 +249,10 @@ class NoticiaView extends StatelessWidget {
     final bool isEditing = noticia != null;
     final String title = isEditing ? 'Editar Noticia' : 'Crear Noticia';
     final String buttonText = isEditing ? 'Actualizar' : 'Crear';
-    String id = isEditing ? noticia.id : '';
+    String id = isEditing ? (noticia.id ?? '') : '';
 
-    String selectedCategoriaId = noticia?.categoriaId ?? NewsConstants.defaultCategoriaId;
+    String selectedCategoriaId =
+        noticia?.categoriaId ?? NewsConstants.defaultCategoriaId;
 
     final formKey = GlobalKey<FormState>();
     final TextEditingController tituloController = TextEditingController(
@@ -277,22 +282,29 @@ class NoticiaView extends StatelessWidget {
                   TextFormField(
                     controller: tituloController,
                     decoration: const InputDecoration(labelText: 'Título'),
-                    validator: (value) =>
-                        value?.isEmpty ?? true ? 'El título es obligatorio' : null,
+                    validator:
+                        (value) =>
+                            value?.isEmpty ?? true
+                                ? 'El título es obligatorio'
+                                : null,
                   ),
                   TextFormField(
                     controller: descripcionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Descripción',
-                    ),
-                    validator: (value) =>
-                        value?.isEmpty ?? true ? 'La descripción es obligatoria' : null,
+                    decoration: const InputDecoration(labelText: 'Descripción'),
+                    validator:
+                        (value) =>
+                            value?.isEmpty ?? true
+                                ? 'La descripción es obligatoria'
+                                : null,
                   ),
                   TextFormField(
                     controller: fuenteController,
                     decoration: const InputDecoration(labelText: 'Fuente'),
-                    validator: (value) =>
-                        value?.isEmpty ?? true ? 'La fuente es obligatoria' : null,
+                    validator:
+                        (value) =>
+                            value?.isEmpty ?? true
+                                ? 'La fuente es obligatoria'
+                                : null,
                   ),
                   TextFormField(
                     controller: urlImagenController,
@@ -301,10 +313,10 @@ class NoticiaView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  
+
                   _buildCategoriasDropdown(
-                    context, 
-                    selectedCategoriaId, 
+                    context,
+                    selectedCategoriaId,
                     (value) => selectedCategoriaId = value,
                   ),
                 ],
@@ -333,12 +345,17 @@ class NoticiaView extends StatelessWidget {
                   );
 
                   Navigator.pop(dialogContext);
-                  
+
                   if (isEditing) {
                     context.read<NoticiaBloc>().add(
-                      UpdateNoticia(
-                        id: id,
-                        noticia: newNoticia,
+                      NoticiasUpdateEvent(
+                        id,
+                        newNoticia.titulo,
+                        newNoticia.descripcion,
+                        newNoticia.fuente,
+                        newNoticia.publicadaEl,
+                        newNoticia.urlImagen,
+                        newNoticia.categoriaId ?? '',
                       ),
                     );
                     MessageHelper.showSnackBar(
@@ -347,7 +364,16 @@ class NoticiaView extends StatelessWidget {
                       isSuccess: true,
                     );
                   } else {
-                    context.read<NoticiaBloc>().add(CreateNoticia(newNoticia));
+                    context.read<NoticiaBloc>().add(
+                      NoticiasCreateEvent(
+                        newNoticia.titulo,
+                        newNoticia.descripcion,
+                        newNoticia.fuente,
+                        newNoticia.publicadaEl,
+                        newNoticia.urlImagen,
+                        newNoticia.categoriaId ?? '',
+                      ),
+                    );
                     MessageHelper.showSnackBar(
                       context,
                       SuccessConstants.successCreated,
@@ -376,27 +402,25 @@ class NoticiaView extends StatelessWidget {
       future: CategoriaRepository().getCategorias(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
         }
-        
+
         if (snapshot.hasError) {
           return const Text(
             'Error al cargar categorías',
             style: TextStyle(color: Colors.red),
           );
         }
-        
+
         final categorias = snapshot.data ?? [];
-        
+
         if (categorias.isEmpty) {
           return const Text(
             'No hay categorías disponibles',
             style: TextStyle(color: Colors.grey),
           );
         }
-        
+
         final items = [
           const DropdownMenuItem<String>(
             value: NewsConstants.defaultCategoriaId,
@@ -409,11 +433,12 @@ class NoticiaView extends StatelessWidget {
             );
           }),
         ];
-        
-        final String value = items.any((item) => item.value == initialValue)
-            ? initialValue
-            : NewsConstants.defaultCategoriaId;
-        
+
+        final String value =
+            items.any((item) => item.value == initialValue)
+                ? initialValue
+                : NewsConstants.defaultCategoriaId;
+
         return DropdownButtonFormField<String>(
           decoration: const InputDecoration(
             labelText: 'Categoría',

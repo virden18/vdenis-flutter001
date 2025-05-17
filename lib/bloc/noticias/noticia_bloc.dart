@@ -2,145 +2,97 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/noticias/noticia_event.dart';
 import 'package:vdenis/bloc/noticias/noticia_state.dart';
-import 'package:vdenis/data/categoria_repository.dart';
 import 'package:vdenis/data/noticia_repository.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
+import 'package:watch_it/watch_it.dart';
 
-class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
-  final NoticiaRepository _noticiaRepository;
-  final CategoriaRepository _categoriaRepository;
+class NoticiaBloc extends Bloc<NoticiasEvent, NoticiasState> {
+  final NoticiaRepository _noticiaRepository = di<NoticiaRepository>();
   
-  NoticiaBloc({
-    required NoticiaRepository noticiaRepository,
-    required CategoriaRepository categoriaRepository,
-  })  : _noticiaRepository = noticiaRepository,
-        _categoriaRepository = categoriaRepository,
-        super(const NoticiaInitial()) {
-    on<LoadNoticias>(_onLoadNoticias);
-    on<CreateNoticia>(_onCreateNoticia);
-    on<UpdateNoticia>(_onUpdateNoticia);
-    on<DeleteNoticia>(_onDeleteNoticia);
+  NoticiaBloc(): super(NoticiasInitial()) {
+    on<NoticiasLoadEvent>(_onLoadNoticias);
+    on<NoticiasCreateEvent>(_onCreateNoticia);
+    on<NoticiasUpdateEvent>(_onUpdateNoticia);
+    on<NoticiasDeleteEvent>(_onDeleteNoticia);
   }
 
-  Future<void> _onLoadNoticias(
-    LoadNoticias event,
-    Emitter<NoticiaState> emit,
-  ) async {
-    try {
-      emit(const NoticiaLoading());
-      
-      final noticias = await _noticiaRepository.loadMoreNoticias();
-      
-      // Si ya teníamos categorías cargadas, mantenerlas
-      Map<String, String> categoriasCache = {};
-      if (state is NoticiaLoaded) {
-        categoriasCache = (state as NoticiaLoaded).categoriasCache;
-      } else {
-        // Cargar categorías si no las teníamos
-        try {
-          final categorias = await _categoriaRepository.getCategorias();
-          for (final categoria in categorias) {
-            if (categoria.id != null) {
-              categoriasCache[categoria.id!] = categoria.nombre;
-            }
-          }
-        } catch (e) {
-          debugPrint('Error cargando categorías: $e');
-        }
-      }
-      
-      emit(NoticiaLoaded(
-        noticias: noticias,
-        lastUpdated: DateTime.now(),
-        categoriasCache: categoriasCache,
-      ));
+  Future<void> _onLoadNoticias(NoticiasLoadEvent event, Emitter<NoticiasState> emit) async {
+     try {
+      final noticias = await _noticiaRepository.getNoticias();
+      emit(NoticiasLoaded(noticias, DateTime.now()));
     } catch (e) {
-      if (e is ApiException) {
-        emit(NoticiaError(
-          message: e.message,
-          statusCode: e.statusCode ?? 0,
-        ));
-      } else {
-        emit(NoticiaError(
-          message: e.toString(),
-          statusCode: 0,
-        ));
-      }
+      final int? statusCode = e is ApiException ? e.statusCode : null;
+      debugPrint('parada1${e.toString()}');
+      emit(NoticiasError('Error al cargar noticias: ${e.toString()}', statusCode: statusCode));
     }
   }
 
   Future<void> _onCreateNoticia(
-    CreateNoticia event,
-    Emitter<NoticiaState> emit,
+    NoticiasCreateEvent event,
+    Emitter<NoticiasState> emit,
   ) async {
+    emit(NoticiasLoading());
     try {
-      emit(const NoticiaLoading());
-      
-      await _noticiaRepository.createNoticia(event.noticia);
-      
-      add(const LoadNoticias());
+      final noticiaData = {
+        'titulo': event.titulo,
+        'descripcion': event.descripcion,
+        'fuente': event.fuente,
+        'publicadaEl': event.publicadaEl.toIso8601String(),
+        'urlImagen': event.urlImagen,
+        'categoriaId': event.categoriaId,
+      };
+
+      await _noticiaRepository.crearNoticia(noticiaData);
+
+      // Refrescar la lista de noticias después de agregar
+      final noticias = await _noticiaRepository.getNoticias();
+      emit(NoticiasLoaded(noticias, DateTime.now()));
     } catch (e) {
-      if (e is ApiException) {
-        emit(NoticiaError(
-          message: e.message,
-          statusCode: e.statusCode ?? 0,
-        ));
-      } else {
-        emit(NoticiaError(
-          message: e.toString(),
-          statusCode: 0,
-        ));
-      }
+      final int? statusCode = e is ApiException ? e.statusCode : null;
+      emit(NoticiasError('Error al agregar noticia: ${e.toString()}',statusCode: statusCode));
     }
   }
 
   Future<void> _onUpdateNoticia(
-    UpdateNoticia event,
-    Emitter<NoticiaState> emit,
+    NoticiasUpdateEvent event,
+    Emitter<NoticiasState> emit,
   ) async {
+    emit(NoticiasLoading());
     try {
-      emit(const NoticiaLoading());
-      
-      await _noticiaRepository.updateNoticia(event.id, event.noticia);
-      
-      add(const LoadNoticias());
+      final data = {
+        'id': event.id,
+        'titulo': event.titulo,
+        'descripcion': event.descripcion,
+        'fuente': event.fuente,
+        'publicadaEl': event.publicadaEl.toIso8601String(),
+        'urlImagen': event.urlImagen,
+        'categoriaId': event.categoriaId,
+      };
+      await _noticiaRepository.actualizarNoticia(event.id, data);
+
+      // Refrescar la lista de noticias después de actualizar
+      final noticias = await _noticiaRepository.getNoticias();
+      emit(NoticiasLoaded(noticias, DateTime.now()));
     } catch (e) {
-      if (e is ApiException) {
-        emit(NoticiaError(
-          message: e.message,
-          statusCode: e.statusCode ?? 0,
-        ));
-      } else {
-        emit(NoticiaError(
-          message: e.toString(),
-          statusCode: 0,
-        ));
-      }
+      final int? statusCode = e is ApiException ? e.statusCode : null;
+      emit(NoticiasError('Error al actualizar noticia: ${e.toString()}',statusCode: statusCode));
     }
   }
 
   Future<void> _onDeleteNoticia(
-    DeleteNoticia event,
-    Emitter<NoticiaState> emit,
+    NoticiasDeleteEvent event,
+    Emitter<NoticiasState> emit,
   ) async {
+    emit(NoticiasLoading());
     try {
-      emit(const NoticiaLoading());
-      
-      await _noticiaRepository.deleteNoticia(event.noticia.id);
-      
-      add(const LoadNoticias());
+      await _noticiaRepository.eliminarNoticia(event.id);
+
+      // Refrescar la lista de noticias después de eliminar
+      final noticias = await _noticiaRepository.getNoticias();
+      emit(NoticiasLoaded(noticias, DateTime.now()));
     } catch (e) {
-      if (e is ApiException) {
-        emit(NoticiaError(
-          message: e.message,
-          statusCode: e.statusCode ?? 0,
-        ));
-      } else {
-        emit(NoticiaError(
-          message: e.toString(),
-          statusCode: 0,
-        ));
-      }
+      final int? statusCode = e is ApiException ? e.statusCode : null;
+      emit(NoticiasError('Error al eliminar noticia: ${e.toString()}',statusCode: statusCode));
     }
   }
 }

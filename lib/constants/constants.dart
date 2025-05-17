@@ -44,7 +44,7 @@ class QuoteConstants {
 
 // Constantes para Noticias y Categorías
 class NewsConstants {
-  static String get newsUrl => '${AppConstants.baseUrl}/noticias';
+  static String get newsEndpoint => '/noticias';
   static String get categoriasUrl => '${AppConstants.baseUrl}/categorias';
   static const String tituloAppNoticias = 'Noticias Técnicas';
   static const String mensajeCargando = 'Cargando noticias...';

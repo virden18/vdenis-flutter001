@@ -12,7 +12,7 @@ import 'package:vdenis/domain/noticia.dart';
 import 'package:vdenis/helpers/error_helper.dart';
 import 'package:vdenis/helpers/message_helper.dart';
 import 'package:vdenis/helpers/noticia_card_helper.dart';
-import 'package:vdenis/views/categoria2_screen.dart';
+import 'package:vdenis/views/categoria_screen.dart';
 
 class NoticiaScreen extends StatelessWidget {
   const NoticiaScreen({super.key});

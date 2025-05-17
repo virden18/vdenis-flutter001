@@ -1,193 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/data/categoria_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vdenis/bloc/categorias/categorias_bloc.dart';
+import 'package:vdenis/bloc/categorias/categorias_event.dart';
+import 'package:vdenis/bloc/categorias/categorias_state.dart';
+import 'package:vdenis/components/app_drawer.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/categoria.dart';
-import 'package:vdenis/exceptions/api_exception.dart';
-import 'package:vdenis/helpers/error_helper.dart';
+import 'package:vdenis/helpers/categoria_card_helper.dart';
+import 'package:vdenis/helpers/message_helper.dart';
 
-class CategoriaScreen extends StatefulWidget {
-  const CategoriaScreen({super.key});
-
-  @override
-  CategoriaScreenState createState() => CategoriaScreenState();
-}
-
-class CategoriaScreenState extends State<CategoriaScreen> {
-  final CategoriaRepository _categoriaService = CategoriaRepository();
-  List<Categoria> categorias = [];
-  bool isLoading = false;
-  bool hasError = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCategorias();
-  }
-
-  Future<void> _loadCategorias() async {
-    setState(() {
-      isLoading = true;
-      hasError = false;
-    });
-
-    try {
-      final fetchedCategorias = await _categoriaService.getCategorias();
-
-      // Verificar si el widget sigue montado antes de actualizar el estado
-      if (mounted) {
-        setState(() {
-          categorias = fetchedCategorias;
-          isLoading = false;
-        });
-      }
-    } catch (e) {
-      // Verificar si el widget sigue montado antes de actualizar el estado
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-          hasError = true;
-        });
-
-        String errorMessage = 'Error desconocido';
-        Color errorColor = Colors.grey;
-
-        if (e is ApiException) {
-          final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
-          errorMessage = errorData['message'];
-          errorColor = errorData['color'];
-        }
-
-        // Verificar nuevamente antes de usar ScaffoldMessenger
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMessage), backgroundColor: errorColor),
-          );
-        }
-      }
-    }
-  }
+class CategoriaScreenDos extends StatelessWidget {
+  const CategoriaScreenDos({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Categorías'),
-        backgroundColor: Colors.blueGrey,
-      ),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : hasError
-              ? const Center(
-                child: Text(
-                  'Ocurrió un error al cargar las categorías.',
-                  style: TextStyle(color: Colors.red, fontSize: 16),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
+        ),
+      ],
+      child: Builder(
+        builder: (context) {
+          return BlocConsumer<CategoriaBloc, CategoriaState>(
+            listener: (context, state) {
+              if (state is CategoriaError) {
+                MessageHelper.showSnackBar(context, state.message);
+              }
+            },
+            builder: (context, state) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Categorías de Noticias'),
+                  centerTitle: true,
                 ),
-              )
-              : categorias.isEmpty
-              ? const Center(
-                child: Text(
-                  'No hay categorías disponibles.',
-                  style: TextStyle(fontSize: 16),
+                drawer: const AppDrawer(),
+                backgroundColor: Colors.white,
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () => _mostrarDialogCategoria(context),
+                  backgroundColor: Colors.blueGrey,
+                  child: const Icon(Icons.add, color: Colors.white),
                 ),
-              )
-              : ListView.builder(
-                itemCount: categorias.length,
-                itemBuilder: (context, index) {
-                  final categoria = categorias[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    child: InkWell(
-                      onTap: () => _editarCategoria(categoria),
-                      child: ListTile(
-                        title: Text(
-                          categoria.nombre,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (categoria.descripcion.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 4,
-                                  bottom: 4,
-                                ),
-                                child: Text(categoria.descripcion),
-                              ),
-                            Text(
-                              'ID: ${categoria.id}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                        isThreeLine: categoria.descripcion.isNotEmpty,
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.grey[200],
-                          child:
-                              categoria.imagenUrl.isNotEmpty
-                                  ? Image.network(
-                                    categoria.imagenUrl,
-                                    width: 40,
-                                    height: 40,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(
-                                        Icons.category,
-                                        color: Colors.grey,
-                                      );
-                                    },
-                                  )
-                                  : const Icon(
-                                    Icons.category,
-                                    color: Colors.grey,
-                                  ),
-                        ),
-                        // Modificar el trailing en el ListTile para incluir botón de edición junto al de eliminar
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Botón de editar
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () => _editarCategoria(categoria),
-                            ),
-                            // Botón de eliminar (ya existente)
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed:
-                                  () => _confirmarEliminarCategoria(categoria),
-                            ),
-                          ],
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _agregarCategoria,
-        tooltip: 'Agregar Categoría',
-        child: const Icon(Icons.add),
+                body: CategoriaCardHelper.construirCuerpoCategorias(
+                  context,
+                  state,
+                  mostrarDialogCategoria: _mostrarDialogCategoria,
+                  confirmarEliminarCategoria: _confirmarEliminarCategoria,
+                ),
+              );
+            },
+          );
+        },
       ),
-      backgroundColor: Colors.grey[200],
     );
   }
 
-  Future<Map<String, dynamic>?> _mostrarDialogCategoria(
+  Future<void> _mostrarDialogCategoria(
     BuildContext context, {
     Categoria? categoria,
   }) async {
+    final bool isEditing = categoria != null;
+    final String title = isEditing ? 'Editar Categoría' : 'Crear Categoría';
+    final String buttonText = isEditing ? 'Actualizar' : 'Crear';
+
     final TextEditingController nombreController = TextEditingController(
       text: categoria?.nombre ?? '',
     );
@@ -198,67 +73,102 @@ class CategoriaScreenState extends State<CategoriaScreen> {
       text: categoria?.imagenUrl ?? '',
     );
 
-    return showDialog<Map<String, dynamic>>(
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
-          title: Text(
-            categoria == null ? 'Agregar Categoría' : 'Editar Categoría',
-          ),
+          title: Text(title),
           content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nombreController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre',
-                    hintText: 'Nombre de la categoría',
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: nombreController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre',
+                      hintText: 'Nombre de la categoría',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese un nombre';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                TextField(
-                  controller: descripcionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Descripción',
-                    hintText: 'Descripción de la categoría',
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: descripcionController,
+                    decoration: const InputDecoration(
+                      labelText: 'Descripción',
+                      hintText: 'Descripción de la categoría',
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Por favor ingrese una descripción';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                TextField(
-                  controller: imagenUrlController,
-                  decoration: const InputDecoration(
-                    labelText: 'URL de Imagen',
-                    hintText: 'URL de la imagen representativa',
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: imagenUrlController,
+                    decoration: const InputDecoration(
+                      labelText: 'URL de Imagen',
+                      hintText: 'URL de la imagen representativa',
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
-                if (nombreController.text.isNotEmpty &&
-                    descripcionController.text.isNotEmpty) {
-                  if (imagenUrlController.text.isEmpty) {
-                    imagenUrlController.text = NewsConstants.urlCategoria;
+                if (formKey.currentState!.validate()) {
+                  Navigator.pop(dialogContext);
+                  if (isEditing) {
+                    context.read<CategoriaBloc>().add(
+                      CategoriaUpdateEvent(
+                        id: categoria.id!,
+                        nombre: nombreController.text,
+                        descripcion: descripcionController.text,
+                        imagenUrl: imagenUrlController.text.isNotEmpty
+                            ? imagenUrlController.text
+                            : NewsConstants.urlCategoria,
+                      ),
+                    );
+                    MessageHelper.showSnackBar(
+                      context,
+                      'Categoría actualizada exitosamente',
+                      isSuccess: true,
+                    );
+                  } else {
+                    context.read<CategoriaBloc>().add(
+                      CategoriaCreateEvent(
+                        nombre: nombreController.text,
+                        descripcion: descripcionController.text,
+                        imagenUrl: imagenUrlController.text.isNotEmpty
+                            ? imagenUrlController.text
+                            : NewsConstants.urlCategoria,
+                      ),
+                    );
+                    MessageHelper.showSnackBar(
+                      context,
+                      'Categoría agregada exitosamente',
+                      isSuccess: true,
+                    );
                   }
-                  Navigator.pop(context, {
-                    'nombre': nombreController.text.toString(),
-                    'descripcion': descripcionController.text.toString(),
-                    'imagenUrl': imagenUrlController.text.toString(),
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('No puede haber campos vacíos'),
-                    ),
-                  );
                 }
               },
-              child: const Text('Guardar'),
+              child: Text(buttonText),
             ),
           ],
         );
@@ -266,163 +176,47 @@ class CategoriaScreenState extends State<CategoriaScreen> {
     );
   }
 
-  Future<void> _agregarCategoria() async {
-    final nuevaCategoriaData = await _mostrarDialogCategoria(context);
-    if (nuevaCategoriaData != null) {
-      try {
-        final nuevaCategoria = Categoria(
-          id: '',
-          nombre: nuevaCategoriaData['nombre'],
-          descripcion: nuevaCategoriaData['descripcion'],
-          imagenUrl: nuevaCategoriaData['imagenUrl'] ?? NewsConstants.urlCategoria,
-        );
-
-        await _categoriaService.crearCategoria(
-          nuevaCategoria,
-        ); // Llama al servicio
-        await _loadCategorias(); // Recarga las categorías
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Categoría agregada exitosamente'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          String errorMessage = 'Error al agregar la categoría';
-          Color backgroundColor = Colors.red;
-
-          if (e is ApiException) {
-            final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
-            errorMessage = '${errorData['message']}: ${e.message}';
-            backgroundColor = errorData['color'];
-          }
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(errorMessage),
-              backgroundColor: backgroundColor,
-            ),
-          );
-        }
-      }
-    }
-  }
-
-  Future<void> _editarCategoria(Categoria categoria) async {
-    final categoriaEditadaData = await _mostrarDialogCategoria(
-      context,
-      categoria: categoria,
-    );
-
-    if (categoriaEditadaData != null) {
-      try {
-        final categoriaActualizada = Categoria(
-          id: categoria.id,
-          nombre: categoriaEditadaData['nombre'],
-          descripcion:
-              categoriaEditadaData['descripcion'], // Usar el nuevo valor
-          imagenUrl: categoriaEditadaData['imagenUrl'] ?? categoria.imagenUrl,
-        );
-
-        await _categoriaService.actualizarCategoria(
-          categoria.id!,
-          categoriaActualizada,
-        );
-
-        _loadCategorias(); // Recargar las categorías
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Categoría actualizada exitosamente'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          String errorMessage = 'Error al actualizar la categoría';
-          Color backgroundColor = Colors.red;
-
-          if (e is ApiException) {
-            final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
-            errorMessage = '${errorData['message']}: ${e.message}';
-            backgroundColor = errorData['color'];
-          }
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(errorMessage),
-              backgroundColor: backgroundColor,
-            ),
-          );
-        }
-      }
-    }
-  }
-
-  Future<void> _confirmarEliminarCategoria(Categoria categoria) async {
+  Future<void> _confirmarEliminarCategoria(
+    BuildContext context,
+    Categoria categoria,
+  ) async {
+    // Capturar el contexto antes de la operación async
+    final currentContext = context;
+    
     final confirmar = await showDialog<bool>(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Confirmar eliminación'),
-            content: Text(
-              '¿Estás seguro de que deseas eliminar la categoría "${categoria.nombre}"?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text(
-                  'Eliminar',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar eliminación'),
+        content: Text(
+          '¿Estás seguro de que deseas eliminar la categoría "${categoria.nombre}"?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
           ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
 
+    // Verificar que el contexto siga montado
+    if (!currentContext.mounted) return;
+
     if (confirmar == true) {
-      try {
-        await _categoriaService.eliminarCategoria(categoria.id!);
-        _loadCategorias(); // Recargar la lista después de eliminar
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Categoría eliminada exitosamente'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          String errorMessage = 'Error al eliminar la categoría';
-          Color backgroundColor = Colors.red;
-
-          if (e is ApiException) {
-            final errorData = ErrorHelper.getErrorMessageAndColor(e.statusCode);
-            errorMessage = '${errorData['message']}: ${e.message}';
-            backgroundColor = errorData['color'];
-          }
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(errorMessage),
-              backgroundColor: backgroundColor,
-            ),
-          );
-        }
-      }
+      currentContext.read<CategoriaBloc>().add(CategoriaDeleteEvent(id: categoria.id!));
+      MessageHelper.showSnackBar(
+        currentContext,
+        SuccessConstants.successDeleted,
+        isSuccess: true,
+      );
     }
   }
 }

@@ -1,37 +1,52 @@
 import 'package:equatable/equatable.dart';
-import 'package:vdenis/domain/categoria.dart';
 
 abstract class CategoriaEvent extends Equatable {
-  @override
-  List<Object?> get props => [];
+   @override
+   List<Object?> get props => [];
 }
 
-class CategoriaInitEvent extends CategoriaEvent { 
-}
+// Evento para cargar categorías
+class CategoriaInitEvent extends CategoriaEvent {}
 
+// Evento para crear una nueva categoría
 class CategoriaCreateEvent extends CategoriaEvent {
-  final Categoria categoria;
+  final String nombre;
+  final String descripcion;
+  final String imagenUrl;
 
-  CategoriaCreateEvent(this.categoria);
+  CategoriaCreateEvent({
+    required this.nombre, 
+    required this.descripcion, 
+    this.imagenUrl = '',
+  });
 
   @override
-  List<Object?> get props => [categoria];
+  List<Object?> get props => [nombre, descripcion, imagenUrl];
 }
 
+// Evento para actualizar una categoría existente
 class CategoriaUpdateEvent extends CategoriaEvent {
   final String id;
-  final Categoria categoria;
+  final String nombre;
+  final String descripcion;
+  final String imagenUrl;
 
-  CategoriaUpdateEvent({required this.id, required this.categoria});
+  CategoriaUpdateEvent({
+    required this.id,
+    required this.nombre,
+    required this.descripcion,
+    required this.imagenUrl,
+  });
 
   @override
-  List<Object?> get props => [id, categoria];
+  List<Object?> get props => [id, nombre, descripcion, imagenUrl];
 }
 
+// Evento para eliminar una categoría
 class CategoriaDeleteEvent extends CategoriaEvent {
   final String id;
 
-  CategoriaDeleteEvent(this.id);
+  CategoriaDeleteEvent({required this.id});
 
   @override
   List<Object?> get props => [id];

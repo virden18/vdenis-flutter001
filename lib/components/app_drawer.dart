@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/contador_bloc/contador_bloc.dart';
+import 'package:vdenis/bloc/contador/contador_bloc.dart';
 import 'package:vdenis/helpers/common_widgets_helper.dart';
 import 'package:vdenis/views/presentation/misc/contador_screen.dart';
 import 'package:vdenis/views/login_screen.dart';
-import 'package:vdenis/views/presentation/noticia/noticia_screen.dart';
+import 'package:vdenis/views/noticia_screen.dart';
 import 'package:vdenis/views/presentation/quote/quote_screen.dart';
 import 'package:vdenis/views/presentation/task/tasks_screen.dart';
 import 'package:vdenis/views/presentation/question/start_screen.dart';
@@ -85,7 +85,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                MaterialPageRoute(builder: (context) => LoginScreen()),
               );
             },
           ),

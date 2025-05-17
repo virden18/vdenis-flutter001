@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/contador_bloc/contador_event.dart';
-import 'package:vdenis/bloc/contador_bloc/contador_state.dart';
+import 'package:vdenis/bloc/contador/contador_event.dart';
+import 'package:vdenis/bloc/contador/contador_state.dart';
 
 class ContadorBloc extends Bloc<ContadorEvent, ContadorState> {
   ContadorBloc() : super(ContadorState(0)) {

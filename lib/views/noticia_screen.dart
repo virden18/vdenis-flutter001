@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/noticias_bloc/noticia_bloc.dart';
-import 'package:vdenis/bloc/noticias_bloc/noticia_event.dart';
-import 'package:vdenis/bloc/noticias_bloc/noticia_state.dart';
+import 'package:vdenis/bloc/noticias/noticia_bloc.dart';
+import 'package:vdenis/bloc/noticias/noticia_event.dart';
+import 'package:vdenis/bloc/noticias/noticia_state.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/data/categoria_repository.dart';
 import 'package:vdenis/data/noticia_repository.dart';
@@ -12,7 +12,7 @@ import 'package:vdenis/domain/noticia.dart';
 import 'package:vdenis/helpers/error_helper.dart';
 import 'package:vdenis/helpers/message_helper.dart';
 import 'package:vdenis/helpers/noticia_card_helper.dart';
-import 'package:vdenis/views/presentation/categoria/categoria2_screen.dart';
+import 'package:vdenis/views/categoria_screen.dart';
 
 class NoticiaScreen extends StatelessWidget {
   const NoticiaScreen({super.key});

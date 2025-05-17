@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/categorias_bloc/categorias_bloc.dart';
-import 'package:vdenis/bloc/categorias_bloc/categorias_event.dart';
-import 'package:vdenis/bloc/categorias_bloc/categorias_state.dart';
+import 'package:vdenis/bloc/categorias/categorias_bloc.dart';
+import 'package:vdenis/bloc/categorias/categorias_event.dart';
+import 'package:vdenis/bloc/categorias/categorias_state.dart';
 import 'package:vdenis/components/app_drawer.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/categoria.dart';
@@ -133,23 +133,16 @@ class CategoriaScreenDos extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 if (formKey.currentState!.validate()) {
-                  final Categoria newCategoria = Categoria(
-                    id: isEditing ? categoria.id : null,
-                    nombre: nombreController.text,
-                    descripcion: descripcionController.text,
-                    imagenUrl:
-                        imagenUrlController.text.isNotEmpty
-                            ? imagenUrlController.text
-                            : NewsConstants.urlCategoria,
-                  );
-
                   Navigator.pop(dialogContext);
-
                   if (isEditing) {
                     context.read<CategoriaBloc>().add(
                       CategoriaUpdateEvent(
                         id: categoria.id!,
-                        categoria: newCategoria,
+                        nombre: nombreController.text,
+                        descripcion: descripcionController.text,
+                        imagenUrl: imagenUrlController.text.isNotEmpty
+                            ? imagenUrlController.text
+                            : NewsConstants.urlCategoria,
                       ),
                     );
                     MessageHelper.showSnackBar(
@@ -159,7 +152,13 @@ class CategoriaScreenDos extends StatelessWidget {
                     );
                   } else {
                     context.read<CategoriaBloc>().add(
-                      CategoriaCreateEvent(newCategoria),
+                      CategoriaCreateEvent(
+                        nombre: nombreController.text,
+                        descripcion: descripcionController.text,
+                        imagenUrl: imagenUrlController.text.isNotEmpty
+                            ? imagenUrlController.text
+                            : NewsConstants.urlCategoria,
+                      ),
                     );
                     MessageHelper.showSnackBar(
                       context,
@@ -212,7 +211,7 @@ class CategoriaScreenDos extends StatelessWidget {
     if (!currentContext.mounted) return;
 
     if (confirmar == true) {
-      currentContext.read<CategoriaBloc>().add(CategoriaDeleteEvent(categoria.id!));
+      currentContext.read<CategoriaBloc>().add(CategoriaDeleteEvent(id: categoria.id!));
       MessageHelper.showSnackBar(
         currentContext,
         SuccessConstants.successDeleted,

@@ -1,14 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/categoria_service.dart';
 import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 
 class CategoriaRepository {
-  final CategoriaService _service = CategoriaService();
+  final CategoriaService _categoriaService = CategoriaService();
 
   /// Obtiene todas las categorías desde el repositorio
   Future<List<Categoria>> getCategorias() async {
     try {
-      return await _service.getCategorias();
+      return await _categoriaService.getCategorias();
     } catch (e) {
       if (e is ApiException) {
         // Propaga el mensaje contextual de ApiException
@@ -19,38 +20,32 @@ class CategoriaRepository {
     }
   }
 
-  /// Crea una nueva categoría
-  Future<void> crearCategoria(Categoria categoria) async {
+  Future<void> crearCategoria(Map<String, dynamic> categoriaData) async {
     try {
-      await _service.crearCategoria(categoria.toJson());
+      // Llama al método del repositorio para crear la categoría
+      await _categoriaService.crearCategoria(categoriaData);
+      debugPrint('Categoría creada exitosamente.');
     } catch (e) {
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        throw Exception('Error en el servicio de categorías: ${e.message}');
-      } else {
-        throw Exception('Error desconocido: $e');
-      }
+      debugPrint('Error en CategoriaService al crear categoría: $e');
+      rethrow;
     }
   }
 
-  /// Edita una categoría existente
-  Future<void> actualizarCategoria(String id, Categoria categoria) async {
+  Future<void> actualizarCategoria(String id, Map<String, dynamic> categoriaData) async {
     try {
-      await _service.editarCategoria(id, categoria.toJson());
+      // Llama al método del repositorio para editar la categoría
+      await _categoriaService.editarCategoria(id, categoriaData);
+      debugPrint('Categoría con ID $id actualizada exitosamente.');
     } catch (e) {
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        throw Exception('Error en el servicio de categorías: ${e.message}');
-      } else {
-        throw Exception('Error desconocido: $e');
-      }
+      debugPrint('Error en CategoriaService al actualizar categoría $id: $e');
+      rethrow;
     }
   }
 
   /// Elimina una categoría
   Future<void> eliminarCategoria(String id) async {
     try {
-      await _service.eliminarCategoria(id);
+      await _categoriaService.eliminarCategoria(id);
     } catch (e) {
       if (e is ApiException) {
         // Propaga el mensaje contextual de ApiException
@@ -60,5 +55,4 @@ class CategoriaRepository {
       }
     }
   }
-
 }

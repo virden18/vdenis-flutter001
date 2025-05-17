@@ -1,27 +1,45 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vdenis/api/service/categoria_cache_service.dart';
 import 'package:vdenis/bloc/noticias/noticia_bloc.dart';
 import 'package:vdenis/bloc/noticias/noticia_event.dart';
 import 'package:vdenis/bloc/noticias/noticia_state.dart';
 import 'package:vdenis/constants/constants.dart';
-import 'package:vdenis/data/categoria_repository.dart';
 import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/domain/noticia.dart';
 import 'package:vdenis/helpers/error_helper.dart';
 import 'package:vdenis/helpers/message_helper.dart';
 import 'package:vdenis/helpers/noticia_card_helper.dart';
 import 'package:vdenis/views/categoria_screen.dart';
+import 'package:watch_it/watch_it.dart';
 
 class NoticiaScreen extends StatelessWidget {
   const NoticiaScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
+    // Asegurarse de que las categorías estén precargadas
+    _precargarCategorias();
+    
     return BlocProvider(
-      create: (context) => NoticiaBloc()..add(const NoticiasLoadEvent()),
+      create: (context) {
+        // Crear el bloque e iniciar la carga
+        return NoticiaBloc()..add(const NoticiasLoadEvent());
+      },
       child: const NoticiaView(),
     );
+  }
+  
+  // Método para precargar categorías
+  static Future<void> _precargarCategorias() async {
+    try {
+      final categoriaCacheService = di<CategoryCacheService>();
+      if (!categoriaCacheService.hasCachedCategories) {
+        await categoriaCacheService.refreshCategories();
+      }
+    } catch (e) {
+      debugPrint('Error al precargar categorías: ${e.toString()}');
+    }
   }
 }
 
@@ -74,14 +92,15 @@ class NoticiaView extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const CategoriaScreenDos(),
               ),
-            );
-
-            // Verificar que el contexto siga montado
+            );            // Verificar que el contexto siga montado
             if (!currentContext.mounted) return;
 
             // Recargar categorías al volver
             if (result == true) {
-              // Just load noticias as that will include categories
+              // Refrescar caché de categorías primero
+              final categoriaCacheService = di<CategoryCacheService>();
+              await categoriaCacheService.refreshCategories();
+              // Luego recargar noticias
               currentContext.read<NoticiaBloc>().add(const NoticiasLoadEvent());
             }
           },
@@ -155,9 +174,9 @@ class NoticiaView extends StatelessWidget {
           ),
         );
       } else {
-        // Since NoticiasLoaded doesn't have categoriasCache, we'll create an empty map
-        Map<String, String> categoriasCache = {};
-        return _buildNoticiasList(context, noticias, categoriasCache);
+        // Usar lista de noticias directamente sin caché de categorías
+        // El NoticiaCardHelper se encargará de obtener los nombres de categoría
+        return _buildNoticiasList(context, noticias);
       }
     }
 
@@ -167,7 +186,6 @@ class NoticiaView extends StatelessWidget {
   Widget _buildNoticiasList(
     BuildContext context,
     List<Noticia> noticias,
-    Map<String, String> categoriasCache,
   ) {
     return RefreshIndicator(
       onRefresh: () async {
@@ -190,8 +208,6 @@ class NoticiaView extends StatelessWidget {
             onDelete: (noticia) {
               _confirmarEliminarNoticia(context, noticia);
             },
-            categoriaNombre:
-                categoriasCache[noticia.categoriaId] ?? 'Sin categoría',
           );
         },
       ),
@@ -263,8 +279,7 @@ class NoticiaView extends StatelessWidget {
     );
     final TextEditingController fuenteController = TextEditingController(
       text: noticia?.fuente ?? '',
-    );
-    final TextEditingController urlImagenController = TextEditingController(
+    );    final TextEditingController urlImagenController = TextEditingController(
       text: noticia?.urlImagen ?? '',
     );
 
@@ -389,17 +404,15 @@ class NoticiaView extends StatelessWidget {
       },
     );
   }
-
   Widget _buildCategoriasDropdown(
     BuildContext context,
     String initialValue,
     Function(String) onChanged,
   ) {
-    // Aquí no necesitamos capturar el contexto para problemas de async gap
-    // ya que FutureBuilder maneja esto internamente y no utiliza el contexto después
-    // de operaciones asíncronas fuera del builder
+    // Usar CategoryCacheService a través del método estático di de watch_it
+    final categoriaCacheService = di<CategoryCacheService>();
     return FutureBuilder<List<Categoria>>(
-      future: CategoriaRepository().getCategorias(),
+      future: categoriaCacheService.getCategories(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator(strokeWidth: 2));

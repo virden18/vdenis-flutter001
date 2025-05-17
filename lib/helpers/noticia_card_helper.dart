@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/core/categoria_helper.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class NoticiaCardHelper {
@@ -9,18 +10,41 @@ class NoticiaCardHelper {
     void Function(Noticia)? onTap,
     void Function(Noticia)? onEdit,
     void Function(Noticia)? onDelete,
-    String? categoriaNombre, // Nuevo parámetro opcional
+    String? categoriaNombre,
   }) {
     final DateFormat formatter = DateFormat(AppConstants.formatoFecha);
     final String formattedDate = formatter.format(noticia.publicadaEl);
     
-    // Determinar el texto de categoría a mostrar usando el nombre si está disponible
+    // Si ya tenemos el nombre de la categoría, lo usamos directamente
+    if (categoriaNombre != null) {
+      return _buildCard(noticia, formattedDate, categoriaNombre, onTap, onEdit, onDelete);
+    }
+    
+    // Si no tenemos el nombre, lo buscamos usando CategoryHelper
+    return FutureBuilder<String>(
+      future: noticia.categoriaId != null && noticia.categoriaId!.isNotEmpty
+          ? CategoryHelper.getCategoryName(noticia.categoriaId!)
+          : Future.value('Sin categoría'),
+      builder: (context, snapshot) {
+        final String categoryName = snapshot.data ?? 'Cargando categoría...';
+        return _buildCard(noticia, formattedDate, categoryName, onTap, onEdit, onDelete);
+      },
+    );
+  }
+  
+  // Método auxiliar para construir la tarjeta con el nombre de categoría
+  static Widget _buildCard(
+    Noticia noticia,
+    String formattedDate,
+    String categoryName,
+    void Function(Noticia)? onTap,
+    void Function(Noticia)? onEdit,
+    void Function(Noticia)? onDelete,
+  ) {
     final String categoriaText = noticia.categoriaId != null && 
-                                 noticia.categoriaId != NewsConstants.defaultCategoriaId
-        ? categoriaNombre != null 
-            ? 'Categoría: $categoriaNombre' 
-            : 'Categoría: ${noticia.categoriaId}'
-        : 'Sin categoría';
+                               noticia.categoriaId != NewsConstants.defaultCategoriaId
+      ? 'Categoría: $categoryName'
+      : 'Sin categoría';
 
     return Column(
       children: [

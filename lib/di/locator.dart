@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vdenis/api/service/categoria_cache_service.dart';
 import 'package:vdenis/core/connectivity_service.dart';
 import 'package:vdenis/core/secure_storage.dart';
 import 'package:vdenis/data/auth_repository.dart';
@@ -24,6 +25,6 @@ Future<void> initLocator() async {
   // GetIt.instance.registerFactory(() => ReporteBloc());  
   di.registerSingleton<AuthRepository>(AuthRepository());
 
-  // // Registramos el servicio de caché de categorías como singleton
-  // di.registerLazySingleton<CategoryCacheService>(() => CategoryCacheService());
+  // Registramos el servicio de caché de categorías como singleton
+  di.registerLazySingleton<CategoryCacheService>(() => CategoryCacheService());
 }

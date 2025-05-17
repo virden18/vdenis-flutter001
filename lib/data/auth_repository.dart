@@ -11,14 +11,11 @@ class AuthRepository {
   // Login user and store JWT token
   Future<bool> login(String email, String password) async {
     try {
-      if (email.isEmpty || password.isEmpty) {
-        throw ArgumentError('Error: Email and password cannot be empty.');
-      }
       final loginRequest = LoginRequest(
         username: email,
         password: password,
       );
-      
+
       final LoginResponse response = await _authService.login(loginRequest);
       await _secureStorage.saveJwt(response.sessionToken);
       await _secureStorage.saveUserEmail(email);

@@ -31,13 +31,14 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => ContadorBloc()),
+          create: (context) => ContadorBloc()
+        ),
         BlocProvider(
           create: (context) => AuthBloc(),
         ), 
         BlocProvider(
           create: (context) => ConnectivityBloc(),
-        ), // Bloc para gestionar la conectividad
+        ), 
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

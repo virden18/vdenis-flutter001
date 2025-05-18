@@ -92,8 +92,8 @@ class NoticiaView extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const CategoriaScreenDos(),
               ),
-            );            // Verificar que el contexto siga montado
-            if (!currentContext.mounted) return;
+            );
+            
 
             // Recargar categorías al volver
             if (result == true) {
@@ -101,6 +101,7 @@ class NoticiaView extends StatelessWidget {
               final categoriaCacheService = di<CategoryCacheService>();
               await categoriaCacheService.refreshCategories();
               // Luego recargar noticias
+              if (!currentContext.mounted) return;
               currentContext.read<NoticiaBloc>().add(const NoticiasLoadEvent());
             }
           },

@@ -2,7 +2,7 @@ import 'package:dart_mappable/dart_mappable.dart';
 part 'noticia.mapper.dart';
 
 @MappableClass()
-class Noticia {
+class Noticia with NoticiaMappable {
   final String? id;
   final String titulo;
   final String descripcion;

@@ -63,3 +63,16 @@ class NoticiasDeleteEvent extends NoticiasEvent {
   @override
   List<Object> get props => [id];
 }
+
+class FilterNoticiasByPreferencias extends NoticiasEvent {
+  final List<String> categoriasIds;
+
+  const FilterNoticiasByPreferencias(this.categoriasIds);
+
+  @override
+  List<Object> get props => [categoriasIds];
+}
+
+class ClearNoticiasFilters extends NoticiasEvent {
+  const ClearNoticiasFilters();
+}

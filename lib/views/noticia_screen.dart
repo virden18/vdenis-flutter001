@@ -12,6 +12,7 @@ import 'package:vdenis/helpers/error_helper.dart';
 import 'package:vdenis/helpers/message_helper.dart';
 import 'package:vdenis/helpers/noticia_card_helper.dart';
 import 'package:vdenis/views/categoria_screen.dart';
+import 'package:vdenis/views/preferencia_screen.dart';
 import 'package:watch_it/watch_it.dart';
 
 class NoticiaScreen extends StatelessWidget {
@@ -73,13 +74,34 @@ class NoticiaView extends StatelessWidget {
         );
       },
     );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context, NoticiasState state) {
+  }  PreferredSizeWidget _buildAppBar(BuildContext context, NoticiasState state) {
+    // Obtener una referencia al bloc para verificar si hay filtros aplicados
+    final noticiaBloc = BlocProvider.of<NoticiaBloc>(context);
+    
     return AppBar(
       title: const Text(NewsConstants.tituloAppNoticias),
       backgroundColor: Colors.blueGrey,
       actions: [
+        // Mostrar botón para limpiar filtros solo cuando hay filtros aplicados
+        if (noticiaBloc.filtrosAplicados)
+          IconButton(
+            icon: const Icon(Icons.filter_none),
+            tooltip: 'Limpiar filtros',
+            onPressed: () {
+              // Dispatch event para limpiar filtros
+              noticiaBloc.add(const ClearNoticiasFilters());
+              MessageHelper.showSnackBar(
+                context,
+                'Filtros eliminados',
+                isSuccess: true,
+              );
+            },
+          ),
+        IconButton(
+          icon: const Icon(Icons.filter_list),
+          tooltip: 'Mis preferencias',
+          onPressed: () => _navegarAPreferencias(context),
+        ),
         IconButton(
           icon: const Icon(Icons.category),
           tooltip: 'Categorías',
@@ -468,5 +490,26 @@ class NoticiaView extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _navegarAPreferencias(BuildContext context) async {
+    // Capturar el contexto actual antes de la operación async
+    final currentContext = context;
+    
+    // Navegar a la pantalla de preferencias
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider.value(
+          value: BlocProvider.of<NoticiaBloc>(currentContext),
+          child: const PreferenciaScreen(),
+        ),
+      ),
+    );
+    
+    // Si regresamos con resultado true, aplicar filtros de preferencias
+    if (result == true && currentContext.mounted) {
+      // Se aplican los filtros automáticamente al guardar las preferencias
+    }
   }
 }

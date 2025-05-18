@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/preferencia/preferencia_event.dart';
@@ -52,9 +51,7 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
         ),
       );
     }
-  }
-
-  void _onCambiarCategoria(
+  }  void _onCambiarCategoria(
     CambiarCategoria event,
     Emitter<PreferenciaState> emit,
   ) async {
@@ -73,27 +70,13 @@ class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
         categoriasActualizadas.remove(event.categoria);
       }
 
-      // 3. Emitir estado actualizado inmediatamente para UI responsiva
+      // 3. Solo actualizamos el estado en memoria, sin persistir a la API
+      // La persistencia se realizará cuando el usuario presione Guardar
       emit(state.copyWith(categoriasSeleccionadas: categoriasActualizadas));
-
-      // 4. Luego intentar persistir el cambio (sin bloquear la UI)
-      try {
-        if (event.seleccionada) {
-          await _preferenciasRepository.agregarCategoriaFiltro(event.categoria);
-        } else {
-          await _preferenciasRepository.eliminarCategoriaFiltro(
-            event.categoria,
-          );
-        }
-      } catch (e) {
-        // Si falla la persistencia, no interrumpir la experiencia del usuario
-        // pero registrar el error para depuración
-        debugPrint('Error al persistir cambio de categoría: $e');
 
         // Opcionalmente, podrías emitir un estado de "sincronización pendiente"
         // para indicar que los cambios locales no se han guardado aún
-      }
-    } catch (e) {
+      } catch (e) {
       final int? statusCode = e is ApiException ? e.statusCode : null;
       // Este catch solo atraparía errores graves en la lógica del bloc
       emit(

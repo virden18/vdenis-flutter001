@@ -1,24 +1,30 @@
-class AuthService {
-  late String _authenticatedUser; // Propiedad privada para almacenar el usuario autenticado
+import 'dart:async';
+import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/domain/login_request.dart';
+import 'package:vdenis/domain/login_response.dart';
+import 'package:vdenis/exceptions/api_exception.dart';
 
-  Future<void> login(String username, String password) async {
-    if (username.isEmpty || password.isEmpty) {
-      //print('AuthService: Credenciales inválidas');
-      throw Exception('El usuario y la contraseña no pueden estar vacíos');
-    } else {
-      // Simula una llamada a un servidor para autenticar al usuario
-      //print('AuthService: Attempting login');
-      //print('Username: $username');
-      //print('Password: $password');
-
-      // Simula una respuesta exitosa del servidor
-      _authenticatedUser = username; // Guarda el usuario autenticado
-      return;
+class AuthService extends BaseService {
+  AuthService() : super();
+  
+  Future<LoginResponse> login(LoginRequest request) async {
+    try {
+      final data = await post(
+        '/login',
+        data: request.toJson(),   
+      );
+      
+      if (data != null) {
+        return LoginResponseMapper.fromMap(data);
+      } else {
+        throw ApiException('Error de autenticación: respuesta vacía');
+      }
+    } catch (e) {
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw ApiException('Error de conexión: ${e.toString()}');
+      }
     }
-  }
-
-  // Método para obtener el usuario autenticado
-  String getAuthenticatedUser() {
-    return _authenticatedUser;
   }
 }

@@ -1,12 +1,17 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:vdenis/core/api_config.dart';
 
 // Constantes generales de la aplicación
 class AppConstants {
-  static String get baseUrl =>
-      dotenv.env['API_URL'] ?? 'https://default-url.com';
-  
+  static final String baseUrl = ApiConfig.beeceptorBaseUrl;
   static const int timeoutSeconds = 10;
   static const String formatoFecha = 'dd/MM/yyyy HH:mm';
+}
+
+class ApiConstants {
+  static const String baseUrl = 'https://jsonplaceholder.typicode.com';
+  static const String endpointNoticias = '/noticias';
+  static const String endpointComentarios = '/comentarios';
+  static const String endpointCategorias = '/categorias';
 }
 
 // Constantes para la pantalla de Tareas
@@ -46,7 +51,7 @@ class QuoteConstants {
 
 // Constantes para Noticias y Categorías
 class NewsConstants {
-  static String get newsUrl => '${AppConstants.baseUrl}/noticias';
+  static String get newsEndpoint => '/noticias';
   static String get categoriasUrl => '${AppConstants.baseUrl}/categorias';
   static const String tituloAppNoticias = 'Noticias Técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
@@ -65,7 +70,9 @@ class ErrorConstants {
   static const String errorNotFound = 'Noticias no encontradas';
   static const String errorServer = 'Error del servidor';
   static const String errorNoCategory = 'Categoría no encontrada';
-  static const String errorTimeout = 'Tiempo de espera agotado';
+  static const String errorTimeOut = 'Tiempo de espera agotado';
+  static const String errorNoInternet = 'Sin conexión a Internet';
+  static const String errorInvalidData = 'Datos inválidos';
 }
 
 // Constantes para mensajes de éxito

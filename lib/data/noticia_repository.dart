@@ -1,15 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/noticia_service.dart';
 import 'package:vdenis/domain/noticia.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:vdenis/helpers/error_helper.dart';
 
 class NoticiaRepository {
-  final NoticiaService _service = NoticiaService();
+  final NoticiaService _noticiaService = NoticiaService();
 
   /// Carga noticias desde el repositorio
-  Future<List<Noticia>> loadMoreNoticias() async {
+  Future<List<Noticia>> getNoticias() async {
     try {
-      final List<Noticia> noticias = await _service.fetchNoticiasDesdeApi();
+      final List<Noticia> noticias = await _noticiaService.getNoticias();
 
       if (noticias.isEmpty ) {
         return [];
@@ -41,76 +42,38 @@ class NoticiaRepository {
     }
   }
 
-  /// Crea una nueva noticia
-  Future<Noticia> createNoticia(Noticia noticia) async {
+   Future<void> crearNoticia(Map<String, dynamic> noticiaData) async {
     try {
-      // Validación local
-      if (noticia.titulo.isEmpty || noticia.descripcion.isEmpty || noticia.fuente.isEmpty) {
-        throw ApiException(
-          'Por favor, completa todos los campos requeridos.',
-          statusCode: 400
-        );
-      }
-
-      return await _service.createNoticia(noticia);
+      // Llama al método del repositorio para crear la categoría
+      await _noticiaService.createNoticia(noticiaData);
+      debugPrint('Noticia creada exitosamente.');
     } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      } else {
-        final errorMessage = ErrorHelper.getServiceErrorMessage(e.toString());
-        throw ApiException(
-          errorMessage,
-          statusCode: _getStatusCodeFromError(e.toString())
-        );
-      }
+      debugPrint('Error en NoticiaService al crear categoría: $e');
+      rethrow;
     }
   }
 
-  /// Actualiza una noticia existente
-  Future<void> updateNoticia(String id, Noticia noticia) async {
+  Future<void> actualizarNoticia(String id, Map<String, dynamic> noticiaData) async {
     try {
-      // Validación local
-      if (noticia.titulo.isEmpty || noticia.descripcion.isEmpty || noticia.fuente.isEmpty) {
-        throw ApiException(
-          'Por favor, completa todos los campos requeridos.',
-          statusCode: 400
-        );
-      }
-
-      await _service.updateNoticia(id, noticia);
+      // Llama al método del repositorio para editar la categoría
+      await _noticiaService.updateNoticia(id, noticiaData);
+      debugPrint('Noticia con ID $id actualizada exitosamente.');
     } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      } else {
-        final errorMessage = ErrorHelper.getServiceErrorMessage(e.toString());
-        throw ApiException(
-          errorMessage,
-          statusCode: _getStatusCodeFromError(e.toString())
-        );
-      }
+      debugPrint('Error en NoticiaService al actualizar categoría $id: $e');
+      rethrow;
     }
   }
 
-  /// Elimina una noticia
-  Future<void> deleteNoticia(String id) async {
+  /// Elimina una categoría
+  Future<void> eliminarNoticia(String id) async {
     try {
-      if (id.isEmpty) {
-        throw ApiException(
-          'No se puede eliminar la noticia porque el ID no es válido.',
-          statusCode: 400
-        );
-      }
-
-      await _service.deleteNoticia(id);
+      await _noticiaService.deleteNoticia(id);
     } catch (e) {
       if (e is ApiException) {
-        rethrow;
+        // Propaga el mensaje contextual de ApiException
+        throw Exception('Error en el servicio de noticias: ${e.message}');
       } else {
-        final errorMessage = ErrorHelper.getServiceErrorMessage(e.toString());
-        throw ApiException(
-          errorMessage,
-          statusCode: _getStatusCodeFromError(e.toString())
-        );
+        throw Exception('Error desconocido: $e');
       }
     }
   }

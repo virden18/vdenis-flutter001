@@ -4,8 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:vdenis/bloc/comentarios/comentario_bloc.dart';
 import 'package:vdenis/bloc/comentarios/comentario_event.dart';
 import 'package:vdenis/bloc/comentarios/comentario_state.dart';
+import 'package:vdenis/bloc/reporte/reporte_bloc.dart';
+import 'package:vdenis/bloc/reporte/reporte_event.dart';
+import 'package:vdenis/components/reporte_modal.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/core/categoria_helper.dart';
+import 'package:vdenis/data/reporte_repository.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class NoticiaCardHelper {
@@ -197,6 +201,50 @@ class NoticiaCardHelper {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        IconButton(
+                          icon: Row(
+                            children: [
+                              FutureBuilder<int>(
+                                future: ReporteRepository().obtenerNumeroReportes(
+                                  noticia.id!,
+                                ),
+                                builder: (context, snapshot) {
+                                  final count = snapshot.data ?? 0;
+                                  return Text(
+                                    '$count',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(
+                                Icons.warning_amber,
+                                size: 24,
+                                color: Colors.red,
+                              ),
+                            ],
+                          ),
+                          tooltip: 'Reportes de esta noticia',
+                          onPressed:
+                              () => showDialog(
+                                context: context,
+                                builder:
+                                    (context) => ReporteModal(
+                                      noticiaId: noticia.id!,
+                                      onSubmit: (motivo) {
+                                        context.read<ReporteBloc>().add(
+                                          ReporteCreateEvent(
+                                            noticiaId: noticia.id!,
+                                            motivo: motivo,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                              ), // Puedes añadir lógica adicional aquí
+                        ),
                         // Botón de comentarios con contador
                         if (onComment != null && noticia.id != null)
                           _buildComentarioButton(context, noticia, onComment),
@@ -236,10 +284,7 @@ class _CommentButtonContent extends StatefulWidget {
   final Noticia noticia;
   final void Function(Noticia) onComment;
 
-  const _CommentButtonContent({
-    required this.noticia,
-    required this.onComment,
-  });
+  const _CommentButtonContent({required this.noticia, required this.onComment});
 
   @override
   State<_CommentButtonContent> createState() => _CommentButtonContentState();
@@ -262,14 +307,14 @@ class _CommentButtonContentState extends State<_CommentButtonContent> {
     if (!_requestSent && widget.noticia.id != null && mounted) {
       final bloc = context.read<ComentarioBloc>();
       final currentState = bloc.state;
-      
+
       // Solo enviar solicitud si no es ya el estado actual para esta noticia
-      if (!(currentState is NumeroComentariosLoaded && 
-            currentState.noticiaId == widget.noticia.id)) {
+      if (!(currentState is NumeroComentariosLoaded &&
+          currentState.noticiaId == widget.noticia.id)) {
         setState(() {
           _requestSent = true;
         });
-        
+
         bloc.add(GetNumeroComentarios(noticiaId: widget.noticia.id!));
       }
     }
@@ -289,9 +334,10 @@ class _CommentButtonContentState extends State<_CommentButtonContent> {
       builder: (context, state) {
         // Inicializar contador
         int numeroComentarios = 0;
-        
+
         // Actualizar contador si tenemos datos
-        if (state is NumeroComentariosLoaded && state.noticiaId == widget.noticia.id) {
+        if (state is NumeroComentariosLoaded &&
+            state.noticiaId == widget.noticia.id) {
           numeroComentarios = state.numeroComentarios;
         }
 

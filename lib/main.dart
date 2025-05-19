@@ -5,6 +5,7 @@ import 'package:vdenis/bloc/comentarios/comentario_bloc.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_bloc.dart';
 import 'package:vdenis/bloc/preferencia/preferencia_bloc.dart';
 import 'package:vdenis/bloc/preferencia/preferencia_event.dart';
+import 'package:vdenis/bloc/reporte/reporte_bloc.dart';
 import 'package:vdenis/di/locator.dart';
 import 'package:vdenis/bloc/auth/auth_bloc.dart'; // Importa el AuthBloc
 import 'package:vdenis/core/secure_storage.dart'; // Importa el servicio de almacenamiento seguro
@@ -33,20 +34,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => ContadorBloc()
-        ),
-        BlocProvider(
-          create: (context) => AuthBloc(),
-        ), 
-        BlocProvider(
-          create: (context) => ConnectivityBloc(),
-        ), 
-        BlocProvider(
-          create:
-              (context) => PreferenciaBloc()..add(const CargarPreferencias()),
-        ),
+        BlocProvider(create: (context) => ContadorBloc()),
+        BlocProvider(create: (context) => AuthBloc()),
+        BlocProvider(create: (context) => ConnectivityBloc()),
+        BlocProvider(create: (context) => PreferenciaBloc()..add(const CargarPreferencias())),
         BlocProvider(create: (context) => ComentarioBloc()),
+        BlocProvider<ReporteBloc>(create: (context) => ReporteBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

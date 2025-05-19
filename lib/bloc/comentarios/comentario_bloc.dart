@@ -229,6 +229,7 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
 
       // Llamamos al repositorio para persistir el cambio
       await comentarioRepository.reaccionarComentario(
+        noticiaId: event.noticiaId,
         comentarioId: event.comentarioId,
         tipoReaccion: event.tipoReaccion,
       );
@@ -268,6 +269,7 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
 
       // Llamar al repositorio para agregar el subcomentario
       final resultado = await comentarioRepository.agregarSubcomentario(
+        noticiaId: event.noticiaId,
         comentarioId: event.comentarioId,
         texto: event.texto,
         autor: event.autor,

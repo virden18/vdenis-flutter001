@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:vdenis/api/service/preferencia_service.dart';
+import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/core/secure_storage.dart';
 import 'package:vdenis/domain/preferencia.dart';
-import 'package:vdenis/exceptions/api_exception.dart';
 
-class PreferenciaRepository {
-  final PreferenciaService _preferenciaService = PreferenciaService(); // o new PreferenciaService()
+class PreferenciaRepository extends BaseRepository {
+  final PreferenciaService _preferenciaService = PreferenciaService();
   final SecureStorageService _secureStorageService = SecureStorageService();
 
   // Caché de preferencias para minimizar llamadas a la API
@@ -13,108 +13,96 @@ class PreferenciaRepository {
 
   /// Obtiene las categorías seleccionadas para filtrar las noticias
   Future<List<String>> obtenerCategoriasSeleccionadas() async {
-    try {
-      // Si no hay caché o es la primera vez, obtener de la API
-      _cachedPreferencias ??= await _preferenciaService.getPreferencias();
-
-      return _cachedPreferencias!.categoriasSeleccionadas;
-    } catch (e) {
-      debugPrint('Error al obtener categorías seleccionadas: $e');
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        // En caso de error desconocido, devolver lista vacía para no romper la UI
-        return [];
-      }
-    }
+    return executeServiceCall(
+      serviceCall: () async {
+        // Si no hay caché o es la primera vez, obtener de la API
+        _cachedPreferencias ??= await _preferenciaService.getPreferencias();
+        return _cachedPreferencias!.categoriasSeleccionadas;
+      },
+      operacion: 'obtener categorías seleccionadas',
+    ).catchError((error) {
+      // En caso de error, devolver lista vacía para no romper la UI
+      debugPrint('Error al obtener categorías seleccionadas: $error');
+      return <String>[];
+    });
   }
 
   /// Guarda las categorías seleccionadas para filtrar las noticias
   Future<void> guardarCategoriasSeleccionadas(List<String> categoriaIds) async {
-    try {
-      // Si no hay caché o es la primera vez, obtener de la API
-      _cachedPreferencias ??= await _preferenciaService.getPreferencias();
+    return executeServiceCall(
+      serviceCall: () async {
+        // Si no hay caché o es la primera vez, obtener de la API
+        _cachedPreferencias ??= await _preferenciaService.getPreferencias();
 
+        // Actualizar el objeto en caché
+        final email = await _secureStorageService.getUserEmail();
+        _cachedPreferencias = Preferencia(
+          categoriasSeleccionadas: categoriaIds,
+          email: email ?? '',
+        );
 
-      // Actualizar el objeto en caché
-      final email = await _secureStorageService.getUserEmail();
-      _cachedPreferencias = Preferencia(
-        categoriasSeleccionadas: categoriaIds,
-        email: email ?? '',
-      );
-
-      // Guardar en la API
-      await _preferenciaService.guardarPreferencias(_cachedPreferencias!);
-    } catch (e) {
-      debugPrint('Error al guardar categorías seleccionadas: $e');
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        throw ApiException('Error al guardar preferencias: $e');
-      }
-    }
+        // Guardar en la API
+        await _preferenciaService.guardarPreferencias(_cachedPreferencias!);
+      },
+      operacion: 'guardar categorías seleccionadas',
+    );
   }
 
   /// Añade una categoría a las categorías seleccionadas
   Future<void> agregarCategoriaFiltro(String categoriaId) async {
-    try {
-      final categorias = await obtenerCategoriasSeleccionadas();
-      if (!categorias.contains(categoriaId)) {
-        categorias.add(categoriaId);
-        await guardarCategoriasSeleccionadas(categorias);
-      }
-    } catch (e) {
-      debugPrint('Error al agregar categoría: $e');
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        throw ApiException('Error al agregar categoría: $e');
-      }
-    }
+    return executeServiceCall(
+      serviceCall: () async {
+        final categorias = await obtenerCategoriasSeleccionadas();
+        if (!categorias.contains(categoriaId)) {
+          categorias.add(categoriaId);
+          await guardarCategoriasSeleccionadas(categorias);
+        }
+      },
+      operacion: 'agregar categoría al filtro',
+    );
   }
 
   /// Elimina una categoría de las categorías seleccionadas
   Future<void> eliminarCategoriaFiltro(String categoriaId) async {
-    try {
-      final categorias = await obtenerCategoriasSeleccionadas();
-      categorias.remove(categoriaId);
-      await guardarCategoriasSeleccionadas(categorias);
-    } catch (e) {
-      debugPrint('Error al eliminar categoría: $e');
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        throw ApiException('Error al eliminar categoría: $e');
-      }
-    }
+    return executeServiceCall(
+      serviceCall: () async {
+        final categorias = await obtenerCategoriasSeleccionadas();
+        categorias.remove(categoriaId);
+        await guardarCategoriasSeleccionadas(categorias);
+      },
+      operacion: 'eliminar categoría del filtro',
+    );
   }
 
   /// Limpia todas las categorías seleccionadas
   Future<void> limpiarFiltrosCategorias() async {
-    try {
-      await guardarCategoriasSeleccionadas([]);
+    return executeServiceCall(
+      serviceCall: () async {
+        await guardarCategoriasSeleccionadas([]);
 
-      // Limpiar también la caché
-      if (_cachedPreferencias != null) {
-        _cachedPreferencias = Preferencia.empty();
-      }
-    } catch (e) {
-      debugPrint('Error al limpiar filtros: $e');
-      if (e is ApiException) {
-        // Propaga el mensaje contextual de ApiException
-        rethrow;
-      } else {
-        throw ApiException('Error al limpiar filtros: $e');
-      }
-    }
+        // Limpiar también la caché
+        if (_cachedPreferencias != null) {
+          _cachedPreferencias = Preferencia.empty();
+        }
+      },
+      operacion: 'limpiar filtros de categorías',
+    );
   }
 
   /// Limpia la caché para forzar una recarga desde la API
   void invalidarCache() {
     _cachedPreferencias = null;
+  }
+
+  /// Obtiene las preferencias completas
+  Future<Preferencia> obtenerPreferencias() {
+    return getWithCache(
+      cachedData: _cachedPreferencias,
+      fetchData: _preferenciaService.getPreferencias,
+      updateCache: (Preferencia preferencias) {
+        _cachedPreferencias = preferencias;
+      },
+      operacion: 'obtener preferencias',
+    );
   }
 }

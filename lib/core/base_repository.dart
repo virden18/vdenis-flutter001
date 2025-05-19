@@ -21,7 +21,7 @@ class BaseRepository {
   /// Ejecuta una operación de forma segura, manejando excepciones
   /// y transformando errores genéricos a ApiException
   /// [T] es un tipo de dato génerico que representa el tipo de respuesta esperada
-  Future<T> _executeServiceCall<T>({
+  Future<T> executeServiceCall<T>({
     required Future<T> Function() serviceCall,
     String operacion = 'realizar la operación',
   }) async {
@@ -40,7 +40,32 @@ class BaseRepository {
     required Future<T> Function() serviceGet,
     String operacion = 'obtener datos',
   }) async {
-    return _executeServiceCall(serviceCall: serviceGet, operacion: operacion);
+    return executeServiceCall(serviceCall: serviceGet, operacion: operacion);
+  }
+
+   /// Obtener datos con manejo de caché
+  /// Útil para implementar patrones de caché en repositorios específicos
+  Future<T> getWithCache<T>({
+    required T? cachedData,
+    required Future<T> Function() fetchData,
+    required Function(T) updateCache,
+    String operacion = 'obtener datos',
+  }) async {
+    if (cachedData != null) {
+      return cachedData;
+    }
+    
+    try {
+      final T data = await fetchData();
+      updateCache(data);
+      return data;
+    } on ApiException catch (e) {
+      handleError(e, operacion: operacion);
+      rethrow;
+    } catch (e) {
+      handleError(e, operacion: operacion);
+      rethrow;
+    }
   }
 
   // [D] es un tipo de dato genérico que representa el tipo de datos a enviar
@@ -49,7 +74,7 @@ class BaseRepository {
     required D data,
     String operacion = 'crear recurso',
   }) async {
-    return _executeServiceCall(
+    return executeServiceCall(
       serviceCall: () => serviceCreate(data),
       operacion: operacion,
     );
@@ -63,7 +88,7 @@ class BaseRepository {
     required D data,
     String operacion = 'actualizar datos',
   }) async {
-    return _executeServiceCall(
+    return executeServiceCall(
       serviceCall: () => serviceUpdate(id, data),
       operacion: operacion,
     );
@@ -74,7 +99,7 @@ class BaseRepository {
     required ID id,
     String operacion = 'eliminar recurso',
   }) async {
-    return _executeServiceCall(
+    return executeServiceCall(
       serviceCall: () => serviceDelete(id),
       operacion: operacion,
     );

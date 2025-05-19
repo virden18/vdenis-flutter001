@@ -4,7 +4,7 @@ import 'package:vdenis/domain/preferencia.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
-import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/core/base_service.dart';
 
 class PreferenciaService extends BaseService {
   // Clave para almacenar el ID en SharedPreferences

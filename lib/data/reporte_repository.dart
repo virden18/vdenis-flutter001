@@ -1,69 +1,78 @@
 import 'package:vdenis/api/service/reporte_service.dart';
+import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/domain/reporte.dart';
-import 'package:vdenis/exceptions/api_exception.dart';
 
-class ReporteRepository {
+class ReporteRepository extends BaseRepository {
   final ReporteService _reporteService = ReporteService();
 
   // Obtener todos los reportes
   Future<List<Reporte>> obtenerReportes() async {
-    try {
-      return await _reporteService.getReportes();
-    } on ApiException catch (e) {
-      throw Exception('Error al obtener reportes: ${e.message}');
-    } catch (e) {
-      throw Exception('Error al obtener reportes: ${e.toString()}');
-    }
+    return get(
+      serviceGet: _reporteService.getReportes,
+      operacion: 'obtener todos los reportes',
+    );
+  }
+
+  // Obtener el número de reportes para una noticia
+  Future<int> obtenerNumeroReportes(String noticiaId) async {
+    validateId(noticiaId, mensaje: 'ID de noticia no válido');
+
+    return executeServiceCall(
+      serviceCall: () async {
+        final reportes = await _reporteService.getReportesPorNoticia(noticiaId);
+        return reportes.length;
+      },
+      operacion: 'contar reportes para noticia $noticiaId',
+    );
+  }
+
+  // Obtener el número de reportes por motivo para una noticia
+  Future<int> obtenerNumeroReportesPorMotivo(String noticiaId, MotivoReporte motivo) async {
+    validateId(noticiaId, mensaje: 'ID de noticia no válido');
+
+    return executeServiceCall(
+      serviceCall: () async {
+        final reportes = await _reporteService.getReportesPorNoticia(noticiaId);
+        return reportes.where((reporte) => reporte.motivo == motivo).length;
+      },
+      operacion: 'contar reportes por motivo para noticia $noticiaId',
+    );
   }
 
   // Crear un nuevo reporte
-  // Dentro de ReporteRepository
-  Future<int> obtenerNumeroReportes(String noticiaId) async {
-    try {
-      final reportes = await _reporteService.getReportesPorNoticia(noticiaId);
-      return reportes.length;
-    } on ApiException catch (e) {
-      throw Exception('Error al contar reportes: ${e.message}');
-    } catch (e) {
-      throw Exception('Error al contar reportes: ${e.toString()}');
-    }
-  }
-
   Future<Reporte?> crearReporte({
     required String noticiaId,
     required MotivoReporte motivo,
   }) async {
-    try {
-      return await _reporteService.crearReporte(
+    validateId(noticiaId, mensaje: 'ID de noticia no válido');
+
+    return executeServiceCall(
+      serviceCall: () => _reporteService.crearReporte(
         noticiaId: noticiaId,
         motivo: motivo,
-      );
-    } on ApiException catch (e) {
-      throw Exception('Error al crear reporte: ${e.message}');
-    } catch (e) {
-      throw Exception('Error al crear reporte: ${e.toString()}');
-    }
+      ),
+      operacion: 'crear reporte para noticia $noticiaId',
+    );
   }
 
   // Obtener reportes por id de noticia
   Future<List<Reporte>> obtenerReportesPorNoticia(String noticiaId) async {
-    try {
-      return await _reporteService.getReportesPorNoticia(noticiaId);
-    } on ApiException catch (e) {
-      throw Exception('Error al obtener reportes por noticia: ${e.message}');
-    } catch (e) {
-      throw Exception('Error al obtener reportes por noticia: ${e.toString()}');
-    }
+    validateId(noticiaId, mensaje: 'ID de noticia no válido');
+
+    return executeServiceCall(
+      serviceCall: () => _reporteService.getReportesPorNoticia(noticiaId),
+      operacion: 'obtener reportes para noticia $noticiaId',
+    );
   }
 
   // Eliminar un reporte
   Future<void> eliminarReporte(String reporteId) async {
-    try {
-      await _reporteService.eliminarReporte(reporteId);
-    } on ApiException catch (e) {
-      throw Exception('Error al eliminar reporte: ${e.message}');
-    } catch (e) {
-      throw Exception('Error al eliminar reporte: ${e.toString()}');
-    }
+    validateId(reporteId, mensaje: 'ID de reporte no válido');
+
+    return delete(
+      serviceDelete: _reporteService.eliminarReporte,
+      id: reporteId,
+      operacion: 'eliminar reporte $reporteId',
+    );
   }
 }

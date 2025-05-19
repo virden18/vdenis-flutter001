@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/comentarios/comentario_event.dart';
@@ -187,7 +188,6 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
         final comentarioIndex = comentarios.indexWhere(
           (c) => c.id == event.comentarioId,
         );
-        print('\n\nComentario index: $comentarioIndex\n\n\n');
         // Si no encontramos el comentario, no hacemos nada
         // Si encontramos el comentario, actualizamos localmente antes de hacer la llamada API
         if (comentarioIndex != -1) {
@@ -239,7 +239,7 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
 
       emit(ComentarioLoaded(comentariosList: comentariosActualizados));
     } catch (e) {
-      print('Error en _onAddReaccion: ${e.toString()}');
+      debugPrint('Error en _onAddReaccion: ${e.toString()}');
 
       // Si ocurre un error, intentamos recargar los comentarios para restaurar el estado
       try {

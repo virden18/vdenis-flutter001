@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // Importa flutter_bloc
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:vdenis/bloc/comentarios/comentario_bloc.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_bloc.dart';
+import 'package:vdenis/bloc/preferencia/preferencia_bloc.dart';
+import 'package:vdenis/bloc/preferencia/preferencia_event.dart';
 import 'package:vdenis/di/locator.dart';
 import 'package:vdenis/bloc/auth/auth_bloc.dart'; // Importa el AuthBloc
 import 'package:vdenis/core/secure_storage.dart'; // Importa el servicio de almacenamiento seguro
@@ -39,6 +42,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => ConnectivityBloc(),
         ), 
+        BlocProvider(
+          create:
+              (context) => PreferenciaBloc()..add(const CargarPreferencias()),
+        ),
+        BlocProvider(create: (context) => ComentarioBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

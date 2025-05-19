@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/api/service/categoria_cache_service.dart';
+import 'package:vdenis/bloc/comentarios/comentario_bloc.dart';
 import 'package:vdenis/bloc/noticias/noticia_bloc.dart';
 import 'package:vdenis/bloc/noticias/noticia_event.dart';
 import 'package:vdenis/bloc/noticias/noticia_state.dart';
@@ -12,6 +13,7 @@ import 'package:vdenis/helpers/error_helper.dart';
 import 'package:vdenis/helpers/message_helper.dart';
 import 'package:vdenis/helpers/noticia_card_helper.dart';
 import 'package:vdenis/views/categoria_screen.dart';
+import 'package:vdenis/views/comentarios/comentarios_screen.dart';
 import 'package:vdenis/views/preferencia_screen.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -20,17 +22,25 @@ class NoticiaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Asegurarse de que las categorías estén precargadas
-    _precargarCategorias();
-    
-    return BlocProvider(
-      create: (context) {
-        // Crear el bloque e iniciar la carga
-        return NoticiaBloc()..add(const NoticiasLoadEvent());
-      },
+    _precargarCategorias();    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) {
+            // Crear el bloque de noticias e iniciar la carga
+            return NoticiaBloc()..add(const NoticiasLoadEvent());
+          },
+        ),
+        BlocProvider(
+          create: (context) {
+            // Crear el bloque de comentarios
+            return ComentarioBloc();
+          },
+        ),
+      ],
       child: const NoticiaView(),
     );
   }
-  
+
   // Método para precargar categorías
   static Future<void> _precargarCategorias() async {
     try {
@@ -74,10 +84,12 @@ class NoticiaView extends StatelessWidget {
         );
       },
     );
-  }  PreferredSizeWidget _buildAppBar(BuildContext context, NoticiasState state) {
+  }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context, NoticiasState state) {
     // Obtener una referencia al bloc para verificar si hay filtros aplicados
     final noticiaBloc = BlocProvider.of<NoticiaBloc>(context);
-    
+
     return AppBar(
       title: const Text(NewsConstants.tituloAppNoticias),
       backgroundColor: Colors.blueGrey,
@@ -115,7 +127,6 @@ class NoticiaView extends StatelessWidget {
                 builder: (context) => const CategoriaScreenDos(),
               ),
             );
-            
 
             // Recargar categorías al volver
             if (result == true) {
@@ -206,11 +217,7 @@ class NoticiaView extends StatelessWidget {
     return const Center(child: Text('Estado no reconocido'));
   }
 
-  Widget _buildNoticiasList(
-    BuildContext context,
-    List<Noticia> noticias,
-  ) {
-    return RefreshIndicator(
+  Widget _buildNoticiasList(BuildContext context, List<Noticia> noticias) {        return RefreshIndicator(
       onRefresh: () async {
         // Capturar el contexto actual antes de la operación async
         final currentContext = context;
@@ -223,13 +230,26 @@ class NoticiaView extends StatelessWidget {
         itemCount: noticias.length,
         itemBuilder: (context, index) {
           final noticia = noticias[index];
+
           return NoticiaCardHelper.buildNoticiaCard(
             noticia,
-            onEdit: (noticia) {
-              _showNoticiaForm(context, noticia: noticia);
-            },
-            onDelete: (noticia) {
-              _confirmarEliminarNoticia(context, noticia);
+            onEdit: (noticia) => _showNoticiaForm(context, noticia: noticia),
+            onDelete: (noticia) => _confirmarEliminarNoticia(context, noticia),
+            onComment: (noticia) {
+              // Capturar el contexto actual antes de la operación async
+              final currentContext = context;
+              // Verificar que el contexto siga montado
+              if (!currentContext.mounted) return;
+              // Navegar a la pantalla de comentarios 
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BlocProvider.value(
+                    value: BlocProvider.of<ComentarioBloc>(currentContext),
+                    child: ComentariosScreen(noticiaId: noticia.id!),
+                  ),
+                ),
+              );
             },
           );
         },
@@ -302,7 +322,8 @@ class NoticiaView extends StatelessWidget {
     );
     final TextEditingController fuenteController = TextEditingController(
       text: noticia?.fuente ?? '',
-    );    final TextEditingController urlImagenController = TextEditingController(
+    );
+    final TextEditingController urlImagenController = TextEditingController(
       text: noticia?.urlImagen ?? '',
     );
 
@@ -427,6 +448,7 @@ class NoticiaView extends StatelessWidget {
       },
     );
   }
+
   Widget _buildCategoriasDropdown(
     BuildContext context,
     String initialValue,
@@ -495,18 +517,19 @@ class NoticiaView extends StatelessWidget {
   void _navegarAPreferencias(BuildContext context) async {
     // Capturar el contexto actual antes de la operación async
     final currentContext = context;
-    
+
     // Navegar a la pantalla de preferencias
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BlocProvider.value(
-          value: BlocProvider.of<NoticiaBloc>(currentContext),
-          child: const PreferenciaScreen(),
-        ),
+        builder:
+            (context) => BlocProvider.value(
+              value: BlocProvider.of<NoticiaBloc>(currentContext),
+              child: const PreferenciaScreen(),
+            ),
       ),
     );
-    
+
     // Si regresamos con resultado true, aplicar filtros de preferencias
     if (result == true && currentContext.mounted) {
       // Se aplican los filtros automáticamente al guardar las preferencias

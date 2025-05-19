@@ -12,7 +12,7 @@ class Comentario with ComentarioMappable {
   final int dislikes;//
   final List<Comentario>? subcomentarios;
   final bool isSubComentario; // Ahora es required con valor por defecto
-  final String? idSubComentario; // idNoticia es opcional
+  final String? idSubComentario;
 
   Comentario({
     this.id, // id ahora es opcional

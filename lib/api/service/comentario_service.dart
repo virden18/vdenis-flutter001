@@ -33,7 +33,7 @@ class ComentariosService extends BaseService {
         final comentarios =
             (data)
                 .where((json) => json['noticiaId'] == noticiaId)
-                .map((json) => ComentarioMapper.fromJson(json))
+                .map((json) => ComentarioMapper.fromMap(json))
                 .toList();
 
         return comentarios;
@@ -298,7 +298,7 @@ class ComentariosService extends BaseService {
       // Añadir el nuevo subcomentario a la lista existente
       final subcomentariosActualizados = [
         ...subcomentariosActuales,
-        nuevoSubcomentario.toJson(),
+        nuevoSubcomentario.toMap(),
       ]; // Actualizar el comentario con todos sus subcomentarios
       await put(
         '/comentarios/$comentarioId',

@@ -7,6 +7,13 @@ class AppConstants {
   static const String formatoFecha = 'dd/MM/yyyy HH:mm';
 }
 
+class ApiConstants {
+  static const String baseUrl = 'https://jsonplaceholder.typicode.com';
+  static const String endpointNoticias = '/noticias';
+  static const String endpointComentarios = '/comentarios';
+  static const String endpointCategorias = '/categorias';
+}
+
 // Constantes para la pantalla de Tareas
 class TaskConstants {
   static const String tituloAppBar = 'Mis Tareas';

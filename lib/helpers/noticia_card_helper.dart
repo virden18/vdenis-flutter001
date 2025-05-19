@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:vdenis/bloc/comentarios/comentario_bloc.dart';
+import 'package:vdenis/bloc/comentarios/comentario_event.dart';
+import 'package:vdenis/bloc/comentarios/comentario_state.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/core/categoria_helper.dart';
 import 'package:vdenis/domain/noticia.dart';
@@ -10,28 +14,55 @@ class NoticiaCardHelper {
     void Function(Noticia)? onTap,
     void Function(Noticia)? onEdit,
     void Function(Noticia)? onDelete,
+    void Function(Noticia)? onComment,
     String? categoriaNombre,
   }) {
     final DateFormat formatter = DateFormat(AppConstants.formatoFecha);
     final String formattedDate = formatter.format(noticia.publicadaEl);
-    
+
     // Si ya tenemos el nombre de la categoría, lo usamos directamente
     if (categoriaNombre != null) {
-      return _buildCard(noticia, formattedDate, categoriaNombre, onTap, onEdit, onDelete);
+      return _buildCard(
+        noticia,
+        formattedDate,
+        categoriaNombre,
+        onTap,
+        onEdit,
+        onDelete,
+        onComment,
+      );
     }
-    
+
     // Si no tenemos el nombre, lo buscamos usando CategoryHelper
     return FutureBuilder<String>(
-      future: noticia.categoriaId != null && noticia.categoriaId!.isNotEmpty
-          ? CategoryHelper.getCategoryName(noticia.categoriaId!)
-          : Future.value('Sin categoría'),
+      future:
+          noticia.categoriaId != null && noticia.categoriaId!.isNotEmpty
+              ? CategoryHelper.getCategoryName(noticia.categoriaId!)
+              : Future.value('Sin categoría'),
       builder: (context, snapshot) {
         final String categoryName = snapshot.data ?? 'Cargando categoría...';
-        return _buildCard(noticia, formattedDate, categoryName, onTap, onEdit, onDelete);
+        return _buildCard(
+          noticia,
+          formattedDate,
+          categoryName,
+          onTap,
+          onEdit,
+          onDelete,
+          onComment,
+        );
       },
     );
   }
-  
+
+  // Método para crear el botón de comentarios con contador
+  static Widget _buildComentarioButton(
+    BuildContext context,
+    Noticia noticia,
+    void Function(Noticia) onComment,
+  ) {
+    return _CommentButtonContent(noticia: noticia, onComment: onComment);
+  }
+
   // Método auxiliar para construir la tarjeta con el nombre de categoría
   static Widget _buildCard(
     Noticia noticia,
@@ -40,11 +71,13 @@ class NoticiaCardHelper {
     void Function(Noticia)? onTap,
     void Function(Noticia)? onEdit,
     void Function(Noticia)? onDelete,
+    void Function(Noticia)? onComment,
   ) {
-    final String categoriaText = noticia.categoriaId != null && 
-                               noticia.categoriaId != NewsConstants.defaultCategoriaId
-      ? 'Categoría: $categoryName'
-      : 'Sin categoría';
+    final String categoriaText =
+        noticia.categoriaId != null &&
+                noticia.categoriaId != NewsConstants.defaultCategoriaId
+            ? categoryName
+            : 'Sin categoría';
 
     return Column(
       children: [
@@ -103,7 +136,8 @@ class NoticiaCardHelper {
                                         ),
                                       ),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             formattedDate,
@@ -157,24 +191,32 @@ class NoticiaCardHelper {
                       ),
                     ),
                   ],
-                ),
-                // Reemplazar los botones existentes con botones de edición y eliminación
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // Botón de edición
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.blueGrey),
-                      tooltip: 'Editar noticia',
-                      onPressed: onEdit != null ? () => onEdit(noticia) : null,
-                    ),
-                    // Botón de eliminación
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      tooltip: 'Eliminar noticia',
-                      onPressed: onDelete != null ? () => onDelete(noticia) : null,
-                    ),
-                  ],
+                ), // Fila de botones para interactuar con la noticia
+                Builder(
+                  builder: (BuildContext context) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // Botón de comentarios con contador
+                        if (onComment != null && noticia.id != null)
+                          _buildComentarioButton(context, noticia, onComment),
+                        // Botón de edición
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blueGrey),
+                          tooltip: 'Editar noticia',
+                          onPressed:
+                              onEdit != null ? () => onEdit(noticia) : null,
+                        ),
+                        // Botón de eliminación
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          tooltip: 'Eliminar noticia',
+                          onPressed:
+                              onDelete != null ? () => onDelete(noticia) : null,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -185,6 +227,92 @@ class NoticiaCardHelper {
           margin: const EdgeInsets.fromLTRB(0, 0, 0, 2),
         ),
       ],
+    );
+  }
+}
+
+// Widget separado para manejar el estado de la solicitud
+class _CommentButtonContent extends StatefulWidget {
+  final Noticia noticia;
+  final void Function(Noticia) onComment;
+
+  const _CommentButtonContent({
+    required this.noticia,
+    required this.onComment,
+  });
+
+  @override
+  State<_CommentButtonContent> createState() => _CommentButtonContentState();
+}
+
+class _CommentButtonContentState extends State<_CommentButtonContent> {
+  // Bandera para rastrear si ya se realizó la solicitud
+  bool _requestSent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Programar la solicitud para después de que el widget se monte completamente
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndRequestComments();
+    });
+  }
+
+  void _checkAndRequestComments() {
+    if (!_requestSent && widget.noticia.id != null && mounted) {
+      final bloc = context.read<ComentarioBloc>();
+      final currentState = bloc.state;
+      
+      // Solo enviar solicitud si no es ya el estado actual para esta noticia
+      if (!(currentState is NumeroComentariosLoaded && 
+            currentState.noticiaId == widget.noticia.id)) {
+        setState(() {
+          _requestSent = true;
+        });
+        
+        bloc.add(GetNumeroComentarios(noticiaId: widget.noticia.id!));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ComentarioBloc, ComentarioState>(
+      buildWhen: (previous, current) {
+        // Solo reconstruir si es un estado de NumeroComentariosLoaded para esta noticia
+        // o si es un estado de error
+        if (current is NumeroComentariosLoaded) {
+          return current.noticiaId == widget.noticia.id;
+        }
+        return current is ComentarioError;
+      },
+      builder: (context, state) {
+        // Inicializar contador
+        int numeroComentarios = 0;
+        
+        // Actualizar contador si tenemos datos
+        if (state is NumeroComentariosLoaded && state.noticiaId == widget.noticia.id) {
+          numeroComentarios = state.numeroComentarios;
+        }
+
+        // Construir el botón con el contador
+        return InkWell(
+          onTap: () => widget.onComment(widget.noticia),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                Text(
+                  numeroComentarios.toString(),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                const SizedBox(width: 4),
+                const Icon(Icons.comment, color: Colors.blue, size: 20),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -104,4 +104,11 @@ class BaseRepository {
       operacion: operacion,
     );
   }
+
+  /// Validar que un ID no sea nulo o vacío
+  void validateId(String? id, {String mensaje = 'ID no válido'}) {
+    if (id == null || id.trim().isEmpty) {
+      throw ApiException(mensaje, statusCode: 400);
+    }
+  }
 }

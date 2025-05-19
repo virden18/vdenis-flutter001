@@ -1,27 +1,18 @@
-import 'package:flutter/foundation.dart';
 import 'package:vdenis/api/service/comentario_service.dart';
+import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/domain/comentario.dart';
-import 'package:vdenis/exceptions/api_exception.dart';
 
-class ComentarioRepository {
+class ComentarioRepository extends BaseRepository {
   final ComentariosService _service = ComentariosService();
 
   /// Obtiene los comentarios asociados a una noticia específica
-  Future<List<Comentario>> obtenerComentariosPorNoticia(
-    String noticiaId,
-  ) async {
-    try {
-      final comentarios = await _service.obtenerComentariosPorNoticia(
-        noticiaId,
-      );
-      return comentarios;
-    } catch (e) {
-      if (e is ApiException) {
-        rethrow; // Relanza la excepción para que la maneje el BLoC
-      }
-      debugPrint('Error inesperado al obtener comentarios: $e');
-      throw ApiException('Error inesperado al obtener comentarios.');
-    }
+  Future<List<Comentario>> obtenerComentariosPorNoticia(String noticiaId) async {
+    validateId(noticiaId, mensaje: 'ID de noticia no válido');
+    
+    return executeServiceCall(
+      serviceCall: () => _service.obtenerComentariosPorNoticia(noticiaId),
+      operacion: 'obtener comentarios para noticia $noticiaId',
+    );
   }
 
   /// Agrega un nuevo comentario a una noticia
@@ -31,33 +22,23 @@ class ComentarioRepository {
     String autor,
     String fecha,
   ) async {
-    if (texto.isEmpty) {
-      throw ApiException('El texto del comentario no puede estar vacío.');
-    }
+    validateId(noticiaId, mensaje: 'ID de noticia no válido');
 
-    try {
-      await _service.agregarComentario(noticiaId, texto, autor, fecha);
-    } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      }
-      debugPrint('Error inesperado al agregar comentario: $e');
-      throw ApiException('Error inesperado al agregar comentario.');
-    }
+
+    return executeServiceCall(
+      serviceCall: () => _service.agregarComentario(noticiaId, texto, autor, fecha),
+      operacion: 'agregar comentario a noticia $noticiaId',
+    );
   }
 
   /// Obtiene el número total de comentarios para una noticia específica
   Future<int> obtenerNumeroComentarios(String noticiaId) async {
-    try {
-      final count = await _service.obtenerNumeroComentarios(noticiaId);
-      return count;
-    } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      }
-      debugPrint('Error al obtener número de comentarios: $e');
-      return 0; // En caso de error, retornamos 0 como valor seguro
-    }
+    validateId(noticiaId, mensaje: 'ID de noticia no válido');
+    
+    return executeServiceCall(
+      serviceCall: () => _service.obtenerNumeroComentarios(noticiaId),
+      operacion: 'obtener número de comentarios para noticia $noticiaId',
+    );
   }
 
   /// Añade una reacción (like o dislike) a un comentario específico
@@ -65,18 +46,15 @@ class ComentarioRepository {
     required String comentarioId,
     required String tipoReaccion,
   }) async {
-    try {
-      await _service.reaccionarComentario(
+    validateId(comentarioId, mensaje: 'ID de comentario no válido');
+    
+    return executeServiceCall(
+      serviceCall: () => _service.reaccionarComentario(
         comentarioId: comentarioId,
         tipoReaccion: tipoReaccion,
-      );
-    } catch (e) {
-      if (e is ApiException) {
-        rethrow;
-      }
-      debugPrint('Error inesperado al reaccionar al comentario: $e');
-      throw ApiException('Error inesperado al reaccionar al comentario.');
-    }
+      ),
+      operacion: 'reaccionar a comentario $comentarioId',
+    );
   }
 
   /// Agrega un subcomentario a un comentario existente
@@ -85,6 +63,8 @@ class ComentarioRepository {
     required String texto,
     required String autor,
   }) async {
+    validateId(comentarioId, mensaje: 'ID de comentario no válido');
+    
     if (texto.isEmpty) {
       return {
         'success': false,
@@ -92,19 +72,13 @@ class ComentarioRepository {
       };
     }
 
-    try {
-      final resultado = await _service.agregarSubcomentario(
+    return executeServiceCall(
+      serviceCall: () => _service.agregarSubcomentario(
         comentarioId: comentarioId,
         texto: texto,
         autor: autor,
-      );
-      return resultado;
-    } catch (e) {
-      debugPrint('Error inesperado al agregar subcomentario: $e');
-      return {
-        'success': false,
-        'message': 'Error inesperado al agregar subcomentario: ${e.toString()}',
-      };
-    }
+      ),
+      operacion: 'agregar subcomentario a comentario $comentarioId',
+    );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/tarea.dart';
 
 class CommonWidgetsHelper {
@@ -90,6 +92,15 @@ Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
           foregroundColor: Colors.grey, // Color del texto
         ),
       ),
+      subtitle: CommonWidgetsHelper.buildInfoLines(
+        tarea.descripcion ?? '',
+        '${TareasConstantes.tipoTarea}${tarea.tipo}',
+        '${TareasConstantes.fechaLimite}${_formatDate(tarea.fechaLimite ?? DateTime.now())}',
+      ), // Líneas de información
     ),        
   );
 }
+
+String _formatDate(DateTime date) {
+    return DateFormat(AppConstantes.formatoFecha).format(date);
+  }

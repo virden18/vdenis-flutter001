@@ -45,7 +45,8 @@ class TaskCard extends StatelessWidget {
               children: [
                 // Título
                 CommonWidgetsHelper.buildBoldTitle(tarea.titulo),
-                CommonWidgetsHelper.buildSpacing(), // Espacio entre el título y la descripción
+                CommonWidgetsHelper.buildSpacing(),
+                CommonWidgetsHelper.buildInfoLines(tarea.descripcion ?? ''), // Espacio entre el título y la descripción
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea el botón a la derecha
                   children: [

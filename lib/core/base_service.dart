@@ -11,7 +11,6 @@ import 'package:watch_it/watch_it.dart' show di;
 class BaseService {
   late final Dio _dio;
   final SecureStorageService _secureStorage = SecureStorageService();
-
   
   /// Constructor que inicializa la configuración de Dio con los parámetros base
   BaseService() {

@@ -6,7 +6,7 @@ class TareaService extends BaseService {
   final String _endpoint = ApiConstantes.tareasEndpoint;
 
   /// Obtiene la lista de tareas
-  Future<List<Tarea>> getTasks() async {
+  Future<List<Tarea>> obtenerTareas() async {
     final List<dynamic> tareasJson = await get<List<dynamic>>(
       _endpoint,
       errorMessage: 'Error al obtener las tareas',
@@ -18,7 +18,7 @@ class TareaService extends BaseService {
   }
 
   /// Crea una nueva tarea
-  Future<Tarea> createTask(Tarea task) async {
+  Future<Tarea> crearTarea(Tarea task) async {
     final json = await post(
       _endpoint,
       data: task.toMap(),
@@ -29,13 +29,13 @@ class TareaService extends BaseService {
   }
 
   /// Elimina una tarea existente
-  Future<void> deleteTask(String taskId) async {
+  Future<void> eliminarTarea(String taskId) async {
     final url = '$_endpoint/$taskId';
     await delete(url, errorMessage: 'Error al eliminar la tarea');
   }
 
   /// Actualiza una tarea existente
-  Future<Tarea> updateTask(String taskId, Tarea task) async {
+  Future<Tarea> actualizarTarea(String taskId, Tarea task) async {
     final url = '$_endpoint/$taskId';
     final json = await put(
       url,

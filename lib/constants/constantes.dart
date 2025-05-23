@@ -77,14 +77,18 @@ class TareasConstantes {
   static const String tituloAppBar = 'Mis Tareas';
   static const String listaVacia = 'No hay tareas';
   static const String tipoTarea = 'Tipo: ';
-  static const String taskTypeNormal = 'normal';
-  static const String taskTypeUrgent = 'urgente';
+  static const String tareaTipoNormal = 'normal';
+  static const String tareaTipoUrgente = 'urgente';
   static const String taskDescription = 'Descripción: ';
   static const String pasosTitulo = 'Pasos para completar: ';
   static const String fechaLimite = 'Fecha límite: ';
   static const String tareaEliminada = 'Tarea eliminada';
   static const int limitePasos = 2;
   static const int limiteTareas = 10;
+  static const String mensajeError = 'Error al obtener la tarea';
+  static const String errorCrear = 'Error al crear la tarea';
+  static const String errorEliminar = 'Error al eliminar la tarea';
+  static const String errorActualizar = 'Error al actualizar la tarea';
 }
 
 // Constantes para el Juego de Preguntas

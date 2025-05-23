@@ -1,64 +1,66 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:vdenis/exceptions/api_exception.dart';
 
-@immutable
-class PreferenciaState extends Equatable {
-  final List<String> categoriasSeleccionadas;
-  final bool mostrarFavoritos;
-  final String? palabraClave;
-  final DateTime? fechaDesde;
-  final DateTime? fechaHasta;
-  final String ordenarPor;
-  final bool ascendente;
+abstract class PreferenciaState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
 
-  const PreferenciaState({
-    this.categoriasSeleccionadas = const [],
-    this.mostrarFavoritos = false,
-    this.palabraClave,
-    this.fechaDesde,
-    this.fechaHasta,
-    this.ordenarPor = 'fecha',
-    this.ascendente = false,
+class PreferenciaInitial extends PreferenciaState {}
+
+class PreferenciaLoading extends PreferenciaState {}
+
+enum TipoOperacionPreferencia { cargar, guardar, reiniciar, cambiarCategoria }
+
+class PreferenciaError extends PreferenciaState {
+  final String mensaje;
+  final ApiException error;
+  final TipoOperacionPreferencia tipoOperacion;
+
+  PreferenciaError(
+    this.mensaje, {
+    required this.error,
+    this.tipoOperacion = TipoOperacionPreferencia.cargar,
   });
 
-  PreferenciaState copyWith({
-    List<String>? categoriasSeleccionadas,
-    bool? mostrarFavoritos,
-    String? palabraClave,
-    DateTime? fechaDesde,
-    DateTime? fechaHasta,
-    String? ordenarPor,
-    bool? ascendente,
-  }) {
-    return PreferenciaState(
-      categoriasSeleccionadas:
-          categoriasSeleccionadas ?? this.categoriasSeleccionadas,
-      mostrarFavoritos: mostrarFavoritos ?? this.mostrarFavoritos,
-      palabraClave: palabraClave ?? this.palabraClave,
-      fechaDesde: fechaDesde ?? this.fechaDesde,
-      fechaHasta: fechaHasta ?? this.fechaHasta,
-      ordenarPor: ordenarPor ?? this.ordenarPor,
-      ascendente: ascendente ?? this.ascendente,
-    );
-  }
+  @override
+  List<Object?> get props => [mensaje, error, tipoOperacion];
+}
+
+// Estado base cuando las preferencias están cargadas
+class PreferenciasLoaded extends PreferenciaState {
+  final List<String> categoriasSeleccionadas;
+  final DateTime? lastUpdated;
+  final bool operacionExitosa;
+
+  PreferenciasLoaded({
+    this.categoriasSeleccionadas = const [],
+    this.lastUpdated,
+    this.operacionExitosa = false,
+  });
 
   @override
   List<Object?> get props => [
     categoriasSeleccionadas,
-    mostrarFavoritos,
-    palabraClave,
-    fechaDesde,
-    fechaHasta,
-    ordenarPor,
-    ascendente,
+    lastUpdated,
+    operacionExitosa,
   ];
 }
 
-class PreferenciaError extends PreferenciaState {
-  final String mensaje;
+// Estado después de guardar preferencias con éxito
+class PreferenciasSaved extends PreferenciasLoaded {
+  PreferenciasSaved({
+    required super.categoriasSeleccionadas,
+    super.lastUpdated,
+    super.operacionExitosa = true,
+  });
+}
 
-  const PreferenciaError(this.mensaje, {int? statusCode});
-
-  @override
-  List<Object?> get props => [mensaje, ...super.props];
+// Estado después de resetear todos los filtros
+class PreferenciasReset extends PreferenciasLoaded {
+  PreferenciasReset({
+    super.categoriasSeleccionadas = const [],
+    super.lastUpdated,
+    super.operacionExitosa = true,
+  });
 }

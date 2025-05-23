@@ -3,7 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_event.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_state.dart';
-import 'package:vdenis/core/connectivity_service.dart';
+import 'package:vdenis/core/services/connectivity_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 /// BLoC para gestionar el estado de la conectividad a Internet en la aplicación
@@ -19,8 +19,6 @@ class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
       result,
     ) {
-      // En conectivity_plus 6.x, el resultado es una lista
-      // Procesamos el resultado sea cual sea su tipo
       add(ConnectivityStatusChanged(result));
     });
 
@@ -40,7 +38,6 @@ class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
     ConnectivityStatusChanged event,
     Emitter<ConnectivityState> emit,
   ) async {
-    // Utilizamos directamente el servicio para verificar la conectividad
     final isConnected = await _connectivityService.hasInternetConnection();
     emit(isConnected ? ConnectivityConnected() : ConnectivityDisconnected());
   }

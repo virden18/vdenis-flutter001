@@ -1,4 +1,5 @@
 import 'package:dart_mappable/dart_mappable.dart';
+
 part 'login_request.mapper.dart';
 
 /// Modelo que representa la solicitud de inicio de sesión
@@ -12,4 +13,5 @@ class LoginRequest with LoginRequestMappable {
     required this.username,
     required this.password,
   });
+
 }

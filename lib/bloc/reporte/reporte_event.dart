@@ -2,40 +2,45 @@ import 'package:equatable/equatable.dart';
 import 'package:vdenis/domain/reporte.dart';
 
 abstract class ReporteEvent extends Equatable {
+  const ReporteEvent();
+
   @override
   List<Object?> get props => [];
 }
 
-// Evento para inicializar y cargar todos los reportes
-class ReporteInitEvent extends ReporteEvent {}
-
-// Evento para crear un nuevo reporte
-class ReporteCreateEvent extends ReporteEvent {
+class EnviarReporte extends ReporteEvent {
   final String noticiaId;
   final MotivoReporte motivo;
 
-  ReporteCreateEvent({required this.noticiaId, required this.motivo});
+  const EnviarReporte({
+    required this.noticiaId,
+    required this.motivo,
+  });
 
   @override
   List<Object?> get props => [noticiaId, motivo];
 }
 
-// Evento para eliminar un reporte
-class ReporteDeleteEvent extends ReporteEvent {
-  final String id;
-
-  ReporteDeleteEvent({required this.id});
-
-  @override
-  List<Object?> get props => [id];
-}
-
-// Evento para obtener reportes por ID de noticia
-class ReporteGetByNoticiaEvent extends ReporteEvent {
+// Nuevo evento para cargar estadísticas de reportes para una noticia específica
+class CargarEstadisticasReporte extends ReporteEvent {
   final String noticiaId;
 
-  ReporteGetByNoticiaEvent({required this.noticiaId});
+  const CargarEstadisticasReporte({required this.noticiaId});
 
   @override
   List<Object?> get props => [noticiaId];
+}
+
+// Nuevo evento para verificar si el usuario ha reportado una noticia
+class VerificarReporteUsuario extends ReporteEvent {
+  final String noticiaId;
+  final MotivoReporte motivo;
+
+  const VerificarReporteUsuario({
+    required this.noticiaId,
+    required this.motivo,
+  });
+
+  @override
+  List<Object?> get props => [noticiaId, motivo];
 }

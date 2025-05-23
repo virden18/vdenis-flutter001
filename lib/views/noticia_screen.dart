@@ -1,538 +1,319 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/api/service/categoria_cache_service.dart';
-import 'package:vdenis/bloc/comentarios/comentario_bloc.dart';
-import 'package:vdenis/bloc/noticias/noticia_bloc.dart';
-import 'package:vdenis/bloc/noticias/noticia_event.dart';
-import 'package:vdenis/bloc/noticias/noticia_state.dart';
-import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/bloc/categoria/categoria_bloc.dart';
+import 'package:vdenis/bloc/categoria/categoria_event.dart';
+import 'package:vdenis/bloc/categoria/categoria_state.dart';
+import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
+import 'package:vdenis/bloc/noticia/noticia_event.dart';
+import 'package:vdenis/bloc/noticia/noticia_state.dart';
+import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
+import 'package:vdenis/components/floating_add_button.dart';
+import 'package:vdenis/components/formulario_noticia.dart';
+import 'package:vdenis/components/last_updated_header.dart';
+import 'package:vdenis/components/noticia_card.dart';
+import 'package:vdenis/components/reporte_dialog.dart';
+import 'package:vdenis/components/side_menu.dart';
+import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/domain/noticia.dart';
-import 'package:vdenis/helpers/error_helper.dart';
-import 'package:vdenis/helpers/message_helper.dart';
-import 'package:vdenis/helpers/noticia_card_helper.dart';
-import 'package:vdenis/views/categoria_screen.dart';
-import 'package:vdenis/views/comentarios/comentarios_screen.dart';
+import 'package:vdenis/helpers/categoria_helper.dart';
+import 'package:vdenis/helpers/dialog_helper.dart';
+import 'package:vdenis/helpers/modal_helper.dart';
+import 'package:vdenis/helpers/snackbar_helper.dart';
+import 'package:vdenis/helpers/snackbar_manager.dart';
+import 'package:vdenis/components/comentarios/categoria_screen.dart';
 import 'package:vdenis/views/preferencia_screen.dart';
-import 'package:watch_it/watch_it.dart';
 
 class NoticiaScreen extends StatelessWidget {
-  const NoticiaScreen({super.key});
-  @override
+  const NoticiaScreen({super.key});  @override
   Widget build(BuildContext context) {
-    // Asegurarse de que las categorías estén precargadas
-    _precargarCategorias();    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) {
-            // Crear el bloque de noticias e iniciar la carga
-            return NoticiaBloc()..add(const NoticiasLoadEvent());
-          },
-        ),
-        BlocProvider(
-          create: (context) {
-            // Crear el bloque de comentarios
-            return ComentarioBloc();
-          },
-        ),
-      ],
-      child: const NoticiaView(),
-    );
-  }
-
-  // Método para precargar categorías
-  static Future<void> _precargarCategorias() async {
-    try {
-      final categoriaCacheService = di<CategoryCacheService>();
-      if (!categoriaCacheService.hasCachedCategories) {
-        await categoriaCacheService.refreshCategories();
+    // Limpiar cualquier SnackBar existente al entrar a esta pantalla
+    // pero solo si no está mostrándose el SnackBar de conectividad
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!SnackBarManager().isConnectivitySnackBarShowing) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
-    } catch (e) {
-      debugPrint('Error al precargar categorías: ${e.toString()}');
-    }
+    });    // Usamos el NoticiaBloc global que viene del MultiBlocProvider en main.dart
+    return BlocProvider<CategoriaBloc>(
+      create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
+      child: _NoticiaScreenContent(),
+    );
   }
 }
 
-class NoticiaView extends StatelessWidget {
-  const NoticiaView({super.key});
-
+class _NoticiaScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<NoticiaBloc, NoticiasState>(
+    return BlocConsumer<NoticiaBloc, NoticiaState>(
       listener: (context, state) {
-        if (state is NoticiasError) {
-          MessageHelper.showSnackBar(
+        if (state is NoticiaError) {
+          SnackBarHelper.manejarError(
             context,
-            state.errorMessage,
-            statusCode: state.statusCode,
+            state.error,
           );
+        }else if (state is NoticiaCreated) {
+          SnackBarHelper.mostrarExito(
+            context,
+            mensaje: NoticiasConstantes.successCreated,
+          );
+        }else if (state is NoticiaUpdated) {
+          SnackBarHelper.mostrarExito(
+            context,
+            mensaje: NoticiasConstantes.successUpdated,
+          );
+        }else if (state is NoticiaDeleted) {
+          SnackBarHelper.mostrarExito(
+            context,
+            mensaje: NoticiasConstantes.successDeleted,
+          );
+        }else if (state is NoticiaFiltered) {
+          SnackBarHelper.mostrarExito(
+            context,
+            mensaje: "Noticias filtradas correctamente",
+          );
+        }else if (state is NoticiaLoaded) { 
+          if (state.noticias.isEmpty) {
+            SnackBarHelper.mostrarInfo(
+              context,
+              mensaje: NoticiasConstantes.listaVacia,
+            );
+          }else{
+            SnackBarHelper.mostrarExito(
+              context,
+              mensaje: 'Noticias cargadas correctamente',
+            );
+          }
         }
       },
       builder: (context, state) {
+        DateTime? lastUpdated;
+        if (state is NoticiaLoaded) {
+          lastUpdated = state.lastUpdated;
+        }
         return Scaffold(
-          appBar: _buildAppBar(context, state),
-          body: Container(
-            color: Colors.grey[200],
-            child: _buildBodyContent(context, state),
+          appBar: AppBar(
+            title: const Text(NoticiasConstantes.tituloApp),
+            centerTitle: true,
+            actions: [              
+              IconButton(
+                icon: const Icon(Icons.filter_list),
+                tooltip: 'Filtrar por categorías',
+                onPressed: () async {
+                  // Obtener el NoticiaBloc antes de navegar
+                  final noticiaBloc = context.read<NoticiaBloc>();
+                  // Navegar a la pantalla de preferencias proporcionando el NoticiaBloc actual
+                  await Navigator.push(
+                    context,                    MaterialPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: noticiaBloc,
+                        child: const PreferenciaScreen(),
+                      ),
+                    ),
+                  );
+                  // No necesitamos hacer nada más aquí porque la pantalla de preferencias
+                  // ya se encarga de emitir el evento de filtrado al NoticiaBloc
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.category),
+                tooltip: 'Categorías',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CategoriaScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => _showNoticiaForm(context),
-            backgroundColor: Colors.blueGrey,
-            child: const Icon(Icons.add, color: Colors.white),
+          drawer: const SideMenu(),
+          backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              LastUpdatedHeader(lastUpdated: lastUpdated),
+              Expanded(child: _construirCuerpoNoticias(context, state)),
+            ],
           ),
-        );
-      },
+          floatingActionButton: BlocBuilder<CategoriaBloc, CategoriaState>(
+            builder: (context, categoriaState) {
+              return FloatingAddButton(
+                onPressed: () async {
+
+                  // Si las categorías aún se están cargando, inicia la carga
+                  if (categoriaState is! CategoriaLoaded) {
+                    context.read<CategoriaBloc>().add(CategoriaInitEvent());
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Cargando categorías...')),
+                    );
+                    return;
+                  }
+
+                  final List<Categoria> categorias = categoriaState.categorias;
+
+                  final noticia = await ModalHelper.mostrarDialogo<Noticia>(
+                    context: context,
+                    title: 'Agregar Noticia',
+                    child: FormularioNoticia(categorias: categorias),
+                  );
+
+                  // Si se obtuvo una categoría del formulario y el contexto sigue montado
+                  if (noticia != null && context.mounted) {
+                    // Usar el BLoC para crear la categoría
+                    context.read<NoticiaBloc>().add(
+                      AddNoticiaEvent(noticia),
+                    );
+                  }
+                },
+                tooltip: 'Agregar Noticia',
+              );              
+            },            
+          ),
+          bottomNavigationBar: const CustomBottomNavigationBar(
+            selectedIndex: 0,
+          ),
+
+        );        
+      }
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, NoticiasState state) {
-    // Obtener una referencia al bloc para verificar si hay filtros aplicados
-    final noticiaBloc = BlocProvider.of<NoticiaBloc>(context);
-
-    return AppBar(
-      title: const Text(NewsConstants.tituloApp),
-      backgroundColor: Colors.blueGrey,
-      actions: [
-        // Mostrar botón para limpiar filtros solo cuando hay filtros aplicados
-        if (noticiaBloc.filtrosAplicados)
-          IconButton(
-            icon: const Icon(Icons.filter_none),
-            tooltip: 'Limpiar filtros',
-            onPressed: () {
-              // Dispatch event para limpiar filtros
-              noticiaBloc.add(const ClearNoticiasFilters());
-              MessageHelper.showSnackBar(
-                context,
-                'Filtros eliminados',
-                isSuccess: true,
-              );
-            },
-          ),
-        IconButton(
-          icon: const Icon(Icons.filter_list),
-          tooltip: 'Mis preferencias',
-          onPressed: () => _navegarAPreferencias(context),
-        ),
-        IconButton(
-          icon: const Icon(Icons.category),
-          tooltip: 'Categorías',
-          onPressed: () async {
-            // Capturar el contexto actual antes de la operación async
-            final currentContext = context;
-
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CategoriaScreenDos(),
-              ),
-            );
-
-            // Recargar categorías al volver
-            if (result == true) {
-              // Refrescar caché de categorías primero
-              final categoriaCacheService = di<CategoryCacheService>();
-              await categoriaCacheService.refreshCategories();
-              // Luego recargar noticias
-              if (!currentContext.mounted) return;
-              currentContext.read<NoticiaBloc>().add(const NoticiasLoadEvent());
-            }
-          },
-        ),
-        if (state is NoticiasLoaded)
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Text('Actualizado:', style: TextStyle(fontSize: 10)),
-                  Text(
-                    _formatLastUpdated(state.lastUpdated),
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  String _formatLastUpdated(DateTime dateTime) {
-    return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-  }
-
-  Widget _buildBodyContent(BuildContext context, NoticiasState state) {
-    if (state is NoticiasInitial || state is NoticiasLoading) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text(NewsConstants.mensajeCargando),
-          ],
-        ),
-      );
-    } else if (state is NoticiasError) {
-      final errorMessage = ErrorHelper.getErrorMessageAndColor(
-        state.statusCode,
-      );
+  Widget _construirCuerpoNoticias(
+    BuildContext context,
+    NoticiaState state,
+  ) {
+    if (state is NoticiaLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is NoticiaError) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(errorMessage['message'], style: const TextStyle(fontSize: 16)),
+            Text(
+              state.error.message,
+              style: const TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
-                context.read<NoticiaBloc>().add(const NoticiasLoadEvent());
-              },
-              child: const Text(
-                'Reintentar',
-                style: TextStyle(color: Colors.blueGrey),
-              ),
+              onPressed: () => context.read<NoticiaBloc>().add(FetchNoticiasEvent()),
+              child: const Text('Reintentar'),
             ),
           ],
         ),
       );
-    } else if (state is NoticiasLoaded) {
-      final noticias = state.noticiasList;
-      if (noticias.isEmpty) {
-        return const Center(
-          child: Text(
-            NewsConstants.listaVacia,
-            style: TextStyle(fontSize: 16),
-          ),
-        );
-      } else {
-        // Usar lista de noticias directamente sin caché de categorías
-        // El NoticiaCardHelper se encargará de obtener los nombres de categoría
-        return _buildNoticiasList(context, noticias);
+    } else if (state is NoticiaLoaded) {
+      // Obtener las categorías del BlocProvider
+      final categoriaState = context.watch<CategoriaBloc>().state;
+      List<Categoria> categorias = [];
+      
+      if (categoriaState is CategoriaLoaded) {
+        categorias = categoriaState.categorias;
       }
-    }
-
-    return const Center(child: Text('Estado no reconocido'));
-  }
-
-  Widget _buildNoticiasList(BuildContext context, List<Noticia> noticias) {        return RefreshIndicator(
-      onRefresh: () async {
-        // Capturar el contexto actual antes de la operación async
-        final currentContext = context;
-        // Verificar que el contexto siga montado
-        if (!currentContext.mounted) return;
-
-        currentContext.read<NoticiaBloc>().add(const NoticiasLoadEvent());
-      },
-      child: ListView.builder(
-        itemCount: noticias.length,
-        itemBuilder: (context, index) {
-          final noticia = noticias[index];
-
-          return NoticiaCardHelper.buildNoticiaCard(
-            noticia,
-            onEdit: (noticia) => _showNoticiaForm(context, noticia: noticia),
-            onDelete: (noticia) => _confirmarEliminarNoticia(context, noticia),
-            onComment: (noticia) {
-              // Capturar el contexto actual antes de la operación async
-              final currentContext = context;
-              // Verificar que el contexto siga montado
-              if (!currentContext.mounted) return;
-              // Navegar a la pantalla de comentarios 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BlocProvider.value(
-                    value: BlocProvider.of<ComentarioBloc>(currentContext),
-                    child: ComentariosScreen(noticiaId: noticia.id!),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Future<void> _confirmarEliminarNoticia(
-    BuildContext context,
-    Noticia noticia,
-  ) async {
-    // Capturar el contexto antes de la operación async
-    final currentContext = context;
-
-    final confirmar = await showDialog<bool>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Confirmar eliminación'),
-            content: Text(
-              '¿Estás seguro de que deseas eliminar la noticia "${noticia.titulo}"?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Cancelar'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context, true),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text(
-                  'Eliminar',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-    );
-
-    // Verificar que el contexto siga montado
-    if (!currentContext.mounted) return;
-
-    if (confirmar == true) {
-      currentContext.read<NoticiaBloc>().add(
-        NoticiasDeleteEvent(noticia.id ?? ''),
-      );
-      MessageHelper.showSnackBar(
-        currentContext,
-        SuccessConstants.successDeleted,
-        isSuccess: true,
-      );
-    }
-  }
-
-  void _showNoticiaForm(BuildContext context, {Noticia? noticia}) {
-    final bool isEditing = noticia != null;
-    final String title = isEditing ? 'Editar Noticia' : 'Crear Noticia';
-    final String buttonText = isEditing ? 'Actualizar' : 'Crear';
-    String id = isEditing ? (noticia.id ?? '') : '';
-
-    String selectedCategoriaId =
-        noticia?.categoriaId ?? NewsConstants.defaultCategoriaId;
-
-    final formKey = GlobalKey<FormState>();
-    final TextEditingController tituloController = TextEditingController(
-      text: noticia?.titulo ?? '',
-    );
-    final TextEditingController descripcionController = TextEditingController(
-      text: noticia?.descripcion ?? '',
-    );
-    final TextEditingController fuenteController = TextEditingController(
-      text: noticia?.fuente ?? '',
-    );
-    final TextEditingController urlImagenController = TextEditingController(
-      text: noticia?.urlImagen ?? '',
-    );
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(title),
-          content: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: tituloController,
-                    decoration: const InputDecoration(labelText: 'Título'),
-                    validator:
-                        (value) =>
-                            value?.isEmpty ?? true
-                                ? 'El título es obligatorio'
-                                : null,
-                  ),
-                  TextFormField(
-                    controller: descripcionController,
-                    decoration: const InputDecoration(labelText: 'Descripción'),
-                    validator:
-                        (value) =>
-                            value?.isEmpty ?? true
-                                ? 'La descripción es obligatoria'
-                                : null,
-                  ),
-                  TextFormField(
-                    controller: fuenteController,
-                    decoration: const InputDecoration(labelText: 'Fuente'),
-                    validator:
-                        (value) =>
-                            value?.isEmpty ?? true
-                                ? 'La fuente es obligatoria'
-                                : null,
-                  ),
-                  TextFormField(
-                    controller: urlImagenController,
-                    decoration: const InputDecoration(
-                      labelText: 'URL de la Imagen',
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-
-                  _buildCategoriasDropdown(
-                    context,
-                    selectedCategoriaId,
-                    (value) => selectedCategoriaId = value,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  final Noticia newNoticia = Noticia(
-                    id: isEditing ? id : '',
-                    titulo: tituloController.text,
-                    descripcion: descripcionController.text,
-                    fuente: fuenteController.text,
-                    publicadaEl: noticia?.publicadaEl ?? DateTime.now(),
-                    urlImagen:
-                        urlImagenController.text.isNotEmpty
-                            ? urlImagenController.text
-                            : NewsConstants.urlImagen,
-                    categoriaId: selectedCategoriaId,
-                  );
-
-                  Navigator.pop(dialogContext);
-
-                  if (isEditing) {
-                    context.read<NoticiaBloc>().add(
-                      NoticiasUpdateEvent(
-                        id,
-                        newNoticia.titulo,
-                        newNoticia.descripcion,
-                        newNoticia.fuente,
-                        newNoticia.publicadaEl,
-                        newNoticia.urlImagen,
-                        newNoticia.categoriaId ?? '',
-                      ),
-                    );
-                    MessageHelper.showSnackBar(
-                      context,
-                      SuccessConstants.successUpdated,
-                      isSuccess: true,
-                    );
-                  } else {
-                    context.read<NoticiaBloc>().add(
-                      NoticiasCreateEvent(
-                        newNoticia.titulo,
-                        newNoticia.descripcion,
-                        newNoticia.fuente,
-                        newNoticia.publicadaEl,
-                        newNoticia.urlImagen,
-                        newNoticia.categoriaId ?? '',
-                      ),
-                    );
-                    MessageHelper.showSnackBar(
-                      context,
-                      SuccessConstants.successCreated,
-                      isSuccess: true,
-                    );
-                  }
-                }
-              },
-              child: Text(buttonText),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildCategoriasDropdown(
-    BuildContext context,
-    String initialValue,
-    Function(String) onChanged,
-  ) {
-    // Usar CategoryCacheService a través del método estático di de watch_it
-    final categoriaCacheService = di<CategoryCacheService>();
-    return FutureBuilder<List<Categoria>>(
-      future: categoriaCacheService.getCategories(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-        }
-
-        if (snapshot.hasError) {
-          return const Text(
-            'Error al cargar categorías',
-            style: TextStyle(color: Colors.red),
-          );
-        }
-
-        final categorias = snapshot.data ?? [];
-
-        if (categorias.isEmpty) {
-          return const Text(
-            'No hay categorías disponibles',
-            style: TextStyle(color: Colors.grey),
-          );
-        }
-
-        final items = [
-          const DropdownMenuItem<String>(
-            value: NewsConstants.defaultCategoriaId,
-            child: Text('Sin categoría'),
-          ),
-          ...categorias.map((categoria) {
-            return DropdownMenuItem<String>(
-              value: categoria.id,
-              child: Text(categoria.nombre),
-            );
-          }),
-        ];
-
-        final String value =
-            items.any((item) => item.value == initialValue)
-                ? initialValue
-                : NewsConstants.defaultCategoriaId;
-
-        return DropdownButtonFormField<String>(
-          decoration: const InputDecoration(
-            labelText: 'Categoría',
-            border: OutlineInputBorder(),
-          ),
-          value: value,
-          items: items,
-          onChanged: (value) {
-            if (value != null) {
-              onChanged(value);
+      if (state.noticias.isNotEmpty) {
+        return RefreshIndicator(
+          onRefresh: () async {
+            await Future.delayed(const Duration(milliseconds: 1200));
+            if (context.mounted) {
+              context.read<NoticiaBloc>().add(FetchNoticiasEvent());
             }
           },
+          child: ListView.builder(
+            physics:
+                const AlwaysScrollableScrollPhysics(), // Necesario para pull-to-refresh
+            itemCount: state.noticias.length,
+            itemBuilder: (context, index) {
+              final noticia= state.noticias[index];
+              return Dismissible(
+                key: Key(noticia.id ?? UniqueKey().toString()),
+                background: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                direction: DismissDirection.startToEnd,
+                confirmDismiss: (direction) async {
+                  return await DialogHelper.mostrarConfirmacion(
+                    context: context,
+                    titulo: 'Confirmar eliminación',
+                    mensaje: '¿Estás seguro de que deseas eliminar esta noticia?',
+                    textoCancelar: 'Cancelar',
+                    textoConfirmar: 'Eliminar',
+                  );
+                },
+                onDismissed: (direction) {
+                  context.read<NoticiaBloc>().add(DeleteNoticiaEvent(noticia.id!));
+                },                child: NoticiaCard(
+                  noticia: noticia,
+                  onReport: () {
+                    // Mostrar el diálogo de reportes
+                    ReporteDialog.mostrarDialogoReporte(
+                      context: context, 
+                      noticiaId: noticia.id!,
+                    );
+                  },
+                  onEdit: () async {
+                  // Solo muestra el formulario si las categorías están cargadas
+                  if (categorias.isEmpty) {
+                    SnackBarHelper.mostrarInfo(
+                      context, 
+                      mensaje: 'Cargando categorías...'
+                    );
+                    context.read<CategoriaBloc>().add(CategoriaInitEvent());
+                    return;
+                  }
+                  
+                  final noticiaEditada = await ModalHelper.mostrarDialogo<Noticia>(
+                    context: context,
+                    title: 'Editar Noticia',
+                    child: FormularioNoticia(
+                      noticia: noticia,
+                      categorias: categorias,
+                    ),
+                  );
+                  
+                  if (noticiaEditada != null && context.mounted) {
+                    // Usar copyWith para mantener el ID original y actualizar el resto de datos
+                    final noticiaActualizada = noticiaEditada.copyWith(id: noticia.id);
+                    context.read<NoticiaBloc>().add(
+                      UpdateNoticiaEvent(noticiaActualizada),
+                    );
+                  }
+                },
+                  categoriaNombre: CategoriaHelper.obtenerNombreCategoria(
+                    noticia.categoriaId?? '',
+                    categorias,
+                  ),
+                ),
+              );   
+            } 
+          ),       
         );
-      },
-    );
-  }
-
-  void _navegarAPreferencias(BuildContext context) async {
-    // Capturar el contexto actual antes de la operación async
-    final currentContext = context;
-
-    // Navegar a la pantalla de preferencias
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => BlocProvider.value(
-              value: BlocProvider.of<NoticiaBloc>(currentContext),
-              child: const PreferenciaScreen(),
+      } else {
+          // Añadir esta parte para manejar el caso de lista vacía
+          return RefreshIndicator(
+            onRefresh: () async {
+              await Future.delayed(const Duration(milliseconds: 1200));
+              if (context.mounted) {
+                context.read<NoticiaBloc>().add(FetchNoticiasEvent());
+              }            
+            },
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: const Center(child: Text(NoticiasConstantes.listaVacia)),
+                ),
+              ],
             ),
-      ),
-    );
-
-    // Si regresamos con resultado true, aplicar filtros de preferencias
-    if (result == true && currentContext.mounted) {
-      // Se aplican los filtros automáticamente al guardar las preferencias
+          );
+        }
+    } else {
+      return Container();
     }
   }
 }
+

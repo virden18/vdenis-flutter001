@@ -1,49 +1,55 @@
+import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/data/quote_repository.dart';
 import 'package:vdenis/domain/quote.dart';
 
 class QuoteService {
   final QuoteRepository _repository = QuoteRepository();
 
-  List<Quote> getQuotes() {
-    return _repository.getQuotes();
+  // Método para obtener todas las cotizaciones
+  Future<List<Quote>> getAllQuotes() {
+    return _repository.fetchAllQuotes();
   }
 
-  Future<List<Quote>> getPaginacion(int page, int pageSize) async {
-    if (page < 1) {
-      throw ArgumentError(
-        'El número de página debe ser mayor o igual a 1.',
-        'page',
-      );
+  // Método para obtener una cotización aleatoria
+  Future<Quote> getRandomQuote() {
+    return _repository.fetchRandomQuote();
+  }
+
+  // Método para obtener cotizaciones paginadas
+  Future<List<Quote>> getPaginatedQuotes({
+    required int pageNumber,
+    int pageSize = CotizacionConstantes.pageSize
+  }) async {
+    // Validaciones
+    if (pageNumber < 1) {
+      throw Exception('El número de página debe ser mayor o igual a 1.');
     }
     if (pageSize <= 0) {
-      throw ArgumentError(
-        'El tamaño de página debe ser mayor que 0.',
-        'pageSize',
-      );
+      throw Exception('El tamaño de página debe ser mayor que 0.');
     }
 
-    final quotes = await _repository.getQuotesPag(page, pageSize);
+    // Llama al método del repository para obtener las cotizaciones paginadas
+    final quotes = await _repository.getPaginatedQuotes(
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+    );
 
-    List<Quote> validQuotes = [];
-    for (Quote quote in quotes) {
-      if (quote.changePercentage < -100 && quote.changePercentage > 100) {
-        throw ArgumentError('El change percentage no puede ser menor a -100 o mayor a 100');
-      } else if (quote.stockPrice < 0){
-        throw ArgumentError('El stock price debe ser mayor a cero');
-      } else {
-        validQuotes.add(quote);
+    // Validación adicional: changePercentage debe estar entre -100 y 100
+    for (final quote in quotes) {
+      if (quote.changePercentage > 100 || quote.changePercentage < -100) {
+        throw Exception('El porcentaje de cambio debe estar entre -100 y 100.');
       }
     }
 
-    validQuotes.sort((a, b) => a.stockPrice.compareTo(b.stockPrice));  
-    return validQuotes;
-  }
+    // Filtra las cotizaciones con stockPrice positivo
+    final filteredQuotes = quotes.where((quote) => quote.stockPrice > 0).toList();
 
-  void updateQuotes(List<Quote> quotes) {
-    _repository.updateQuotes(quotes);
-  }
+    // Ordena las cotizaciones por stockPrice de mayor a menor
+    filteredQuotes.sort((a, b) => b.stockPrice.compareTo(a.stockPrice));
 
-  int getLength() {
-    return _repository.getLength();
+    // Simula un delay adicional para consistencia
+    await Future.delayed(const Duration(seconds: 2));
+
+    return filteredQuotes;
   }
 }

@@ -1,87 +1,67 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vdenis/domain/reporte.dart';
 
+@immutable
 abstract class ReporteState extends Equatable {
+  const ReporteState();
+  
   @override
   List<Object?> get props => [];
 }
 
-// Estado inicial
 class ReporteInitial extends ReporteState {}
 
-// Estado de error
-class ReporteError extends ReporteState {
-  final String message;
-
-  ReporteError(this.message, {int? statusCode});
-
-  @override
-  List<Object> get props => [message];
-}
-
-// Estado de carga
 class ReporteLoading extends ReporteState {}
 
-// Estado cuando los reportes están cargados
-class ReporteLoaded extends ReporteState {
-  final List<Reporte> reportes;
-  final DateTime timestamp;
-
-  ReporteLoaded(this.reportes, this.timestamp);
-
+class ReporteSuccess extends ReporteState {
+  final String mensaje;
+  
+  const ReporteSuccess({required this.mensaje});
+  
   @override
-  List<Object> get props => [reportes, timestamp];
+  List<Object?> get props => [mensaje];
 }
 
-// Estado cuando un reporte ha sido creado exitosamente
-class ReporteCreated extends ReporteState {
-  final Reporte reporte;
-
-  ReporteCreated(this.reporte);
-
+class ReporteError extends ReporteState {
+  final String errorMessage;
+  final int? statusCode;
+  
+  const ReporteError({
+    required this.errorMessage,
+    this.statusCode,
+  });
+  
   @override
-  List<Object> get props => [reporte];
+  List<Object?> get props => [errorMessage, statusCode];
 }
 
-// Estado cuando un reporte ha sido eliminado exitosamente
-class ReporteDeleted extends ReporteState {
-  final String id;
-
-  ReporteDeleted(this.id);
-
-  @override
-  List<Object> get props => [id];
-}
-
-// Estado para reportes filtrados por noticia
-class ReportesPorNoticiaLoaded extends ReporteState {
-  final List<Reporte> reportes;
+// Nuevo estado para estadísticas de reportes
+class ReporteEstadisticasLoaded extends ReporteState {
   final String noticiaId;
-
-  ReportesPorNoticiaLoaded(this.reportes, this.noticiaId);
-
+  final Map<MotivoReporte, int> estadisticas;
+  
+  const ReporteEstadisticasLoaded({
+    required this.noticiaId,
+    required this.estadisticas,
+  });
+  
   @override
-  List<Object> get props => [reportes, noticiaId];
+  List<Object?> get props => [noticiaId, estadisticas];
 }
-class ReporteSuccessWithData extends ReporteLoaded {
-  final String message;
 
-  ReporteSuccessWithData({
-    required List<Reporte> reportes,
-    required this.message,
-  }) : super(reportes, DateTime.now());
-
+// Nuevo estado para verificación de reportes del usuario
+class ReporteUsuarioVerificado extends ReporteState {
+  final String noticiaId;
+  final MotivoReporte motivo;
+  final bool reportado;
+  
+  const ReporteUsuarioVerificado({
+    required this.noticiaId,
+    required this.motivo,
+    required this.reportado,
+  });
+  
   @override
-  List<Object> get props => [message, ...super.props];
-}
-class ReporteLoadedWithMessage extends ReporteLoaded {
-  final String message;
-
-  ReporteLoadedWithMessage({
-    required List<Reporte> reportes,
-    required this.message,
-  }) : super(reportes, DateTime.now());
-
-  @override
-  List<Object> get props => [message, ...super.props];
+  List<Object?> get props => [noticiaId, motivo, reportado];
 }

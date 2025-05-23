@@ -1,7 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
+import 'package:vdenis/bloc/noticia/noticia_event.dart';
+import 'package:vdenis/data/auth_repository.dart';
 import 'package:vdenis/bloc/auth/auth_event.dart';
 import 'package:vdenis/bloc/auth/auth_state.dart';
-import 'package:vdenis/data/auth_repository.dart';
+import 'package:vdenis/data/preferencia_repository.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -20,7 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       if (event.email.isEmpty || event.password.isEmpty) {
-        emit(const AuthFailure(error: 'El usuario y la contraseña son obligatorios'));
+        emit(const AuthFailure('El usuario y la contraseña son obligatorios'));
         return;
       }
       
@@ -31,10 +34,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (success) {
         emit(AuthAuthenticated());
       } else {
-        emit(const AuthFailure(error: 'Credenciales inválidas'));
+        emit(const AuthFailure('Credenciales inválidas'));
       }
     } catch (e) {
-      emit(AuthFailure(error: e.toString()));
+      emit( AuthFailure( e.toString()));
     }
   }
 
@@ -45,9 +48,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await _authRepository.logout();
-      emit(AuthUnauthenticated());
+      // Limpiar la caché de preferencias
+      di<PreferenciaRepository>().invalidarCache();
+      
+      // Reiniciar el NoticiaBloc para que no mantenga noticias del usuario anterior
+      final noticiaBloc = di<NoticiaBloc>();
+      noticiaBloc.add(ResetNoticiaEvent());
+      
+      emit(AuthInitial());
     } catch (e) {
-      emit(AuthFailure(error: e.toString()));
+      emit(AuthFailure('Error al cerrar sesión: ${e.toString()}'));
     }
   }
 
@@ -64,7 +74,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthUnauthenticated());
       }
     } catch (e) {
-      emit(AuthFailure(error: e.toString()));
+      emit(AuthFailure(e.toString()));
     }
   }
 }

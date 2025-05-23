@@ -1,48 +1,57 @@
 import 'package:vdenis/api/service/noticia_service.dart';
+import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/domain/noticia.dart';
 
-class NoticiaRepository extends BaseRepository {
+/// Repositorio para gestionar operaciones relacionadas con las noticias.
+/// Extiende BaseRepository para aprovechar la gestión de errores estandarizada.
+class NoticiaRepository extends BaseRepository<Noticia> {
   final NoticiaService _noticiaService = NoticiaService();
 
-  /// Carga noticias desde el repositorio
-  Future<List<Noticia>> getNoticias() async {
-    final List<Noticia> noticias = await get(
-      serviceGet: _noticiaService.getNoticias,
-      operacion: 'cargar noticias',
+  @override
+  void validarEntidad(Noticia noticia) {
+    validarNoVacio(noticia.titulo, ValidacionConstantes.tituloNoticia);
+    validarNoVacio(
+      noticia.descripcion,
+      ValidacionConstantes.descripcionNoticia,
     );
-    if (noticias.isEmpty) {
-      return [];
-    }
-    return noticias;
-  }
+    validarNoVacio(noticia.fuente, ValidacionConstantes.fuenteNoticia);
 
-  Future<void> crearNoticia(Map<String, dynamic> noticiaData) async {
-    return create(
-      serviceCreate: _noticiaService.createNoticia,
-      data: noticiaData,
-      operacion: 'crear noticia',
+    // Validación adicional para la fecha usando el método genérico
+    validarFechaNoFutura(
+      noticia.publicadaEl,
+      ValidacionConstantes.fechaNoticia,
     );
   }
 
-  Future<void> actualizarNoticia(
-    String id,
-    Map<String, dynamic> noticiaData,
-  ) async {
-    return update(
-      serviceUpdate: _noticiaService.updateNoticia,
-      id: id,
-      data: noticiaData,
-      operacion: 'actualizar noticia',
+  /// Obtiene todas las noticias desde el repositorio
+  Future<List<Noticia>> obtenerNoticias() async {
+    return manejarExcepcion(
+      () => _noticiaService.obtenerNoticias(),
+      mensajeError: NoticiasConstantes.mensajeError,
     );
   }
+  /// Crea una nueva noticia
+  Future<Noticia> crearNoticia(Noticia noticia) async {
+    return manejarExcepcion(() {
+      validarEntidad(noticia);
+      return _noticiaService.crearNoticia(noticia);
+    }, mensajeError: NoticiasConstantes.errorCreated);
+  }
 
-  /// Elimina una categoría
+  /// Edita una noticia existente
+  Future<Noticia> editarNoticia(Noticia noticia) async {
+    return manejarExcepcion(() {
+      validarEntidad(noticia);
+      return _noticiaService.editarNoticia(noticia);
+    }, mensajeError: NoticiasConstantes.errorUpdated);
+  }
+
+  /// Elimina una noticia
   Future<void> eliminarNoticia(String id) async {
-    return delete(
-      serviceDelete: _noticiaService.deleteNoticia,
-      id: id,
-      operacion: 'eliminar noticia',
-    );
+    return manejarExcepcion(() {
+      validarId(id);
+      return _noticiaService.eliminarNoticia(id);
+    }, mensajeError: NoticiasConstantes.errorDelete);
   }
 }

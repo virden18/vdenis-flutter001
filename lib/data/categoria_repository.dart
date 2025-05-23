@@ -1,44 +1,80 @@
 import 'package:vdenis/api/service/categoria_service.dart';
+import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/domain/categoria.dart';
 
-class CategoriaRepository extends BaseRepository {
+/// Repositorio de categorías con capacidad de caché
+class CategoriaRepository extends CacheableRepository<Categoria> {
   final CategoriaService _categoriaService = CategoriaService();
 
+  // Timestamp de la última actualización
+  DateTime? _lastRefreshed;
+
+  @override
+  void validarEntidad(Categoria categoria) {
+    validarNoVacio(categoria.nombre, ValidacionConstantes.nombreCategoria);
+    validarNoVacio(
+      categoria.descripcion,
+      ValidacionConstantes.descripcionCategoria,
+    );
+    validarNoVacio(categoria.imagenUrl, ValidacionConstantes.imagenUrl);
+  }
+
+  /// Implementación del método abstracto de CacheableRepository
+  @override
+  Future<List<Categoria>> cargarDatos() async {
+    final categorias = await manejarExcepcion(
+      () => _categoriaService.obtenerCategorias(),
+      mensajeError: CategoriaConstantes.mensajeError,
+    );
+    _lastRefreshed = DateTime.now();
+    return categorias;
+  }
+
+  /// Obtiene el timestamp de la última actualización
+  DateTime? get lastRefreshed => _lastRefreshed;
+
   /// Obtiene todas las categorías desde el repositorio
-  Future<List<Categoria>> getCategorias() async {
-    return get(
-      serviceGet: _categoriaService.getCategorias,
-      operacion: 'cargar categorías',
-    );
+  /// Si hay caché, devolverá los datos en caché
+  Future<List<Categoria>> obtenerCategorias({
+    bool forzarRecarga = false,
+  }) async {
+    return obtenerDatos(forzarRecarga: forzarRecarga);
   }
 
-  Future<void> crearCategoria(Map<String, dynamic> categoriaData) async {
-    return create(
-      serviceCreate: _categoriaService.crearCategoria,
-      data: categoriaData,
-      operacion: 'crear categoría',
-    ); 
+  /// Crea una nueva categoría
+  /// Retorna la categoría creada con su ID asignado por el servidor
+  Future<Categoria> crearCategoria(Categoria categoria) async {
+    return manejarExcepcion(() async {
+      validarEntidad(categoria);
+      final categoriaCreada = await _categoriaService.crearCategoria(categoria);
+      invalidarCache();
+      return categoriaCreada;
+    }, mensajeError: CategoriaConstantes.errorCreated);
   }
 
-  Future<void> actualizarCategoria(
-    String id,
-    Map<String, dynamic> categoriaData,
-  ) async {
-    return update(
-      serviceUpdate: _categoriaService.editarCategoria,
-      id: id,
-      data: categoriaData,
-      operacion: 'actualizar categoría',
-    );
+  /// Edita una categoría existente
+  Future<Categoria> actualizarCategoria(Categoria categoria) async {
+    return manejarExcepcion(() async {
+      validarEntidad(categoria);
+      final categoriaActualizada = await _categoriaService.editarCategoria(categoria);
+      invalidarCache();
+      return categoriaActualizada;
+    }, mensajeError: CategoriaConstantes.errorUpdated);
   }
 
   /// Elimina una categoría
   Future<void> eliminarCategoria(String id) async {
-    return delete(
-      serviceDelete: _categoriaService.eliminarCategoria,
-      id: id,
-      operacion: 'eliminar categoría',
-    );
+    return manejarExcepcion(() async {
+      validarId(id);
+      await _categoriaService.eliminarCategoria(id);
+      invalidarCache();
+    }, mensajeError: CategoriaConstantes.errorDelete);
+  }
+
+  /// Limpia la caché de categorías (método público)
+  void limpiarCache() {
+    invalidarCache();
+    _lastRefreshed = null;
   }
 }

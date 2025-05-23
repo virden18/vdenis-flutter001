@@ -1,114 +1,95 @@
-import 'package:flutter/foundation.dart';
+import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 
-class BaseRepository {
-  void handleError(
-    dynamic error, {
-    String operacion = 'realizar la operación',
-  }) {
-    final String mensaje =
-        error is ApiException
-            ? error.message
-            : 'Error al $operacion: ${error.toString()}';
-    debugPrint('Error en repositorio: $mensaje');
-    if (error is ApiException) {
-      throw error; // Relanzar ApiException para mantener el código de estado
-    } else {
-      throw ApiException(mensaje);
-    }
-  }
+/// La clase BaseRepository sirve como base para todos los repositorios de la aplicación.
+/// Proporciona funcionalidad común y manejo de errores estandarizado.
+abstract class BaseRepository<T> {
+  /// Un método para validar entidades genéricas.
+  /// Cada repositorio concreto debe implementar su propia lógica de validación.
+  void validarEntidad(T entidad);
 
-  /// Ejecuta una operación de forma segura, manejando excepciones
-  /// y transformando errores genéricos a ApiException
-  /// [T] es un tipo de dato génerico que representa el tipo de respuesta esperada
-  Future<T> executeServiceCall<T>({
-    required Future<T> Function() serviceCall,
-    String operacion = 'realizar la operación',
+  /// Método utilitario para manejar excepciones de manera consistente.
+  /// Diferencia entre ApiException y otras excepciones, permitiendo un manejo adecuado.
+  Future<R> manejarExcepcion<R>(
+    Future<R> Function() accion, {
+    String mensajeError = 'Error desconocido',
   }) async {
     try {
-      return await serviceCall();
-    } on ApiException catch (e) {
-      handleError(e, operacion: operacion);
-      rethrow; // Esta línea nunca se ejecutará si handleError relanza la excepción
+      return await accion();
     } catch (e) {
-      handleError(e, operacion: operacion);
-      rethrow; // Esta línea nunca se ejecutará si handleError relanza la excepción
+      if (e is ApiException) {
+        // Propagar ApiException directamente
+        rethrow;
+      } else {
+        // Envolver otras excepciones en ApiException con mensaje contextual
+        throw ApiException('$mensajeError: $e');
+      }
     }
   }
 
-  Future<T> get<T>({
-    required Future<T> Function() serviceGet,
-    String operacion = 'obtener datos',
-  }) async {
-    return executeServiceCall(serviceCall: serviceGet, operacion: operacion);
-  }
-
-   /// Obtener datos con manejo de caché
-  /// Útil para implementar patrones de caché en repositorios específicos
-  Future<T> getWithCache<T>({
-    required T? cachedData,
-    required Future<T> Function() fetchData,
-    required Function(T) updateCache,
-    String operacion = 'obtener datos',
-  }) async {
-    if (cachedData != null) {
-      return cachedData;
-    }
-    
-    try {
-      final T data = await fetchData();
-      updateCache(data);
-      return data;
-    } on ApiException catch (e) {
-      handleError(e, operacion: operacion);
-      rethrow;
-    } catch (e) {
-      handleError(e, operacion: operacion);
-      rethrow;
+  /// Valida que un valor no esté vacío y lanza una excepción si lo está.
+  void validarNoVacio(String? valor, String nombreCampo) {
+    if (valor == null || valor.isEmpty) {
+      throw ApiException(
+        '$nombreCampo${ValidacionConstantes.campoVacio}',
+        statusCode: 400,
+      );
     }
   }
 
-  // [D] es un tipo de dato genérico que representa el tipo de datos a enviar
-  Future<void> create<D>({
-    required Future<void> Function(D data) serviceCreate,
-    required D data,
-    String operacion = 'crear recurso',
-  }) async {
-    return executeServiceCall(
-      serviceCall: () => serviceCreate(data),
-      operacion: operacion,
-    );
+  /// Valida que un ID no esté vacío.
+  void validarId(String? id) {
+    validarNoVacio(id, 'ID');
   }
 
-  // [D] es un tipo de dato genérico que representa el tipo de datos a enviar
-  // [ID] es un tipo de dato genérico que representa el tipo de ID
-  Future<void> update<D, ID>({
-    required Future<void> Function(ID id, D data) serviceUpdate,
-    required ID id,
-    required D data,
-    String operacion = 'actualizar datos',
-  }) async {
-    return executeServiceCall(
-      serviceCall: () => serviceUpdate(id, data),
-      operacion: operacion,
-    );
-  }
-
-  Future<void> delete<ID>({
-    required Future<void> Function(ID id) serviceDelete,
-    required ID id,
-    String operacion = 'eliminar recurso',
-  }) async {
-    return executeServiceCall(
-      serviceCall: () => serviceDelete(id),
-      operacion: operacion,
-    );
-  }
-
-  /// Validar que un ID no sea nulo o vacío
-  void validateId(String? id, {String mensaje = 'ID no válido'}) {
-    if (id == null || id.trim().isEmpty) {
-      throw ApiException(mensaje, statusCode: 400);
+  /// Valida que una fecha no esté en el futuro
+  /// @param fecha La fecha a validar
+  /// @param nombreCampo Nombre del campo para el mensaje de error
+  /// @param mensajeError Mensaje de error personalizado (opcional)
+  void validarFechaNoFutura(DateTime fecha, String nombreCampo) {
+    if (fecha.isAfter(DateTime.now())) {
+      throw ApiException(
+        '$nombreCampo${ValidacionConstantes.noFuturo}',
+        statusCode: 400,
+      );
     }
+  }
+}
+
+/// Extensión del BaseRepository que incluye capacidades de caché.
+abstract class CacheableRepository<T> extends BaseRepository<T> {
+  /// Almacenamiento en caché de datos
+  List<T>? _cache;
+
+  /// Flag para indicar si hay cambios pendientes
+  bool _cambiosPendientes = false;
+
+  /// Obtiene datos, preferentemente desde la caché
+  Future<List<T>> obtenerDatos({bool forzarRecarga = false}) async {
+    // Si forzarRecarga es true o no hay caché, cargar desde la fuente de datos
+    if (forzarRecarga || _cache == null) {
+      _cache = await cargarDatos();
+    }
+
+    return _cache ?? [];
+  }
+
+  /// Carga datos desde la fuente de datos
+  Future<List<T>> cargarDatos();
+
+  /// Marca que hay cambios pendientes
+  void marcarCambiosPendientes() {
+    _cambiosPendientes = true;
+  }
+
+  /// Verifica si hay cambios pendientes
+  bool hayCambiosPendientes() {
+    return _cambiosPendientes;
+  }
+
+  /// Limpia la caché para forzar una recarga
+  void invalidarCache() {
+    _cache = null;
+    _cambiosPendientes = false;
   }
 }

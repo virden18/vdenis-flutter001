@@ -22,13 +22,13 @@ class TaskMapper extends ClassMapperBase<Task> {
 
   static String _$title(Task v) => v.title;
   static const Field<Task, String> _f$title = Field('title', _$title);
-  static String _$type(Task v) => v.type;
+  static String _$type(Task v) => v.tipo;
   static const Field<Task, String> _f$type =
       Field('type', _$type, opt: true, def: 'normal');
-  static String? _$description(Task v) => v.description;
+  static String? _$description(Task v) => v.descripcion;
   static const Field<Task, String> _f$description =
       Field('description', _$description, opt: true);
-  static DateTime? _$date(Task v) => v.date;
+  static DateTime? _$date(Task v) => v.fecha;
   static const Field<Task, DateTime> _f$date = Field('date', _$date, opt: true);
   static DateTime? _$fechaLimite(Task v) => v.fechaLimite;
   static const Field<Task, DateTime> _f$fechaLimite =
@@ -50,9 +50,9 @@ class TaskMapper extends ClassMapperBase<Task> {
   static Task _instantiate(DecodingData data) {
     return Task(
         title: data.dec(_f$title),
-        type: data.dec(_f$type),
-        description: data.dec(_f$description),
-        date: data.dec(_f$date),
+        tipo: data.dec(_f$type),
+        descripcion: data.dec(_f$description),
+        fecha: data.dec(_f$date),
         fechaLimite: data.dec(_f$fechaLimite),
         pasos: data.dec(_f$pasos));
   }
@@ -145,9 +145,9 @@ class _TaskCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Task, $Out>
   @override
   Task $make(CopyWithData data) => Task(
       title: data.get(#title, or: $value.title),
-      type: data.get(#type, or: $value.type),
-      description: data.get(#description, or: $value.description),
-      date: data.get(#date, or: $value.date),
+      tipo: data.get(#type, or: $value.tipo),
+      descripcion: data.get(#description, or: $value.descripcion),
+      fecha: data.get(#date, or: $value.fecha),
       fechaLimite: data.get(#fechaLimite, or: $value.fechaLimite),
       pasos: data.get(#pasos, or: $value.pasos));
 

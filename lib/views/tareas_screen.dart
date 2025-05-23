@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/api/service/tarea_service.dart';
+import 'package:vdenis/data/tarea_repository.dart';
 import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
@@ -16,7 +16,7 @@ class TareaScreen extends StatefulWidget {
 }
 
 class TareaScreenState extends State<TareaScreen> {
-  final TareasService _tareasService = TareasService();
+  final TareasRepository _tareasRepository = TareasRepository();
   final ScrollController _scrollController = ScrollController();
   bool _cargando = false;
   // bool _hayMasTareas = true;
@@ -45,7 +45,9 @@ class TareaScreenState extends State<TareaScreen> {
       _cargando = true;
     });
 
-    final tareas = await _tareasService.getTasksWithSteps(limite: _limitePorPagina);
+    final tareas = await _tareasRepository.getTasksWithSteps(
+      limite: _limitePorPagina,
+    );
 
     setState(() {
       _tareas = tareas;
@@ -74,7 +76,7 @@ class TareaScreenState extends State<TareaScreen> {
         _cargando = true;
       });
 
-      final nuevasTareas = await _tareasService.getMoreTasksWithSteps(
+      final nuevasTareas = await _tareasRepository.getMoreTasksWithSteps(
         inicio: _tareas.length,
         limite: _limitePorPagina,
       );
@@ -99,7 +101,7 @@ class TareaScreenState extends State<TareaScreen> {
       context: context,
       builder: (context) => AddTaskModal(
         onTaskAdded: (Task nuevaTarea) async {
-          Task tareaActualizada = await _tareasService.agregarTarea(nuevaTarea); // El servicio define el tipo
+          Task tareaActualizada = await _tareasRepository.agregarTarea(nuevaTarea); // El servicio define el tipo
           setState(() {
             _tareas.insert(0, tareaActualizada); // Agrega la nueva tarea al inicio de la lista
           });
@@ -109,7 +111,7 @@ class TareaScreenState extends State<TareaScreen> {
   }
 
   Future<void> _eliminarTarea(int index) async {
-    await _tareasService.eliminarTarea(index);
+    await _tareasRepository.eliminarTarea(index);
     setState(() {
       _tareas.removeAt(index); // Elimina la tarea de la lista persistente
     });
@@ -133,7 +135,7 @@ class TareaScreenState extends State<TareaScreen> {
       builder: (context) => AddTaskModal(
         taskToEdit: tarea,
         onTaskAdded: (Task tareaEditada) async {
-          Task tareaActualizada = await _tareasService.actualizarTarea(index, tareaEditada);
+          Task tareaActualizada = await _tareasRepository.actualizarTarea(index, tareaEditada);
           setState(() {
             _tareas[index] = tareaActualizada; // Actualiza la tarea en la lista persistente
           });

@@ -13,7 +13,7 @@ class TareaService extends BaseService {
     );
 
     return tareasJson
-        .map<Tarea>((json) => TaskMapper.fromMap(json as Map<String, dynamic>))
+        .map<Tarea>((json) => TareaMapper.fromMap(json as Map<String, dynamic>))
         .toList();
   }
 
@@ -25,7 +25,7 @@ class TareaService extends BaseService {
       errorMessage: 'Error al crear la tarea',
     );
 
-    return TaskMapper.fromMap(json);
+    return TareaMapper.fromMap(json);
   }
 
   /// Elimina una tarea existente
@@ -43,6 +43,6 @@ class TareaService extends BaseService {
       errorMessage: 'Error al actualizar la tarea',
     );
 
-    return TaskMapper.fromMap(json);
+    return TareaMapper.fromMap(json);
   }
 }

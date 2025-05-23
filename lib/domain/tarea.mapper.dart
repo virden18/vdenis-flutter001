@@ -36,9 +36,6 @@ class TareaMapper extends ClassMapperBase<Tarea> {
   static DateTime? _$fechaLimite(Tarea v) => v.fechaLimite;
   static const Field<Tarea, DateTime> _f$fechaLimite =
       Field('fechaLimite', _$fechaLimite, opt: true);
-  static List<String>? _$pasos(Tarea v) => v.pasos;
-  static const Field<Tarea, List<String>> _f$pasos =
-      Field('pasos', _$pasos, opt: true);
 
   @override
   final MappableFields<Tarea> fields = const {
@@ -48,7 +45,6 @@ class TareaMapper extends ClassMapperBase<Tarea> {
     #descripcion: _f$descripcion,
     #fecha: _f$fecha,
     #fechaLimite: _f$fechaLimite,
-    #pasos: _f$pasos,
   };
 
   static Tarea _instantiate(DecodingData data) {
@@ -58,8 +54,7 @@ class TareaMapper extends ClassMapperBase<Tarea> {
         tipo: data.dec(_f$tipo),
         descripcion: data.dec(_f$descripcion),
         fecha: data.dec(_f$fecha),
-        fechaLimite: data.dec(_f$fechaLimite),
-        pasos: data.dec(_f$pasos));
+        fechaLimite: data.dec(_f$fechaLimite));
   }
 
   @override
@@ -108,15 +103,13 @@ extension TareaValueCopy<$R, $Out> on ObjectCopyWith<$R, Tarea, $Out> {
 
 abstract class TareaCopyWith<$R, $In extends Tarea, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get pasos;
   $R call(
       {String? id,
       String? titulo,
       String? tipo,
       String? descripcion,
       DateTime? fecha,
-      DateTime? fechaLimite,
-      List<String>? pasos});
+      DateTime? fechaLimite});
   TareaCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -127,28 +120,20 @@ class _TareaCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Tarea, $Out>
   @override
   late final ClassMapperBase<Tarea> $mapper = TareaMapper.ensureInitialized();
   @override
-  ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get pasos =>
-      $value.pasos != null
-          ? ListCopyWith($value.pasos!,
-              (v, t) => ObjectCopyWith(v, $identity, t), (v) => call(pasos: v))
-          : null;
-  @override
   $R call(
           {Object? id = $none,
           String? titulo,
           String? tipo,
           Object? descripcion = $none,
           Object? fecha = $none,
-          Object? fechaLimite = $none,
-          Object? pasos = $none}) =>
+          Object? fechaLimite = $none}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
         if (titulo != null) #titulo: titulo,
         if (tipo != null) #tipo: tipo,
         if (descripcion != $none) #descripcion: descripcion,
         if (fecha != $none) #fecha: fecha,
-        if (fechaLimite != $none) #fechaLimite: fechaLimite,
-        if (pasos != $none) #pasos: pasos
+        if (fechaLimite != $none) #fechaLimite: fechaLimite
       }));
   @override
   Tarea $make(CopyWithData data) => Tarea(
@@ -157,8 +142,7 @@ class _TareaCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Tarea, $Out>
       tipo: data.get(#tipo, or: $value.tipo),
       descripcion: data.get(#descripcion, or: $value.descripcion),
       fecha: data.get(#fecha, or: $value.fecha),
-      fechaLimite: data.get(#fechaLimite, or: $value.fechaLimite),
-      pasos: data.get(#pasos, or: $value.pasos));
+      fechaLimite: data.get(#fechaLimite, or: $value.fechaLimite));
 
   @override
   TareaCopyWith<$R2, Tarea, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>

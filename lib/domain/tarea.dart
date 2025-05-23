@@ -9,7 +9,6 @@ class Tarea with TareaMappable{
   final String? descripcion;
   final DateTime? fecha;
   final DateTime? fechaLimite; // Nueva fecha límite
-  final List<String>? pasos; // Nuevos pasos
 
   Tarea({
     this.id,
@@ -18,6 +17,5 @@ class Tarea with TareaMappable{
     this.descripcion,
     this.fecha,
     this.fechaLimite,
-    this.pasos,
   });
 }

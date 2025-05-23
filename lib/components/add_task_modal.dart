@@ -41,9 +41,6 @@ class AddTaskModalState extends State<AddTaskModal> {
           : '',
     );
 
-    // Inicializa la lista de pasos
-    pasos = widget.taskToEdit?.pasos ?? [];
-
     // Inicializa el tipo de tarea
     tipoSeleccionado = widget.taskToEdit?.tipo ?? 'normal';
 
@@ -169,7 +166,6 @@ class AddTaskModalState extends State<AddTaskModal> {
               fechaLimite: fechaLimiteSeleccionada,
               // Mantiene el type si está editando
               tipo: tipoSeleccionado,
-              pasos: pasos, 
             );
 
             widget.onTaskAdded(nuevaTarea); // Llama al callback para agregar la tarea

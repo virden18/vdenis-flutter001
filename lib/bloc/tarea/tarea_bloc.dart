@@ -6,13 +6,14 @@ import 'package:vdenis/data/tarea_repository.dart';
 
 class TareaBloc extends Bloc<TareaEvent, TareaState> {
   final TareasRepository _tareaRepository = TareasRepository();
-  
+
   TareaBloc() : super(TareaInitial()) {
     on<TareaLoadEvent>(_onLoadTareas);
     on<TareaCreateEvent>(_onCreateTarea);
     on<TareaUpdateEvent>(_onUpdateTarea);
     on<TareaDeleteEvent>(_onDeleteTarea);
   }
+
   /// Maneja el evento para cargar tareas iniciales
   Future<void> _onLoadTareas(
     TareaLoadEvent event,
@@ -20,24 +21,29 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
   ) async {
     // Emitimos estado de carga
     emit(TareaLoading());
-    
+
     try {
       // Obtenemos las tareas del repositorio
-      final tareas = await _tareaRepository.obtenerTareas(
-        limite: event.limite,
-      );
-      
+      final tareas = await _tareaRepository.obtenerTareas();
+
       // Emitimos el estado con las tareas cargadas
-      emit(TareaLoaded(
-        tareas: tareas,
-        hayMasTareas: tareas.length >= event.limite, // Si obtenemos el límite completo, asumimos que hay más
-      ));
+      emit(
+        TareaLoaded(
+          tareas: tareas,
+          hayMasTareas:
+              tareas.length >=
+              event
+                  .limite, // Si obtenemos el límite completo, asumimos que hay más
+        ),
+      );
     } catch (e) {
       debugPrint('Error en _onLoadTareas: $e');
-      emit(TareaError(
-        e is Exception ? e : Exception(e.toString()),
-        TipoOperacionTarea.cargar,
-      ));
+      emit(
+        TareaError(
+          e is Exception ? e : Exception(e.toString()),
+          TipoOperacionTarea.cargar,
+        ),
+      );
     }
   }
 
@@ -52,23 +58,27 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       try {
         // Creamos la nueva tarea
         final nuevaTarea = await _tareaRepository.agregarTarea(event.tarea);
-        
+
         // Añadimos la nueva tarea al inicio de la lista
         final tareas = [nuevaTarea, ...currentState.tareas];
-        
+
         // Emitimos el estado de tarea creada
-        emit(TareaCreated(
-          nuevaTarea: nuevaTarea,
-          tareas: tareas,
-          hayMasTareas: currentState.hayMasTareas,
-        ));
+        emit(
+          TareaCreated(
+            nuevaTarea: nuevaTarea,
+            tareas: tareas,
+            hayMasTareas: currentState.hayMasTareas,
+          ),
+        );
       } catch (e) {
         debugPrint('Error en _onCreateTarea: $e');
-        emit(TareaError(
-          e is Exception ? e : Exception(e.toString()),
-          TipoOperacionTarea.crear,
-        ));
-        
+        emit(
+          TareaError(
+            e is Exception ? e : Exception(e.toString()),
+            TipoOperacionTarea.crear,
+          ),
+        );
+
         // Restauramos el estado anterior después del error
         emit(currentState);
       }
@@ -92,25 +102,30 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
           event.taskId,
           event.tarea,
         );
-        
+
         // Reemplazamos la tarea actualizada en la lista
-        final tareas = currentState.tareas.map((tarea) {
-          return tarea.id == event.taskId ? tareaActualizada : tarea;
-        }).toList();
-        
+        final tareas =
+            currentState.tareas.map((tarea) {
+              return tarea.id == event.taskId ? tareaActualizada : tarea;
+            }).toList();
+
         // Emitimos el estado de tarea actualizada
-        emit(TareaUpdated(
-          tareaActualizada: tareaActualizada,
-          tareas: tareas,
-          hayMasTareas: currentState.hayMasTareas,
-        ));
+        emit(
+          TareaUpdated(
+            tareaActualizada: tareaActualizada,
+            tareas: tareas,
+            hayMasTareas: currentState.hayMasTareas,
+          ),
+        );
       } catch (e) {
         debugPrint('Error en _onUpdateTarea: $e');
-        emit(TareaError(
-          e is Exception ? e : Exception(e.toString()),
-          TipoOperacionTarea.actualizar,
-        ));
-        
+        emit(
+          TareaError(
+            e is Exception ? e : Exception(e.toString()),
+            TipoOperacionTarea.actualizar,
+          ),
+        );
+
         // Restauramos el estado anterior después del error
         emit(currentState);
       }
@@ -131,25 +146,30 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       try {
         // Eliminamos la tarea
         await _tareaRepository.eliminarTarea(event.taskId);
-        
+
         // Filtramos la tarea eliminada de la lista
-        final tareas = currentState.tareas
-            .where((tarea) => tarea.id != event.taskId)
-            .toList();
-        
+        final tareas =
+            currentState.tareas
+                .where((tarea) => tarea.id != event.taskId)
+                .toList();
+
         // Emitimos el estado de tarea eliminada
-        emit(TareaDeleted(
-          tareaEliminadaId: event.taskId,
-          tareas: tareas,
-          hayMasTareas: currentState.hayMasTareas,
-        ));
+        emit(
+          TareaDeleted(
+            tareaEliminadaId: event.taskId,
+            tareas: tareas,
+            hayMasTareas: currentState.hayMasTareas,
+          ),
+        );
       } catch (e) {
         debugPrint('Error en _onDeleteTarea: $e');
-        emit(TareaError(
-          e is Exception ? e : Exception(e.toString()),
-          TipoOperacionTarea.eliminar,
-        ));
-        
+        emit(
+          TareaError(
+            e is Exception ? e : Exception(e.toString()),
+            TipoOperacionTarea.eliminar,
+          ),
+        );
+
         // Restauramos el estado anterior después del error
         emit(currentState);
       }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/tarea.dart';
 
 class CommonWidgetsHelper {
@@ -84,19 +83,6 @@ Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
     shape: CommonWidgetsHelper.buildRoundedBorder(),
     leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo), // Ícono dinámico
     title: CommonWidgetsHelper.buildBoldTitle(tarea.titulo), // Título en negrita
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('${TareasConstantes.tipoTarea} ${tarea.tipo}'), // Muestra el tipo de tarea
-          CommonWidgetsHelper.buildSpacing(),
-          if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
-              CommonWidgetsHelper.buildInfoLines(
-                '${TareasConstantes.pasosTitulo} ${tarea.pasos![0]}',
-              ) // Muestra el primer paso
-          else
-            CommonWidgetsHelper.buildNoStepsText(), // Mensaje si no hay pasos
-        ],
-      ),
       trailing: IconButton(
         onPressed: onEdit, // Llama a la función de edición
         icon: const Icon(Icons.edit, size: 16),

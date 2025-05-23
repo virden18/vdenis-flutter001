@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:vdenis/api/service/preferencia_service.dart';
 import 'package:vdenis/core/base_repository.dart';
-import 'package:vdenis/core/secure_storage.dart';
+import 'package:vdenis/core/service/secure_storage_service.dart';
 import 'package:vdenis/domain/preferencia.dart';
 
 class PreferenciaRepository extends BaseRepository {

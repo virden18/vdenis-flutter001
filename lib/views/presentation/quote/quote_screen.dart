@@ -172,7 +172,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
           final bool isPositiveChange = quote.changePercentage >= 0;
           final Color changeColor =
               isPositiveChange ? Colors.green : Colors.red;
-          final DateFormat formatter = DateFormat(AppConstants.formatoFecha);
+          final DateFormat formatter = DateFormat(AppConstantes.formatoFecha);
           final String formattedDate = formatter.format(quote.lastUpdated);
 
           return Card(

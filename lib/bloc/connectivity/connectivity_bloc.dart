@@ -3,7 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_event.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_state.dart';
-import 'package:vdenis/core/connectivity_service.dart';
+import 'package:vdenis/core/service/connectivity_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 /// BLoC para gestionar el estado de la conectividad a Internet en la aplicación

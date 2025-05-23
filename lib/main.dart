@@ -8,7 +8,7 @@ import 'package:vdenis/bloc/preferencia/preferencia_event.dart';
 import 'package:vdenis/bloc/reporte/reporte_bloc.dart';
 import 'package:vdenis/di/locator.dart';
 import 'package:vdenis/bloc/auth/auth_bloc.dart'; // Importa el AuthBloc
-import 'package:vdenis/core/secure_storage.dart'; // Importa el servicio de almacenamiento seguro
+import 'package:vdenis/core/service/secure_storage_service.dart'; // Importa el servicio de almacenamiento seguro
 import 'package:watch_it/watch_it.dart'; // Importa watch_it para usar di
 import 'package:vdenis/components/connectivity_wrapper.dart'; // Importa el wrapper de conectividad
 import 'package:vdenis/views/login_screen.dart';

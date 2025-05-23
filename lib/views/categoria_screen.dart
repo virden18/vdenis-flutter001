@@ -142,7 +142,7 @@ class CategoriaScreenDos extends StatelessWidget {
                         descripcion: descripcionController.text,
                         imagenUrl: imagenUrlController.text.isNotEmpty
                             ? imagenUrlController.text
-                            : NewsConstants.urlCategoria,
+                            : NoticiasConstantes.urlCategoria,
                       ),
                     );
                     MessageHelper.showSnackBar(
@@ -157,7 +157,7 @@ class CategoriaScreenDos extends StatelessWidget {
                         descripcion: descripcionController.text,
                         imagenUrl: imagenUrlController.text.isNotEmpty
                             ? imagenUrlController.text
-                            : NewsConstants.urlCategoria,
+                            : NoticiasConstantes.urlCategoria,
                       ),
                     );
                     MessageHelper.showSnackBar(

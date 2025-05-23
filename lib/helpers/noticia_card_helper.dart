@@ -21,7 +21,7 @@ class NoticiaCardHelper {
     void Function(Noticia)? onComment,
     String? categoriaNombre,
   }) {
-    final DateFormat formatter = DateFormat(AppConstants.formatoFecha);
+    final DateFormat formatter = DateFormat(AppConstantes.formatoFecha);
     final String formattedDate = formatter.format(noticia.publicadaEl);
 
     // Si ya tenemos el nombre de la categoría, lo usamos directamente
@@ -79,7 +79,7 @@ class NoticiaCardHelper {
   ) {
     final String categoriaText =
         noticia.categoriaId != null &&
-                noticia.categoriaId != NewsConstants.defaultCategoriaId
+                noticia.categoriaId != NoticiasConstantes.defaultCategoriaId
             ? categoryName
             : 'Sin categoría';
 

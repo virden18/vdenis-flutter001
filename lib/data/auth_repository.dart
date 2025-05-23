@@ -1,6 +1,6 @@
 
 import 'package:vdenis/api/service/auth_service.dart';
-import 'package:vdenis/core/secure_storage.dart';
+import 'package:vdenis/core/service/secure_storage_service.dart';
 import 'package:vdenis/domain/login_request.dart';
 import 'package:vdenis/domain/login_response.dart';
 

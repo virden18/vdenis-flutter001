@@ -91,7 +91,7 @@ class NoticiaView extends StatelessWidget {
     final noticiaBloc = BlocProvider.of<NoticiaBloc>(context);
 
     return AppBar(
-      title: const Text(NewsConstants.tituloApp),
+      title: const Text(NoticiasConstantes.tituloApp),
       backgroundColor: Colors.blueGrey,
       actions: [
         // Mostrar botón para limpiar filtros solo cuando hay filtros aplicados
@@ -172,7 +172,7 @@ class NoticiaView extends StatelessWidget {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text(NewsConstants.mensajeCargando),
+            Text(NoticiasConstantes.mensajeCargando),
           ],
         ),
       );
@@ -203,7 +203,7 @@ class NoticiaView extends StatelessWidget {
       if (noticias.isEmpty) {
         return const Center(
           child: Text(
-            NewsConstants.listaVacia,
+            NoticiasConstantes.listaVacia,
             style: TextStyle(fontSize: 16),
           ),
         );
@@ -311,7 +311,7 @@ class NoticiaView extends StatelessWidget {
     String id = isEditing ? (noticia.id ?? '') : '';
 
     String selectedCategoriaId =
-        noticia?.categoriaId ?? NewsConstants.defaultCategoriaId;
+        noticia?.categoriaId ?? NoticiasConstantes.defaultCategoriaId;
 
     final formKey = GlobalKey<FormState>();
     final TextEditingController tituloController = TextEditingController(
@@ -399,7 +399,7 @@ class NoticiaView extends StatelessWidget {
                     urlImagen:
                         urlImagenController.text.isNotEmpty
                             ? urlImagenController.text
-                            : NewsConstants.urlImagen,
+                            : NoticiasConstantes.urlImagen,
                     categoriaId: selectedCategoriaId,
                   );
 
@@ -481,7 +481,7 @@ class NoticiaView extends StatelessWidget {
 
         final items = [
           const DropdownMenuItem<String>(
-            value: NewsConstants.defaultCategoriaId,
+            value: NoticiasConstantes.defaultCategoriaId,
             child: Text('Sin categoría'),
           ),
           ...categorias.map((categoria) {
@@ -495,7 +495,7 @@ class NoticiaView extends StatelessWidget {
         final String value =
             items.any((item) => item.value == initialValue)
                 ? initialValue
-                : NewsConstants.defaultCategoriaId;
+                : NoticiasConstantes.defaultCategoriaId;
 
         return DropdownButtonFormField<String>(
           decoration: const InputDecoration(

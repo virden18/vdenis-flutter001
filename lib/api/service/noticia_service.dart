@@ -13,7 +13,7 @@ class NoticiaService extends BaseService {
   Future<List<Noticia>> getNoticias() async {
     try {
       // Utilizamos el método get() de BaseService
-      final data = await get(NewsConstants.newsEndpoint, requireAuthToken: false);
+      final data = await get(ApiConstants.endpointNoticias, requireAuthToken: false);
 
       if (data is List) {
         final List<dynamic> articlesJson = data;
@@ -53,7 +53,7 @@ class NoticiaService extends BaseService {
     try {
       // Utilizamos el método post() de BaseService
       await post(
-        NewsConstants.newsEndpoint,
+        ApiConstants.endpointNoticias,
         data: noticia,
         requireAuthToken: true,
       );
@@ -80,7 +80,7 @@ class NoticiaService extends BaseService {
 
       // Utilizamos el método put() de BaseService
       await put(
-        '${NewsConstants.newsEndpoint}/$id',
+        '${ApiConstants.endpointNoticias}/$id',
         data: noticia,
         requireAuthToken: true,
       );
@@ -107,7 +107,7 @@ class NoticiaService extends BaseService {
 
       // Utilizamos el método delete() de BaseService
       await delete(
-        '${NewsConstants.newsEndpoint}/$id',
+        '${ApiConstants.endpointNoticias}/$id',
         requireAuthToken: true,
       );
       
@@ -133,7 +133,7 @@ class NoticiaService extends BaseService {
 
       // Si no está en caché, buscar en la API
       final data = await get(
-        '${NewsConstants.newsEndpoint}/$id', 
+        '${ApiConstants.endpointNoticias}/$id', 
         requireAuthToken: false,
       );
 

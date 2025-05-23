@@ -31,7 +31,7 @@ class BaseService {
         connectTimeout: const Duration(seconds: AppConstants.timeoutSeconds),
         receiveTimeout: const Duration(seconds: AppConstants.timeoutSeconds),
         headers: {
-          'Authorization': 'Bearer ${ApiConfig.beeceptorApiKey}',
+          'x-beeceptor-auth': ApiConfig.beeceptorApiKey,
           'Content-Type': 'application/json',
         },
       ),

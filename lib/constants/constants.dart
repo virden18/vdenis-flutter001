@@ -1,17 +1,15 @@
-import 'package:vdenis/core/api_config.dart';
-
 // Constantes generales de la aplicación
 class AppConstants {
-  static final String baseUrl = ApiConfig.beeceptorBaseUrl;
   static const int timeoutSeconds = 10;
   static const String formatoFecha = 'dd/MM/yyyy HH:mm';
 }
 
 class ApiConstants {
-  static const String baseUrl = 'https://jsonplaceholder.typicode.com';
   static const String endpointNoticias = '/noticias';
   static const String endpointComentarios = '/comentarios';
   static const String endpointCategorias = '/categorias';
+  static const String endpointPreferencias = '/preferencias';
+  static const String endpointReportes = '/reportes';
 }
 
 // Constantes para la pantalla de Tareas
@@ -51,17 +49,27 @@ class QuoteConstants {
 
 // Constantes para Noticias y Categorías
 class NewsConstants {
-  static String get newsEndpoint => '/noticias';
-  static String get categoriasUrl => '${AppConstants.baseUrl}/categorias';
-  static const String tituloAppNoticias = 'Noticias Técnicas';
+  static const String tituloApp = 'Noticias Técnicas';
   static const String mensajeCargando = 'Cargando noticias...';
-  static const String listaVaciaNoticias = 'No hay noticias disponibles';
-  static const String mensajeError = 'Error al cargar noticias';
+  static const String listaVacia = 'No hay noticias disponibles';
+  static const String mensajeError = 'Error al obtener noticias';
+  static const String defaultCategoriaId = 'default';
+  static const String errorNotFound = 'Noticia no encontrada';
+  static const String successUpdated = 'Noticia actualizada exitosamente';
+  static const String successCreated = 'Noticia creada exitosamente';
+  static const String successDeleted = 'Noticia eliminada exitosamente';
+  static const String errorUnauthorized = 'No autorizado para acceder a noticia';
+  static const String errorInvalidData = 'Datos inválidos en noticia';
+  static const String errorServer = 'Error del servidor en noticia';
+  static const String errorCreated = 'Error al crear la noticia';
+  static const String errorUpdated = 'Error al editar la noticia';
+  static const String errorDelete = 'Error al eliminar la noticia';
+  static const String errorFilter = "Error al filtrar noticias";
+
   static const int tamanoPaginaConst = 10;
   static const double espaciadoAlto = 10;
   static const String urlImagen = 'https://picsum.photos/200/300';
-  static const String urlCategoria = 'https://picsum.photos/seed/economia/600/400';
-  static const String defaultCategoriaId = 'default';
+  static const String urlCategoria = 'https://picsum.photos/600/400';
 }
 
 // Constantes para mensajes de error
@@ -80,4 +88,81 @@ class SuccessConstants {
   static const String successCreated = 'Noticia/Categoría creada';
   static const String successUpdated = 'Noticia/Categoría actualizada';
   static const String successDeleted = 'Noticia/Categoría eliminada';
+}
+
+class ComentarioConstantes {
+  static const String mensajeCargando = 'Cargando comentarios...';
+  static const String listaVacia = 'No hay comentarios disponibles';
+  static const String errorNoComentario = 'Comentario no encontrado';
+  static const String successCreated = 'Comentario agregado exitosamente';
+  static const String successReaction = 'Reacción registrada exitosamente';
+  static const String successSubcomentario = 'Subcomentario agregado exitosamente';
+  static const String errorServer = 'Error del servidor en comentario';
+  static const String mensajeError = 'Error al obtener comentarios';
+}
+
+class CategoriaConstantes{
+  static const String tituloApp = 'Categorías de Noticias';
+  static const String mensajeCargando = 'Cargando categorias...';
+  static const String listaVacia = 'No hay categorias disponibles';
+  static const String mensajeError = 'Error al obtener categorías';
+  static const String errorNocategoria = 'Categoría no encontrada';
+  static const String defaultcategoriaId = 'Sin Categoria';
+  static const String successUpdated = 'Categoria actualizada exitosamente';
+  static const String errorUpdated = 'Error al editar la categoría';
+  static const String successDeleted = 'Categoria eliminada exitosamente';
+  static const String errorDelete = 'Error al eliminar la categoría';
+  static const String successCreated = 'Categoria creada exitosamente';
+  static const String errorCreated = 'Error al crear la categoría';
+  static const String errorUnauthorized = 'No autorizado para acceder a categoría';
+  static const String errorInvalidData = 'Datos inválidos en categoria';
+  static const String errorServer = 'Error del servidor en categoria';
+}
+
+class ReporteConstantes {
+  static const String reporteCreado = 'Reporte enviado con éxito';
+  static const String noticiaNoExiste = 'La noticia reportada no existe';
+  static const String errorCrearReporte = 'Error al crear el reporte';
+  static const String errorObtenerReportes = 'Error al obtener reportes';
+  static const String listaVacia = 'No hay reportes disponibles';
+  static const String mensajeCargando = 'Cargando reportes...';
+}
+
+class ConectividadConstantes {
+  static const String mensajeSinConexion = 'Por favor, verifica tu conexión a internet.';
+  static const String mensajeReconectando = 'Intentando reconectar...';
+  static const String mensajeReconectado = 'Conexión restablecida';
+  static const int intentosReconexion = 3;
+  static const int tiempoEsperaReconexion = 5000; // milisegundos
+  static const String tituloModoOffline = 'Modo sin conexión';
+  static const String mensajeDinosaurio = 'Oh no! Parece que estás sin conexión';
+}
+
+class ValidacionConstantes {
+  // Mensajes genéricos
+  static const String campoVacio = ' no puede estar vacío';
+  static const String noFuturo = ' no puede estar en el futuro.';
+  // static const String campoInvalido = 'no es válido';
+  // static const String campoMuyCorto = 'es demasiado corto';
+  // static const String campoMuyLargo = 'es demasiado largo';
+  
+  // Campos comunes
+  static const String imagenUrl = 'URL de la imagen';
+  // static const String nombre = 'nombre';
+  // static const String descripcion = 'descripción';
+  // static const String imagen = 'imagen';
+  // static const String url = 'URL';
+  // static const String titulo = 'título';
+  // static const String fecha = 'fecha';
+  // static const String email = 'correo electrónico';
+  // static const String precio = 'precio';
+  // static const String cantidad = 'cantidad';
+  
+  // Campos específicos
+  static const String nombreCategoria = 'El nombre de la categoría';
+  static const String descripcionCategoria = 'La descripción de la categoría';
+  static const String tituloNoticia = 'El título de la noticia';
+  static const String descripcionNoticia = 'La descripción de la noticia';
+  static const String fuenteNoticia = 'La fuente de la noticia';
+  static const String fechaNoticia = 'La fecha de la publicación de la noticia';
 }

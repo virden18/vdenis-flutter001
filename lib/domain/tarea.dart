@@ -2,7 +2,7 @@ import 'package:dart_mappable/dart_mappable.dart';
 part 'task.mapper.dart';
 
 @MappableClass()
-class Task with TaskMappable{
+class Tarea with TaskMappable{
   final String? id;
   final String titulo;
   final String tipo;
@@ -11,7 +11,7 @@ class Task with TaskMappable{
   final DateTime? fechaLimite; // Nueva fecha límite
   final List<String>? pasos; // Nuevos pasos
 
-  Task({
+  Tarea({
     this.id,
     required this.titulo,
     this.tipo = 'normal', // Valor por defecto

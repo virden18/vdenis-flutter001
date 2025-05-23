@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 
 abstract class TareaState extends Equatable {
@@ -59,7 +59,7 @@ class TareaLoadingMore extends TareaState {}
 
 /// Estado base para cuando se han cargado las tareas
 class TareaLoaded extends TareaState {
-  final List<Task> tareas;
+  final List<Tarea> tareas;
   final bool hayMasTareas;
 
   TareaLoaded({
@@ -72,7 +72,7 @@ class TareaLoaded extends TareaState {
   
   /// Factory para crear una copia con nuevos valores
   TareaLoaded copyWith({
-    List<Task>? tareas,
+    List<Tarea>? tareas,
     bool? hayMasTareas,
   }) {
     return TareaLoaded(
@@ -84,7 +84,7 @@ class TareaLoaded extends TareaState {
 
 /// Estado para cuando se ha creado una nueva tarea
 class TareaCreated extends TareaLoaded {
-  final Task nuevaTarea;
+  final Tarea nuevaTarea;
 
   TareaCreated({
     required this.nuevaTarea,
@@ -98,7 +98,7 @@ class TareaCreated extends TareaLoaded {
 
 /// Estado para cuando se ha actualizado una tarea
 class TareaUpdated extends TareaLoaded {
-  final Task tareaActualizada;
+  final Tarea tareaActualizada;
 
   TareaUpdated({
     required this.tareaActualizada,

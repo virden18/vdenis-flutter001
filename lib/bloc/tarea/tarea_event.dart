@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 
 abstract class TareaEvent extends Equatable {
   @override
@@ -34,7 +34,7 @@ class TareaLoadMoreEvent extends TareaEvent {
 
 /// Evento para crear una nueva tarea
 class TareaCreateEvent extends TareaEvent {
-  final Task tarea;
+  final Tarea tarea;
 
   TareaCreateEvent(this.tarea);
 
@@ -45,7 +45,7 @@ class TareaCreateEvent extends TareaEvent {
 /// Evento para actualizar una tarea existente
 class TareaUpdateEvent extends TareaEvent {
   final String taskId;
-  final Task tarea;
+  final Tarea tarea;
 
   TareaUpdateEvent({
     required this.taskId, 

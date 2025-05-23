@@ -1,24 +1,24 @@
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/core/base_service.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 
 class TareaService extends BaseService {
   final String _endpoint = ApiConstantes.tareasEndpoint;
 
   /// Obtiene la lista de tareas
-  Future<List<Task>> getTasks() async {
+  Future<List<Tarea>> getTasks() async {
     final List<dynamic> tareasJson = await get<List<dynamic>>(
       _endpoint,
       errorMessage: 'Error al obtener las tareas',
     );
 
     return tareasJson
-        .map<Task>((json) => TaskMapper.fromMap(json as Map<String, dynamic>))
+        .map<Tarea>((json) => TaskMapper.fromMap(json as Map<String, dynamic>))
         .toList();
   }
 
   /// Crea una nueva tarea
-  Future<Task> createTask(Task task) async {
+  Future<Tarea> createTask(Tarea task) async {
     final json = await post(
       _endpoint,
       data: task.toMap(),
@@ -35,7 +35,7 @@ class TareaService extends BaseService {
   }
 
   /// Actualiza una tarea existente
-  Future<Task> updateTask(String taskId, Task task) async {
+  Future<Tarea> updateTask(String taskId, Tarea task) async {
     final url = '$_endpoint/$taskId';
     final json = await put(
       url,

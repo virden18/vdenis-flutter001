@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 
 class AddTaskModal extends StatefulWidget {
-  final Function(Task) onTaskAdded;
-  final Task? taskToEdit; // Tarea opcional para editar
+  final Function(Tarea) onTaskAdded;
+  final Tarea? taskToEdit; // Tarea opcional para editar
 
   const AddTaskModal({super.key, required this.onTaskAdded, this.taskToEdit});
 
@@ -162,7 +162,7 @@ class AddTaskModalState extends State<AddTaskModal> {
             }
 
             // Crear la tarea sin el campo 'type'
-            final nuevaTarea = Task(
+            final nuevaTarea = Tarea(
               titulo: titulo,
               descripcion: descripcion,
               fecha: fechaSeleccionada,

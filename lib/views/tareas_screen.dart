@@ -3,8 +3,8 @@ import 'package:vdenis/data/tarea_repository.dart';
 import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
-import 'package:vdenis/views/task_details_screen.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/views/tarea_detalle_screen.dart';
+import 'package:vdenis/domain/tarea.dart';
 import 'package:vdenis/helpers/task_card_helper.dart';
 import 'package:vdenis/components/add_task_modal.dart'; // Importa el modal reutilizable
 
@@ -21,7 +21,7 @@ class TareaScreenState extends State<TareaScreen> {
   bool _cargando = false;
   final int _limitePorPagina = 5;
   final int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
-  List<Task> _tareas = []; // Lista persistente de tareas
+  List<Tarea> _tareas = []; // Lista persistente de tareas
 
   @override
   void initState() {
@@ -73,9 +73,9 @@ class TareaScreenState extends State<TareaScreen> {
     showDialog(
       context: context,
       builder: (context) => AddTaskModal(
-        onTaskAdded: (Task nuevaTarea) async {
+        onTaskAdded: (Tarea nuevaTarea) async {
           try {
-            Task tareaActualizada = await _tareasRepository.agregarTarea(nuevaTarea);
+            Tarea tareaActualizada = await _tareasRepository.agregarTarea(nuevaTarea);
             setState(() {
               _tareas.insert(0, tareaActualizada); // Agrega la nueva tarea al inicio de la lista
             });
@@ -113,7 +113,7 @@ class TareaScreenState extends State<TareaScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TaskDetailsScreen(
+        builder: (context) => TareaDetalleScreen(
           tareas: _tareas, 
           indice: indice
         ),
@@ -121,15 +121,15 @@ class TareaScreenState extends State<TareaScreen> {
     );
   }
 
-  void _mostrarModalEditarTarea(Task tarea, int index) {
+  void _mostrarModalEditarTarea(Tarea tarea, int index) {
     showDialog(
       context: context,
       builder: (context) => AddTaskModal(
         taskToEdit: tarea,
-        onTaskAdded: (Task tareaEditada) async {
+        onTaskAdded: (Tarea tareaEditada) async {
           if (tarea.id != null) {
             try {
-              Task tareaActualizada = await _tareasRepository.actualizarTarea(tarea.id!, tareaEditada);
+              Tarea tareaActualizada = await _tareasRepository.actualizarTarea(tarea.id!, tareaEditada);
               setState(() {
                 _tareas[index] = tareaActualizada; // Actualiza la tarea en la lista persistente
               });

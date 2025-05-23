@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/constants/constantes.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 
 class CommonWidgetsHelper {
   /// Construye un título en negrita con tamaño 20
@@ -75,7 +75,7 @@ class CommonWidgetsHelper {
   }
 }
 
-Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
+Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Espaciado entre tarjetas
     child:ListTile(

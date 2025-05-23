@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/helpers/task_card_helper.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 import 'package:vdenis/constants/constantes.dart';
 
 class TaskCard extends StatelessWidget {
-  final Task tarea;
+  final Tarea tarea;
   final String imageUrl;
   final String fechaLimiteDato;
   final VoidCallback onBackPressed;

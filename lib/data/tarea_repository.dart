@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:vdenis/api/service/tareas_service.dart';
 import 'package:vdenis/data/assistant_repository.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 
 class TareasRepository {
@@ -10,7 +10,7 @@ class TareasRepository {
   final AssistantRepository _assistantRepository = AssistantRepository();
 
   /// Obtiene todas las tareas con pasos generados
-  Future<List<Task>> obtenerTareas({int limite = 4}) async {
+  Future<List<Tarea>> obtenerTareas({int limite = 4}) async {
     try {
       // Obtener tareas de la API 
       debugPrint('🔄 Obteniendo tareas de la API');
@@ -29,12 +29,12 @@ class TareasRepository {
   }
 
   /// Método para agregar pasos a las tareas
-  Future<List<Task>> _addStepsToTasks(List<Task> tareas) async {
+  Future<List<Tarea>> _addStepsToTasks(List<Tarea> tareas) async {
     debugPrint('🔄 Generando pasos para ${tareas.length} tareas');
     return await Future.wait(tareas.map((tarea) async {
       if (tarea.pasos == null || tarea.pasos!.isEmpty) {
         final pasos = await generarPasos(tarea.titulo, tarea.fechaLimite);
-        return Task(
+        return Tarea(
           id: tarea.id,
           titulo: tarea.titulo,
           tipo: tarea.tipo,
@@ -49,13 +49,13 @@ class TareasRepository {
   }
 
   /// Agrega una nueva tarea
-  Future<Task> agregarTarea(Task tarea) async {
+  Future<Tarea> agregarTarea(Tarea tarea) async {
     try {
       // Generar pasos para la tarea
       final pasos = await generarPasos(tarea.titulo, tarea.fechaLimite);
       
       // Crear la tarea con pasos
-      final nuevaTarea = Task(
+      final nuevaTarea = Tarea(
         id: tarea.id,
         titulo: tarea.titulo,
         tipo: tarea.tipo,
@@ -94,7 +94,7 @@ class TareasRepository {
   }
 
   /// Actualiza una tarea existente
-  Future<Task> actualizarTarea(String taskId, Task tareaActualizada) async {
+  Future<Tarea> actualizarTarea(String taskId, Tarea tareaActualizada) async {
     try {
       // Validar ID
       if (taskId.isEmpty) {
@@ -105,7 +105,7 @@ class TareasRepository {
       final pasos = await generarPasos(tareaActualizada.titulo, tareaActualizada.fechaLimite);
       
       // Crear la tarea actualizada con pasos
-      final tareaConPasos = Task(
+      final tareaConPasos = Tarea(
         id: taskId, // Asegurar que mantenemos el ID original
         titulo: tareaActualizada.titulo,
         tipo: tareaActualizada.tipo,

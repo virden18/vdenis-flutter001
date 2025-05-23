@@ -1,37 +1,55 @@
 import 'package:equatable/equatable.dart';
 import 'package:vdenis/domain/noticia.dart';
+import 'package:vdenis/exceptions/api_exception.dart';
 
-
-sealed class NoticiasState extends Equatable {
-  const NoticiasState();
-  
+abstract class NoticiaState extends Equatable {
   @override
   List<Object> get props => [];
 }
 
-final class NoticiasInitial extends NoticiasState {
-  @override
-  List<Object> get props => [];
-}
+class NoticiaInitial extends NoticiaState {}
 
-class NoticiasLoading extends NoticiasState {}
+class NoticiaLoading extends NoticiaState {}
 
-class NoticiasLoaded extends NoticiasState {
-  final List<Noticia> noticiasList;
+class NoticiaLoaded extends NoticiaState {
+  final List<Noticia> noticias;
   final DateTime lastUpdated;
 
-  const NoticiasLoaded(this.noticiasList, this.lastUpdated);
+  NoticiaLoaded(this.noticias, this.lastUpdated);
 
   @override
-  List<Object> get props => [noticiasList, lastUpdated];
+  List<Object> get props => [noticias, lastUpdated];
 }
 
-class NoticiasError extends NoticiasState {
-  final String errorMessage;
-  final int? statusCode;
+enum TipoOperacionNoticia { cargar, crear, actualizar, eliminar, filtrar }
 
-  const NoticiasError(this.errorMessage, {this.statusCode});
+class NoticiaError extends NoticiaState {
+  final ApiException error;
+  final TipoOperacionNoticia tipoOperacion;
+
+  NoticiaError(this.error, this.tipoOperacion);
 
   @override
-  List<Object> get props => [errorMessage, statusCode ?? 0];
+  List<Object> get props => [error, tipoOperacion];
+}
+
+class NoticiaCreated extends NoticiaLoaded {
+  NoticiaCreated(super.noticias, super.lastUpdated);
+}
+
+class NoticiaUpdated extends NoticiaLoaded {
+  NoticiaUpdated(super.noticias, super.lastUpdated);
+}
+
+class NoticiaDeleted extends NoticiaLoaded {
+  NoticiaDeleted(super.noticias, super.lastUpdated);
+}
+
+class NoticiaFiltered extends NoticiaLoaded {
+  final List<String> appliedFilters;
+
+  NoticiaFiltered(super.noticias, super.lastUpdated, this.appliedFilters);
+
+  @override
+  List<Object> get props => [...super.props, appliedFilters];
 }

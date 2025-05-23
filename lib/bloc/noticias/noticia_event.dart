@@ -1,78 +1,51 @@
 import 'package:equatable/equatable.dart';
+import 'package:vdenis/domain/noticia.dart';
 
-sealed class NoticiasEvent extends Equatable {
-  const NoticiasEvent();
-
+abstract class NoticiaEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
 
-class NoticiasLoadEvent extends NoticiasEvent {
-  const NoticiasLoadEvent();
+class NoticiaInitEvent extends NoticiaEvent {}
+
+class FetchNoticiasEvent extends NoticiaEvent {
+  FetchNoticiasEvent();
 }
 
-class NoticiasCreateEvent extends NoticiasEvent {
-  final String titulo;
-  final String descripcion;
-  final String fuente;
-  final DateTime publicadaEl;
-  final String urlImagen;
-  final String categoriaId; // Nuevo campo para categoría
+class AddNoticiaEvent extends NoticiaEvent {
+  final Noticia noticia;
 
-  const NoticiasCreateEvent(
-    this.titulo,
-    this.descripcion,
-    this.fuente,
-    this.publicadaEl,
-    this.urlImagen,
-    this.categoriaId,
-  );
+  AddNoticiaEvent(this.noticia);
 
   @override
-  List<Object> get props => [titulo, descripcion, fuente, publicadaEl, urlImagen, categoriaId];
+  List<Object> get props => [noticia];
 }
 
-class NoticiasUpdateEvent extends NoticiasEvent {
-  final String id;
-  final String titulo;
-  final String descripcion;
-  final String fuente;
-  final DateTime publicadaEl;
-  final String urlImagen;
-  final String categoriaId;
+class UpdateNoticiaEvent extends NoticiaEvent {
+  final Noticia noticia;
 
-  const NoticiasUpdateEvent(
-    this.id, 
-    this.titulo,
-    this.descripcion,
-    this.fuente,
-    this.publicadaEl,
-    this.urlImagen,
-    this.categoriaId,
-    );
+  UpdateNoticiaEvent(this.noticia);
 
   @override
-  List<Object> get props => [id, titulo, descripcion, fuente, publicadaEl, urlImagen, categoriaId];
+  List<Object> get props => [noticia];
 }
 
-class NoticiasDeleteEvent extends NoticiasEvent {
+class DeleteNoticiaEvent extends NoticiaEvent {
   final String id;
 
-  const NoticiasDeleteEvent(this.id);
+  DeleteNoticiaEvent(this.id);
 
   @override
   List<Object> get props => [id];
 }
 
-class FilterNoticiasByPreferencias extends NoticiasEvent {
+class FilterNoticiasByPreferenciasEvent extends NoticiaEvent {
   final List<String> categoriasIds;
 
-  const FilterNoticiasByPreferencias(this.categoriasIds);
+  FilterNoticiasByPreferenciasEvent(this.categoriasIds);
 
   @override
   List<Object> get props => [categoriasIds];
 }
 
-class ClearNoticiasFilters extends NoticiasEvent {
-  const ClearNoticiasFilters();
-}
+class ResetNoticiaEvent extends NoticiaEvent {}

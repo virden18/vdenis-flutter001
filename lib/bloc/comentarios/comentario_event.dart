@@ -1,98 +1,80 @@
 import 'package:equatable/equatable.dart';
+import 'package:vdenis/domain/comentario.dart';
 
 abstract class ComentarioEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-// Evento para cargar comentarios de una noticia específica
 class LoadComentarios extends ComentarioEvent {
   final String noticiaId;
 
-  LoadComentarios({required this.noticiaId});
+  LoadComentarios(this.noticiaId);
 
   @override
-  List<Object?> get props => [noticiaId];
+  List<Object> get props => [noticiaId];
 }
 
-// Evento para agregar un comentario
 class AddComentario extends ComentarioEvent {
   final String noticiaId;
-  final String texto;
-  final String fecha;
-  final String autor;
+  final Comentario comentario;
 
-  AddComentario({
-    required this.noticiaId,
-    required this.texto,
-    required this.autor,
-    required this.fecha,
-  });
+  AddComentario(this.noticiaId, this.comentario);
 
   @override
-  List<Object?> get props => [noticiaId, texto];
+  List<Object> get props => [comentario];
 }
 
-// Evento para obtener el número de comentarios de una noticia
 class GetNumeroComentarios extends ComentarioEvent {
   final String noticiaId;
 
-  GetNumeroComentarios({required this.noticiaId});
+  GetNumeroComentarios(this.noticiaId);
 
   @override
-  List<Object?> get props => [noticiaId];
+  List<Object> get props => [noticiaId];
 }
 
-// Evento para agregar una reacción (like o dislike)
 class AddReaccion extends ComentarioEvent {
-  final String noticiaId;
   final String comentarioId;
-  final String tipoReaccion; // 'like' o 'dislike'
+  final String tipoReaccion;
+  final bool incrementar;
+  final String? comentarioPadreId;
 
-  AddReaccion({
-    required this.noticiaId,
-    required this.comentarioId,
-    required this.tipoReaccion,
-  });
+  AddReaccion(
+    this.comentarioId, 
+    this.tipoReaccion, 
+    this.incrementar,
+    [this.comentarioPadreId]
+  );
 
   @override
-  List<Object?> get props => [noticiaId, comentarioId, tipoReaccion];
+  List<Object?> get props => [comentarioId, tipoReaccion, incrementar, comentarioPadreId];
 }
 
-// Evento para buscar comentarios con un criterio específico
 class BuscarComentarios extends ComentarioEvent {
+  final String terminoBusqueda;
   final String noticiaId;
-  final String criterioBusqueda;
 
-  BuscarComentarios({required this.noticiaId, required this.criterioBusqueda});
+  BuscarComentarios(this.terminoBusqueda, this.noticiaId);
 
   @override
-  List<Object> get props => [noticiaId, criterioBusqueda];
+  List<Object> get props => [terminoBusqueda, noticiaId];
 }
 
-// Evento para ordenar comentarios solo por fecha
 class OrdenarComentarios extends ComentarioEvent {
   final bool ascendente;
 
-  OrdenarComentarios({required this.ascendente});
+  OrdenarComentarios(this.ascendente);
 
   @override
   List<Object> get props => [ascendente];
 }
 
 class AddSubcomentario extends ComentarioEvent {
-  final String comentarioId;
-  final String noticiaId; // Añadir esto
-  final String texto;
-  final String autor;
+  final Comentario subcomentario;
 
-  AddSubcomentario({
-    required this.comentarioId,
-    required this.noticiaId, // Añadir esto
-    required this.texto,
-    required this.autor,
-  });
+  AddSubcomentario(this.subcomentario);
 
   @override
-  List<Object?> get props => [comentarioId, noticiaId, texto, autor];
+  List<Object> get props => [subcomentario];
 }

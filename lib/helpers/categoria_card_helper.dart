@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/categorias/categorias_bloc.dart';
-import 'package:vdenis/bloc/categorias/categorias_event.dart';
-import 'package:vdenis/bloc/categorias/categorias_state.dart';
+import 'package:vdenis/bloc/categorias/categoria_bloc.dart';
+import 'package:vdenis/bloc/categorias/categoria_event.dart';
+import 'package:vdenis/bloc/categorias/categoria_state.dart';
 import 'package:vdenis/domain/categoria.dart';
 
 class CategoriaCardHelper {

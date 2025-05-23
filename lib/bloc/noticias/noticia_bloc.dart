@@ -1,147 +1,177 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vdenis/data/preferencia_repository.dart';
+import 'package:vdenis/domain/noticia.dart';
+import 'package:vdenis/exceptions/api_exception.dart';
+import 'package:vdenis/data/noticia_repository.dart';
+import 'package:watch_it/watch_it.dart';
 import 'package:vdenis/bloc/noticias/noticia_event.dart';
 import 'package:vdenis/bloc/noticias/noticia_state.dart';
-import 'package:vdenis/data/noticia_repository.dart';
-import 'package:vdenis/exceptions/api_exception.dart';
-import 'package:watch_it/watch_it.dart';
 
-class NoticiaBloc extends Bloc<NoticiasEvent, NoticiasState> {
+class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
   final NoticiaRepository _noticiaRepository = di<NoticiaRepository>();
-  
-  // Variable para saber si hay filtros aplicados
-  bool _filtrosAplicados = false;
-  bool get filtrosAplicados => _filtrosAplicados;
-  
-  NoticiaBloc(): super(NoticiasInitial()) {
-    on<NoticiasLoadEvent>(_onLoadNoticias);
-    on<NoticiasCreateEvent>(_onCreateNoticia);
-    on<NoticiasUpdateEvent>(_onUpdateNoticia);
-    on<NoticiasDeleteEvent>(_onDeleteNoticia);
-    on<FilterNoticiasByPreferencias>(_onFilterNoticiasByPreferencias);
-    on<ClearNoticiasFilters>(_onClearFilters);
+
+  NoticiaBloc() : super(NoticiaInitial()) {
+    on<FetchNoticiasEvent>(_onFetchNoticias);
+    on<AddNoticiaEvent>(_onAddNoticia);
+    on<UpdateNoticiaEvent>(_onUpdateNoticia);
+    on<DeleteNoticiaEvent>(_onDeleteNoticia);
+    on<FilterNoticiasByPreferenciasEvent>(_onFilterNoticiasByPreferencias);
+    on<ResetNoticiaEvent>(_onResetNoticias);
   }
-  Future<void> _onLoadNoticias(NoticiasLoadEvent event, Emitter<NoticiasState> emit) async {
-     try {
-      final noticias = await _noticiaRepository.getNoticias();
-      // Restablecer la bandera, ya que estamos cargando todas las noticias sin filtros
-      _filtrosAplicados = false;
-      emit(NoticiasLoaded(noticias, DateTime.now()));
+
+  Future<void> _onFetchNoticias(
+    FetchNoticiasEvent event,
+    Emitter<NoticiaState> emit,
+  ) async {
+    emit(NoticiaLoading());
+    try {
+      final noticias = await _noticiaRepository.obtenerNoticias();
+      final preferenciaRepo = di<PreferenciaRepository>();
+      List<String> categoriasIds =await preferenciaRepo.obtenerCategoriasSeleccionadas();
+
+      List<Noticia> noticiasFiltradas=_filtrarNoticiasPorCategorias(noticias, categoriasIds);
+      emit(NoticiaLoaded(noticiasFiltradas, DateTime.now()));
     } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      debugPrint('parada1${e.toString()}');
-      emit(NoticiasError('Error al cargar noticias: ${e.toString()}', statusCode: statusCode));
+      if (e is ApiException) {
+        emit(NoticiaError(e, TipoOperacionNoticia.cargar));
+      }
     }
   }
 
-  Future<void> _onCreateNoticia(
-    NoticiasCreateEvent event,
-    Emitter<NoticiasState> emit,
+  Future<void> _onAddNoticia(
+    AddNoticiaEvent event,
+    Emitter<NoticiaState> emit,
   ) async {
-    emit(NoticiasLoading());
+    List<Noticia> noticiasActuales = [];
+    if (state is NoticiaLoaded) {
+      noticiasActuales = [...(state as NoticiaLoaded).noticias];
+    }
+    emit(NoticiaLoading());
+
     try {
-      final noticiaData = {
-        'titulo': event.titulo,
-        'descripcion': event.descripcion,
-        'fuente': event.fuente,
-        'publicadaEl': event.publicadaEl.toIso8601String(),
-        'urlImagen': event.urlImagen,
-        'categoriaId': event.categoriaId,
-      };
-
-      await _noticiaRepository.crearNoticia(noticiaData);
-
-      // Refrescar la lista de noticias después de agregar
-      final noticias = await _noticiaRepository.getNoticias();
-      emit(NoticiasLoaded(noticias, DateTime.now()));
+      final noticiaCreada = await _noticiaRepository.crearNoticia(
+        event.noticia,
+      );
+      final noticiasActualizadas = [...noticiasActuales, noticiaCreada];
+      emit(NoticiaCreated(noticiasActualizadas, DateTime.now()));
     } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(NoticiasError('Error al agregar noticia: ${e.toString()}',statusCode: statusCode));
+      if (e is ApiException) {
+        emit(NoticiaError(e, TipoOperacionNoticia.crear));
+      }
     }
   }
 
   Future<void> _onUpdateNoticia(
-    NoticiasUpdateEvent event,
-    Emitter<NoticiasState> emit,
+    UpdateNoticiaEvent event,
+    Emitter<NoticiaState> emit,
   ) async {
-    emit(NoticiasLoading());
-    try {
-      final data = {
-        'id': event.id,
-        'titulo': event.titulo,
-        'descripcion': event.descripcion,
-        'fuente': event.fuente,
-        'publicadaEl': event.publicadaEl.toIso8601String(),
-        'urlImagen': event.urlImagen,
-        'categoriaId': event.categoriaId,
-      };
-      await _noticiaRepository.actualizarNoticia(event.id, data);
+    List<Noticia> noticiasActuales = [];
+    if (state is NoticiaLoaded) {
+      noticiasActuales = [...(state as NoticiaLoaded).noticias];
+    }
+    emit(NoticiaLoading());
 
-      // Refrescar la lista de noticias después de actualizar
-      final noticias = await _noticiaRepository.getNoticias();
-      emit(NoticiasLoaded(noticias, DateTime.now()));
+    try {
+      final noticiaActualizada = await _noticiaRepository.editarNoticia(
+        event.noticia,
+      );
+
+      // Reemplazar la noticia con el mismo ID por la versión actualizada
+      final noticiasActualizadas =
+          noticiasActuales.map((noticia) {
+            // Si encuentra la noticia con el mismo ID, devuelve la versión actualizada
+            if (noticia.id == noticiaActualizada.id) {
+              return noticiaActualizada;
+            }
+            // De lo contrario, mantiene la noticia original
+            return noticia;
+          }).toList();
+
+      emit(NoticiaUpdated(noticiasActualizadas, DateTime.now()));
     } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(NoticiasError('Error al actualizar noticia: ${e.toString()}',statusCode: statusCode));
+      if (e is ApiException) {
+        emit(NoticiaError(e, TipoOperacionNoticia.actualizar));
+      }
     }
   }
 
   Future<void> _onDeleteNoticia(
-    NoticiasDeleteEvent event,
-    Emitter<NoticiasState> emit,
+    DeleteNoticiaEvent event,
+    Emitter<NoticiaState> emit,
   ) async {
-    emit(NoticiasLoading());
+    List<Noticia> noticiasActuales = [];
+    if (state is NoticiaLoaded) {
+      noticiasActuales = [...(state as NoticiaLoaded).noticias];
+    }
+    emit(NoticiaLoading());
+
     try {
       await _noticiaRepository.eliminarNoticia(event.id);
 
-      // Refrescar la lista de noticias después de eliminar
-      final noticias = await _noticiaRepository.getNoticias();
-      emit(NoticiasLoaded(noticias, DateTime.now()));
+      // Filtrar la lista de noticias para quitar la noticia eliminada
+      final noticiasActualizadas =
+          noticiasActuales.where((noticia) => noticia.id != event.id).toList();
+
+      emit(NoticiaDeleted(noticiasActualizadas, DateTime.now()));
     } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(NoticiasError('Error al eliminar noticia: ${e.toString()}',statusCode: statusCode));
+      if (e is ApiException) {
+        emit(NoticiaError(e, TipoOperacionNoticia.eliminar));
+      }
     }
   }
 
-    Future<void> _onFilterNoticiasByPreferencias(
-    FilterNoticiasByPreferencias event,
-    Emitter<NoticiasState> emit,
+  Future<void> _onFilterNoticiasByPreferencias(
+    FilterNoticiasByPreferenciasEvent event,
+    Emitter<NoticiaState> emit,
   ) async {
-    emit(NoticiasLoading());
-    try {
-      final allNoticias = await _noticiaRepository.getNoticias();
+    List<Noticia> noticiasActuales = [];
+    if (state is NoticiaLoaded) {
+      try{
+        noticiasActuales = await _noticiaRepository.obtenerNoticias();
+        List<Noticia> noticiasFiltradas=_filtrarNoticiasPorCategorias(noticiasActuales, event.categoriasIds);
+          emit(
+            NoticiaFiltered(
+              noticiasFiltradas,
+              DateTime.now(),
+              event.categoriasIds,
+            ),
+          );
+      } catch (e) {
+        if (e is ApiException) {
+          emit(NoticiaError(e, TipoOperacionNoticia.cargar));
+        }
+      }
+    }    
+  }
 
-      final filteredNoticias =
-          allNoticias
-              .where(
-                (noticia) => event.categoriasIds.contains(noticia.categoriaId),
-              )
+  Future<void> _onResetNoticias(
+    ResetNoticiaEvent event,
+    Emitter<NoticiaState> emit,
+  ) async {
+    // Reiniciar el estado a inicial
+    emit(NoticiaInitial());
+  }
+
+  /// Filtra una lista de noticias por las categorías especificadas.
+  ///
+  /// [noticias] es la lista de noticias a filtrar.
+  /// [categoriasIds] es la lista de IDs de categorías por las que filtrar.
+  /// Retorna una nueva lista con las noticias que pertenecen a las categorías especificadas.
+  List<Noticia> _filtrarNoticiasPorCategorias(
+    List<Noticia> noticias,
+    List<String> categoriasIds,
+  ) {
+    List<Noticia> noticiasRetornadas;
+    if (categoriasIds.isEmpty) {
+      // Si no hay categorías seleccionadas, devolver todas las noticias
+      noticiasRetornadas = noticias;
+    } else {
+      noticiasRetornadas =
+          noticias
+              .where((noticia) => categoriasIds.contains(noticia.categoriaId))
               .toList();
+    }
+    return noticiasRetornadas;
+  }
 
-      // Marcar que hay filtros aplicados
-      _filtrosAplicados = true;
-      emit(NoticiasLoaded(filteredNoticias, DateTime.now()));
-    } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(NoticiasError('Error al filtrar noticias: ${e.toString()}',statusCode: statusCode));
-    }
-  }
-  
-  Future<void> _onClearFilters(
-    ClearNoticiasFilters event,
-    Emitter<NoticiasState> emit,
-  ) async {
-    emit(NoticiasLoading());
-    try {
-      final noticias = await _noticiaRepository.getNoticias();
-      
-      // Marcar que no hay filtros aplicados
-      _filtrosAplicados = false;
-      emit(NoticiasLoaded(noticias, DateTime.now()));
-    } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(NoticiasError('Error al cargar noticias: ${e.toString()}', statusCode: statusCode));
-    }
-  }
 }
-

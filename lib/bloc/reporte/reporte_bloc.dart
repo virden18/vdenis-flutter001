@@ -1,121 +1,110 @@
-import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vdenis/bloc/reporte/reporte_event.dart';
 import 'package:vdenis/bloc/reporte/reporte_state.dart';
+import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/data/reporte_repository.dart';
+import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
 class ReporteBloc extends Bloc<ReporteEvent, ReporteState> {
-  final ReporteRepository reporteRepository = di<ReporteRepository>();
-
+  final ReporteRepository _reporteRepository = di<ReporteRepository>();
+  
   ReporteBloc() : super(ReporteInitial()) {
-    on<ReporteInitEvent>(_onInit);
-    on<ReporteCreateEvent>(_onCreateReporte);
-    on<ReporteDeleteEvent>(_onDeleteReporte);
-    on<ReporteGetByNoticiaEvent>(_onGetByNoticia);
+    on<EnviarReporte>(_onEnviarReporte);
+    on<CargarEstadisticasReporte>(_onCargarEstadisticasReporte);
+    on<VerificarReporteUsuario>(_onVerificarReporteUsuario);
   }
 
-  Future<void> _onInit(
-    ReporteInitEvent event,
+  Future<void> _onEnviarReporte(
+    EnviarReporte event,
     Emitter<ReporteState> emit,
   ) async {
-    emit(ReporteLoading());
-
     try {
-      final reportes = await reporteRepository.obtenerReportes();
-      emit(ReporteLoaded(reportes, DateTime.now()));
-    } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(
-        ReporteError(
-          'Error al cargar reportes: ${e.toString()}',
-          statusCode: statusCode,
-        ),
+      // Indicar que estamos procesando el reporte
+      emit(ReporteLoading());
+
+      // Llamar al repositorio para enviar el reporte
+      final exito = await _reporteRepository.enviarReporte(
+        noticiaId: event.noticiaId,
+        motivo: event.motivo,
       );
+
+      // Si la operación fue exitosa
+      if (exito) {
+        emit(const ReporteSuccess(mensaje: ReporteConstantes.reporteCreado));
+        
+        // Cargar las estadísticas actualizadas
+        await _cargarEstadisticas(event.noticiaId, emit);
+      } else {
+        // Este caso no debería ocurrir dado que el método lanza excepciones en caso de error
+        // Pero lo incluimos por completitud
+        emit(const ReporteError(
+          errorMessage: ReporteConstantes.errorCrearReporte,
+        ));
+      }
+    } on ApiException catch (e) {
+      // Si es una ApiException, emitir un ReporteError con el mensaje y código de estado
+      emit(ReporteError(
+        errorMessage: e.message,
+        statusCode: e.statusCode,
+      ));
+    } catch (e) {
+      // Para cualquier otra excepción, registrar y emitir un error genérico
+      debugPrint('Error al enviar reporte: $e');
+      emit(const ReporteError(
+        errorMessage: ReporteConstantes.errorCrearReporte,
+      ));
     }
   }
 
-  Future<void> _onCreateReporte(
-    ReporteCreateEvent event,
+  Future<void> _onCargarEstadisticasReporte(
+    CargarEstadisticasReporte event,
     Emitter<ReporteState> emit,
   ) async {
-    emit(ReporteLoading());
-      try {
-    final reporte = await reporteRepository.crearReporte(
-      noticiaId: event.noticiaId,
-      motivo: event.motivo,
-    );
-    
-    // 1. Emitir estado de creación exitosa primero
-    emit(ReporteCreated(reporte!));
-    
-    // 2. Mostrar feedback y luego actualizar datos
-    await Future.delayed(const Duration(milliseconds: 100)); // Breve pausa
-    final reportesActualizados = await reporteRepository.obtenerReportes();
-    
-    // 3. Emitir nuevo estado combinado
-    emit(ReporteLoadedWithMessage(
-      reportes: reportesActualizados,
-      message: 'Reporte creado exitosamente',
+    try {
+      emit(ReporteLoading());
+      await _cargarEstadisticas(event.noticiaId, emit);
+    } catch (e) {
+      debugPrint('Error al cargar estadísticas: $e');
+      emit(const ReporteError(
+        errorMessage: ReporteConstantes.errorObtenerReportes,
+      ));
+    }
+  }
+
+  Future<void> _onVerificarReporteUsuario(
+    VerificarReporteUsuario event,
+    Emitter<ReporteState> emit,
+  ) async {
+    try {
+      final bool yaReportado = await _reporteRepository.verificarReporteUsuario(
+        noticiaId: event.noticiaId,
+        motivo: event.motivo,
+      );
+      
+      emit(ReporteUsuarioVerificado(
+        noticiaId: event.noticiaId,
+        motivo: event.motivo,
+        reportado: yaReportado,
+      ));
+    } catch (e) {
+      debugPrint('Error al verificar reporte de usuario: $e');
+      // No emitimos error aquí, pues es menos crítico
+      emit(ReporteUsuarioVerificado(
+        noticiaId: event.noticiaId,
+        motivo: event.motivo,
+        reportado: false,
+      ));
+    }
+  }
+  
+  // Método auxiliar para cargar estadísticas
+  Future<void> _cargarEstadisticas(String noticiaId, Emitter<ReporteState> emit) async {
+    final estadisticas = await _reporteRepository.obtenerEstadisticasReportesPorNoticia(noticiaId);
+    emit(ReporteEstadisticasLoaded(
+      noticiaId: noticiaId,
+      estadisticas: estadisticas,
     ));
-    
-  } catch (e) {
-      // Manejar error
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(
-        ReporteError(
-          'Error al crear reporte: ${e.toString()}',
-          statusCode: statusCode,
-        ),
-      );
-    }
-  }
-
- 
-
-  Future<void> _onDeleteReporte(
-    ReporteDeleteEvent event,
-    Emitter<ReporteState> emit,
-  ) async {
-    emit(ReporteLoading());
-
-    try {
-      await reporteRepository.eliminarReporte(event.id);
-      emit(ReporteDeleted(event.id));
-
-      // Recargar la lista después de eliminar
-      final reportes = await reporteRepository.obtenerReportes();
-      emit(ReporteLoaded(reportes, DateTime.now()));
-    } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(
-        ReporteError(
-          'Error al eliminar reporte: ${e.toString()}',
-          statusCode: statusCode,
-        ),
-      );
-    }
-  }
-
-  Future<void> _onGetByNoticia(
-    ReporteGetByNoticiaEvent event,
-    Emitter<ReporteState> emit,
-  ) async {
-    emit(ReporteLoading());
-
-    try {
-      final reportes = await reporteRepository.obtenerReportesPorNoticia(
-        event.noticiaId,
-      );
-      emit(ReportesPorNoticiaLoaded(reportes, event.noticiaId));
-    } catch (e) {
-      final int? statusCode = e is ApiException ? e.statusCode : null;
-      emit(
-        ReporteError(
-          'Error al obtener reportes por noticia: ${e.toString()}',
-          statusCode: statusCode,
-        ),
-      );
-    }
   }
 }

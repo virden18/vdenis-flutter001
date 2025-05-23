@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/side_menu.dart';
-import 'package:vdenis/helpers/secure_storage_service.dart';
+import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:vdenis/views/login_screen.dart'; // Añadimos la importación de LoginScreen
 import 'package:watch_it/watch_it.dart';
 

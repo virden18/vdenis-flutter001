@@ -1,6 +1,6 @@
 import 'package:vdenis/api/service/categoria_service.dart';
 import 'package:vdenis/constants/constantes.dart';
-import 'package:vdenis/data/base_repository.dart';
+import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/domain/categoria.dart';
 
 /// Repositorio de categorías con capacidad de caché

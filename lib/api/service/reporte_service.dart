@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/core/base_service.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/reporte.dart';
 import 'package:vdenis/exceptions/api_exception.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_event.dart';
 import 'package:vdenis/domain/comentario.dart';
-import 'package:vdenis/views/comentarios/components/subcomment_card.dart';
+import 'package:vdenis/components/comentarios/subcomment_card.dart';
 
 class CommentCard extends StatelessWidget {
   final Comentario comentario;

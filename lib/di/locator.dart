@@ -5,8 +5,8 @@ import 'package:vdenis/data/comentario_repository.dart';
 import 'package:vdenis/data/noticia_repository.dart';
 import 'package:vdenis/data/preferencia_repository.dart';
 import 'package:vdenis/data/reporte_repository.dart';
-import 'package:vdenis/helpers/connectivity_service.dart';
-import 'package:vdenis/helpers/secure_storage_service.dart';
+import 'package:vdenis/core/services/connectivity_service.dart';
+import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watch_it/watch_it.dart';
 

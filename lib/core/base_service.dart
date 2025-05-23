@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/core/api_config.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
-import 'package:vdenis/helpers/connectivity_service.dart';
-import 'package:vdenis/helpers/secure_storage_service.dart';
+import 'package:vdenis/core/services/connectivity_service.dart';
+import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart' show di;
 
 /// Clase base para servicios API que proporciona funcionalidad común

@@ -1,5 +1,5 @@
 import 'package:vdenis/api/service/comentario_service.dart';
-import 'package:vdenis/data/base_repository.dart';
+import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 

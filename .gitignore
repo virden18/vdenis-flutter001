@@ -243,7 +243,6 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/flutter,androidstudio
-.env*
 /android/key.properties
 /android/app/google-services.json
 .metadata
@@ -251,3 +250,12 @@ fabric.properties
 # Sonar Scanner
 .scannerwork
 sonar-project.properties
+
+#Variables de entorno
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+!.env.example

@@ -2,7 +2,7 @@ import 'package:vdenis/api/service/auth_service.dart';
 import 'package:vdenis/data/preferencia_repository.dart';
 import 'package:vdenis/domain/login_request.dart';
 import 'package:vdenis/domain/login_response.dart';
-import 'package:vdenis/helpers/secure_storage_service.dart';
+import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthRepository {

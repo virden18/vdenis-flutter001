@@ -5,7 +5,7 @@ import 'package:vdenis/bloc/comentario/comentario_event.dart';
 import 'package:vdenis/bloc/comentario/comentario_state.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/helpers/snackbar_helper.dart';
-import 'package:vdenis/views/comentarios/components/comment_card.dart';
+import 'package:vdenis/components/comentarios/comment_card.dart';
 
 class CommentList extends StatelessWidget {
   final String noticiaId;

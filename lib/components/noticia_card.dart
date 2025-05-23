@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/noticia.dart';
 import 'package:intl/intl.dart';
-import 'package:vdenis/views/comentarios/comentarios_screen.dart';
+import 'package:vdenis/views/comentarios_screen.dart';
 import 'package:vdenis/components/reporte_dialog.dart';
 
 class NoticiaCard extends StatelessWidget {

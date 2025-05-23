@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
-import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/core/base_service.dart';
 import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 

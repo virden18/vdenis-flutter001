@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
-import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/core/base_service.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/domain/noticia.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
@@ -13,7 +13,7 @@ class NoticiaService extends BaseService {
   Future<List<Noticia>> getNoticias() async {
     try {
       // Utilizamos el método get() de BaseService
-      final data = await get(NewsConstants.newsEndpoint, requireAuthToken: false);
+      final data = await get(ApiConstants.endpointNoticias, requireAuthToken: false);
 
       if (data is List) {
         final List<dynamic> articlesJson = data;
@@ -25,16 +25,10 @@ class NoticiaService extends BaseService {
         // Mapear respuesta a objetos Noticia
         List<Noticia> noticias = [];
         for (var json in articlesJson) {
-          try {
+
             if (json != null && json is Map<String, dynamic>) {
-              _normalizarId(json); // Normalizar ID antes de deserializar
               noticias.add(NoticiaMapper.fromMap(json));
-            }
-          } catch (e) {
-            debugPrint('Error al deserializar noticia: $e');
-            debugPrint('Datos problemáticos: $json');
-            // Ignoramos esta noticia y continuamos con la siguiente
-          }
+          } 
         }
         return noticias;
       } else {
@@ -59,7 +53,7 @@ class NoticiaService extends BaseService {
     try {
       // Utilizamos el método post() de BaseService
       await post(
-        NewsConstants.newsEndpoint,
+        ApiConstants.endpointNoticias,
         data: noticia,
         requireAuthToken: true,
       );
@@ -86,7 +80,7 @@ class NoticiaService extends BaseService {
 
       // Utilizamos el método put() de BaseService
       await put(
-        '${NewsConstants.newsEndpoint}/$id',
+        '${ApiConstants.endpointNoticias}/$id',
         data: noticia,
         requireAuthToken: true,
       );
@@ -113,7 +107,7 @@ class NoticiaService extends BaseService {
 
       // Utilizamos el método delete() de BaseService
       await delete(
-        '${NewsConstants.newsEndpoint}/$id',
+        '${ApiConstants.endpointNoticias}/$id',
         requireAuthToken: true,
       );
       
@@ -129,19 +123,6 @@ class NoticiaService extends BaseService {
     }
   }
 
-  /// Método auxiliar para normalizar el ID en la respuesta de la API
-  void _normalizarId(Map<String, dynamic> json) {
-    // Asegurarse de que siempre haya un 'id' para deserializar correctamente
-    if (json['_id'] != null && json['id'] == null) {
-      json['id'] = json['_id']; // Copiar '_id' a 'id' si solo existe '_id'
-    }
-
-    // Verificar que el ID exista
-    if (json['id'] == null) {
-      throw ApiException('Noticia sin identificador válido');
-    }
-  }
-
   /// Obtener una noticia por ID
   Future<Noticia?> getNoticiaPorId(String id) async {
     try {
@@ -152,12 +133,11 @@ class NoticiaService extends BaseService {
 
       // Si no está en caché, buscar en la API
       final data = await get(
-        '${NewsConstants.newsEndpoint}/$id', 
+        '${ApiConstants.endpointNoticias}/$id', 
         requireAuthToken: false,
       );
 
       if (data != null && data is Map<String, dynamic>) {
-        _normalizarId(data);
         return NoticiaMapper.fromMap(data);
       } else {
         return null;

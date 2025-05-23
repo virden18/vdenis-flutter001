@@ -3,7 +3,7 @@ import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:vdenis/domain/reporte.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/core/base_service.dart';
 
 class ReporteService extends BaseService {
   // Constructor

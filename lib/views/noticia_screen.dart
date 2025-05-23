@@ -91,7 +91,7 @@ class NoticiaView extends StatelessWidget {
     final noticiaBloc = BlocProvider.of<NoticiaBloc>(context);
 
     return AppBar(
-      title: const Text(NewsConstants.tituloAppNoticias),
+      title: const Text(NewsConstants.tituloApp),
       backgroundColor: Colors.blueGrey,
       actions: [
         // Mostrar botón para limpiar filtros solo cuando hay filtros aplicados
@@ -203,7 +203,7 @@ class NoticiaView extends StatelessWidget {
       if (noticias.isEmpty) {
         return const Center(
           child: Text(
-            NewsConstants.listaVaciaNoticias,
+            NewsConstants.listaVacia,
             style: TextStyle(fontSize: 16),
           ),
         );

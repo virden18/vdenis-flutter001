@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/constants/constants.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
-import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/core/base_service.dart';
 import 'package:flutter/foundation.dart';
 
 class ComentariosService extends BaseService {

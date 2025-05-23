@@ -3,14 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/tarea/tarea_event.dart';
 import 'package:vdenis/bloc/tarea/tarea_state.dart';
 import 'package:vdenis/data/tarea_repository.dart';
+import 'package:watch_it/watch_it.dart';
 
 class TareaBloc extends Bloc<TareaEvent, TareaState> {
-  final TareasRepository _tareaRepository = TareasRepository();  TareaBloc() : super(TareaInitial()) {
+  final TareasRepository _tareaRepository = di<TareasRepository>();
+  
+  TareaBloc() : super(TareaInitial()) {
     on<TareaLoadEvent>(_onLoadTareas);
     on<TareaCreateEvent>(_onCreateTarea);
     on<TareaUpdateEvent>(_onUpdateTarea);
     on<TareaDeleteEvent>(_onDeleteTarea);
   }
+
   /// Maneja el evento para cargar tareas iniciales
   Future<void> _onLoadTareas(
     TareaLoadEvent event,
@@ -39,6 +43,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       );
     }
   }
+    
   /// Maneja el evento para crear una nueva tarea
   Future<void> _onCreateTarea(
     TareaCreateEvent event,
@@ -95,10 +100,11 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         );
 
         // Reemplazamos la tarea actualizada en la lista
-        final tareas =
-            currentState.tareas.map((tarea) {
-              return tarea.id == event.taskId ? tareaActualizada : tarea;
-            }).toList();        // Emitimos el estado de tarea actualizada
+        final tareas = currentState.tareas.map((tarea) {
+          return tarea.id == event.taskId ? tareaActualizada : tarea;
+        }).toList();
+        
+        // Emitimos el estado de tarea actualizada
         emit(
           TareaUpdated(
             tareaActualizada: tareaActualizada,
@@ -119,8 +125,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       }
     } else {
       // Si no hay tareas cargadas aún, primero cargamos las tareas
-      add(TareaLoadEvent());
-    }
+      add(TareaLoadEvent());    }
   }
 
   /// Maneja el evento para eliminar una tarea
@@ -136,10 +141,11 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         await _tareaRepository.eliminarTarea(event.taskId);
 
         // Filtramos la tarea eliminada de la lista
-        final tareas =
-            currentState.tareas
-                .where((tarea) => tarea.id != event.taskId)
-                .toList();        // Emitimos el estado de tarea eliminada
+        final tareas = currentState.tareas
+            .where((tarea) => tarea.id != event.taskId)
+            .toList();
+        
+        // Emitimos el estado de tarea eliminada
         emit(
           TareaDeleted(
             tareaEliminadaId: event.taskId,

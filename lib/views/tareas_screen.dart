@@ -12,7 +12,7 @@ import 'package:vdenis/components/add_task_modal.dart';
 import 'package:vdenis/views/tarea_detalle_screen.dart';
 
 class TareaScreen extends StatelessWidget {
-  TareaScreen({super.key});
+  const TareaScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +67,9 @@ class _TareaScreenContent extends StatelessWidget {
         builder: (context, state) {
           // Estado de carga inicial
           if (state is TareaInitial || 
-              (state is TareaLoading && !(state).isInitialLoad)) {
+              (state is TareaLoading)) {
             return const Center(child: CircularProgressIndicator());
-          }
+          } 
             // Si hay tareas cargadas
           if (state is TareaLoaded) {
             // Lista de tareas
@@ -123,8 +123,7 @@ class _TareaScreenContent extends StatelessWidget {
               ),
             );
           }
-          
-          // Si hay un error
+            // Si hay un error
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +136,7 @@ class _TareaScreenContent extends StatelessWidget {
                 ),
               ],
             ),
-          );
+          );        
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -145,7 +144,7 @@ class _TareaScreenContent extends StatelessWidget {
         tooltip: 'Agregar Tarea',
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(
+      bottomNavigationBar: const CustomBottomNavigationBar(
         selectedIndex: _selectedIndex,
       ),
     );
@@ -171,7 +170,6 @@ class _TareaScreenContent extends StatelessWidget {
       builder: (context) => AddTaskModal(
         onTaskAdded: (Tarea nuevaTarea) {
           context.read<TareaBloc>().add(TareaCreateEvent(nuevaTarea));
-          Navigator.of(context).pop(); // Cierra el modal después de agregar
         },
       ),
     );
@@ -191,7 +189,6 @@ class _TareaScreenContent extends StatelessWidget {
                 tarea: tareaEditada,
               ),
             );
-            Navigator.of(context).pop(); // Cierra el modal después de editar
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(

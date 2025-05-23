@@ -5,7 +5,6 @@ import 'package:vdenis/bloc/auth/auth_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
 import 'package:vdenis/bloc/reporte/reporte_bloc.dart';
 import 'package:vdenis/bloc/tarea/tarea_bloc.dart';
-import 'package:vdenis/bloc/tarea/tarea_event.dart';
 import 'package:vdenis/di/locator.dart';
 import 'package:vdenis/bloc/contador/contador_bloc.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_bloc.dart';
@@ -49,7 +48,7 @@ class MyApp extends StatelessWidget {
             return noticiaBloc;
           },
         ),
-        BlocProvider(create: (context) => TareaBloc()..add(TareaLoadEvent())),
+        BlocProvider(create: (context) => TareaBloc()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

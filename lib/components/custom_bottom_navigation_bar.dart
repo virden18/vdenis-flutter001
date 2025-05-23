@@ -22,7 +22,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       case 1: // Añadir Tarea
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => TareaScreen()),
+          MaterialPageRoute(builder: (context) => const TareaScreen()),
         );
         break;
       case 2: // Salir

@@ -83,7 +83,7 @@ Widget construirTarjetaDeportiva(Task tarea, int indice, VoidCallback onEdit) {
     tileColor: Colors.white, // Fondo blanco para el ListTile
     shape: CommonWidgetsHelper.buildRoundedBorder(),
     leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo), // Ícono dinámico
-    title: CommonWidgetsHelper.buildBoldTitle(tarea.title), // Título en negrita
+    title: CommonWidgetsHelper.buildBoldTitle(tarea.titulo), // Título en negrita
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

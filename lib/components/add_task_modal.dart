@@ -25,7 +25,7 @@ class AddTaskModalState extends State<AddTaskModal> {
   void initState() {
     super.initState();
     // Inicializa los controladores con los datos de la tarea a editar (si existe)
-    tituloController = TextEditingController(text: widget.taskToEdit?.title ?? '');
+    tituloController = TextEditingController(text: widget.taskToEdit?.titulo ?? '');
     descripcionController = TextEditingController(text: widget.taskToEdit?.descripcion ?? '');
     fechaSeleccionada = widget.taskToEdit?.fecha;
     fechaController = TextEditingController(
@@ -163,7 +163,7 @@ class AddTaskModalState extends State<AddTaskModal> {
 
             // Crear la tarea sin el campo 'type'
             final nuevaTarea = Task(
-              title: titulo,
+              titulo: titulo,
               descripcion: descripcion,
               fecha: fechaSeleccionada,
               fechaLimite: fechaLimiteSeleccionada,

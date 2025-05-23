@@ -1,0 +1,48 @@
+import 'package:vdenis/constants/constantes.dart';
+import 'package:vdenis/core/base_service.dart';
+import 'package:vdenis/domain/task.dart';
+
+class TareaService extends BaseService {
+  final String _endpoint = ApiConstantes.tareasEndpoint;
+
+  /// Obtiene la lista de tareas
+  Future<List<Task>> getTasks() async {
+    final List<dynamic> tareasJson = await get<List<dynamic>>(
+      _endpoint,
+      errorMessage: 'Error al obtener las tareas',
+    );
+
+    return tareasJson
+        .map<Task>((json) => TaskMapper.fromMap(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Crea una nueva tarea
+  Future<Task> createTask(Task task) async {
+    final json = await post(
+      _endpoint,
+      data: task.toMap(),
+      errorMessage: 'Error al crear la tarea',
+    );
+
+    return TaskMapper.fromMap(json);
+  }
+
+  /// Elimina una tarea existente
+  Future<void> deleteTask(String taskId) async {
+    final url = '$_endpoint/$taskId';
+    await delete(url, errorMessage: 'Error al eliminar la tarea');
+  }
+
+  /// Actualiza una tarea existente
+  Future<Task> updateTask(String taskId, Task task) async {
+    final url = '$_endpoint/$taskId';
+    final json = await put(
+      url,
+      data: task.toMap(),
+      errorMessage: 'Error al actualizar la tarea',
+    );
+
+    return TaskMapper.fromMap(json);
+  }
+}

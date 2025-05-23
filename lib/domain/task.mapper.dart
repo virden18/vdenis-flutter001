@@ -20,16 +20,19 @@ class TaskMapper extends ClassMapperBase<Task> {
   @override
   final String id = 'Task';
 
-  static String _$title(Task v) => v.title;
-  static const Field<Task, String> _f$title = Field('title', _$title);
-  static String _$type(Task v) => v.tipo;
-  static const Field<Task, String> _f$type =
-      Field('type', _$type, opt: true, def: 'normal');
-  static String? _$description(Task v) => v.descripcion;
-  static const Field<Task, String> _f$description =
-      Field('description', _$description, opt: true);
-  static DateTime? _$date(Task v) => v.fecha;
-  static const Field<Task, DateTime> _f$date = Field('date', _$date, opt: true);
+  static String? _$id(Task v) => v.id;
+  static const Field<Task, String> _f$id = Field('id', _$id, opt: true);
+  static String _$titulo(Task v) => v.titulo;
+  static const Field<Task, String> _f$titulo = Field('titulo', _$titulo);
+  static String _$tipo(Task v) => v.tipo;
+  static const Field<Task, String> _f$tipo =
+      Field('tipo', _$tipo, opt: true, def: 'normal');
+  static String? _$descripcion(Task v) => v.descripcion;
+  static const Field<Task, String> _f$descripcion =
+      Field('descripcion', _$descripcion, opt: true);
+  static DateTime? _$fecha(Task v) => v.fecha;
+  static const Field<Task, DateTime> _f$fecha =
+      Field('fecha', _$fecha, opt: true);
   static DateTime? _$fechaLimite(Task v) => v.fechaLimite;
   static const Field<Task, DateTime> _f$fechaLimite =
       Field('fechaLimite', _$fechaLimite, opt: true);
@@ -39,20 +42,22 @@ class TaskMapper extends ClassMapperBase<Task> {
 
   @override
   final MappableFields<Task> fields = const {
-    #title: _f$title,
-    #type: _f$type,
-    #description: _f$description,
-    #date: _f$date,
+    #id: _f$id,
+    #titulo: _f$titulo,
+    #tipo: _f$tipo,
+    #descripcion: _f$descripcion,
+    #fecha: _f$fecha,
     #fechaLimite: _f$fechaLimite,
     #pasos: _f$pasos,
   };
 
   static Task _instantiate(DecodingData data) {
     return Task(
-        title: data.dec(_f$title),
-        tipo: data.dec(_f$type),
-        descripcion: data.dec(_f$description),
-        fecha: data.dec(_f$date),
+        id: data.dec(_f$id),
+        titulo: data.dec(_f$titulo),
+        tipo: data.dec(_f$tipo),
+        descripcion: data.dec(_f$descripcion),
+        fecha: data.dec(_f$fecha),
         fechaLimite: data.dec(_f$fechaLimite),
         pasos: data.dec(_f$pasos));
   }
@@ -105,10 +110,11 @@ abstract class TaskCopyWith<$R, $In extends Task, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get pasos;
   $R call(
-      {String? title,
-      String? type,
-      String? description,
-      DateTime? date,
+      {String? id,
+      String? titulo,
+      String? tipo,
+      String? descripcion,
+      DateTime? fecha,
       DateTime? fechaLimite,
       List<String>? pasos});
   TaskCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
@@ -128,26 +134,29 @@ class _TaskCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Task, $Out>
           : null;
   @override
   $R call(
-          {String? title,
-          String? type,
-          Object? description = $none,
-          Object? date = $none,
+          {Object? id = $none,
+          String? titulo,
+          String? tipo,
+          Object? descripcion = $none,
+          Object? fecha = $none,
           Object? fechaLimite = $none,
           Object? pasos = $none}) =>
       $apply(FieldCopyWithData({
-        if (title != null) #title: title,
-        if (type != null) #type: type,
-        if (description != $none) #description: description,
-        if (date != $none) #date: date,
+        if (id != $none) #id: id,
+        if (titulo != null) #titulo: titulo,
+        if (tipo != null) #tipo: tipo,
+        if (descripcion != $none) #descripcion: descripcion,
+        if (fecha != $none) #fecha: fecha,
         if (fechaLimite != $none) #fechaLimite: fechaLimite,
         if (pasos != $none) #pasos: pasos
       }));
   @override
   Task $make(CopyWithData data) => Task(
-      title: data.get(#title, or: $value.title),
-      tipo: data.get(#type, or: $value.tipo),
-      descripcion: data.get(#description, or: $value.descripcion),
-      fecha: data.get(#date, or: $value.fecha),
+      id: data.get(#id, or: $value.id),
+      titulo: data.get(#titulo, or: $value.titulo),
+      tipo: data.get(#tipo, or: $value.tipo),
+      descripcion: data.get(#descripcion, or: $value.descripcion),
+      fecha: data.get(#fecha, or: $value.fecha),
       fechaLimite: data.get(#fechaLimite, or: $value.fechaLimite),
       pasos: data.get(#pasos, or: $value.pasos));
 

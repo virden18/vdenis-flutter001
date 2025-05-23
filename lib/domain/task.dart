@@ -4,7 +4,7 @@ part 'task.mapper.dart';
 @MappableClass()
 class Task with TaskMappable{
   final String? id;
-  final String title;
+  final String titulo;
   final String tipo;
   final String? descripcion;
   final DateTime? fecha;
@@ -13,7 +13,7 @@ class Task with TaskMappable{
 
   Task({
     this.id,
-    required this.title,
+    required this.titulo,
     this.tipo = 'normal', // Valor por defecto
     this.descripcion,
     this.fecha,

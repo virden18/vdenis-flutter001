@@ -19,8 +19,6 @@ class TareaScreenState extends State<TareaScreen> {
   final TareasRepository _tareasRepository = TareasRepository();
   final ScrollController _scrollController = ScrollController();
   bool _cargando = false;
-  // bool _hayMasTareas = true;
-  // int _paginaActual = 0;
   final int _limitePorPagina = 5;
   final int _selectedIndex = 0; // Índice del elemento seleccionado en el navbar
   List<Task> _tareas = []; // Lista persistente de tareas
@@ -29,7 +27,6 @@ class TareaScreenState extends State<TareaScreen> {
   void initState() {
     super.initState();
     _cargarTareasIniciales(); // Carga inicial de tareas
-    _scrollController.addListener(_cargarMasTareas);
   }
 
   @override
@@ -38,83 +35,78 @@ class TareaScreenState extends State<TareaScreen> {
     super.dispose();
   }
 
-  Future<void> _cargarTareasIniciales() async {
-    // if (_cargando || !_hayMasTareas) return;
+  // Método para recargar las tareas (pull-to-refresh)
+  Future<void> _recargarTareas() async {
+    
+    // Recarga las tareas
+    await _cargarTareasIniciales();
+    
+    return Future.value();
+  }
 
+  Future<void> _cargarTareasIniciales() async {
     setState(() {
       _cargando = true;
     });
 
-    final tareas = await _tareasRepository.getTasksWithSteps(
-      limite: _limitePorPagina,
-    );
-
-    setState(() {
-      _tareas = tareas;
-      _cargando = false;
-    });
-
-    // Llama al servicio para obtener nuevas tareas
-    // final nuevasTareas = await _tareasService.obtenerTareas(
-    //   inicio: _paginaActual * _limitePorPagina,
-    //   limite: _limitePorPagina,
-    // );
-
-    // setState(() {
-    //   if (nuevasTareas.isNotEmpty) {
-    //     _tareas.addAll(nuevasTareas); // Agrega las nuevas tareas a la lista existente
-    //     _paginaActual++; // Incrementa la página actual para la siguiente carga
-    //   }
-    //   _cargando = false;
-    //   _hayMasTareas = nuevasTareas.length == _limitePorPagina; // Verifica si hay más tareas
-    // });
-  }
-
-   Future<void> _cargarMasTareas() async {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_cargando) {
-      setState(() {
-        _cargando = true;
-      });
-
-      final nuevasTareas = await _tareasRepository.getMoreTasksWithSteps(
-        inicio: _tareas.length,
+    try {
+      final tareas = await _tareasRepository.obtenerTareas(
         limite: _limitePorPagina,
       );
 
       setState(() {
-        _tareas.addAll(nuevasTareas);
+        _tareas = tareas;
         _cargando = false;
       });
+    } catch (e) {
+      setState(() {
+        _cargando = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar tareas: $e')),
+      );
     }
   }
-
-
-  // void _detectarScrollFinal() {
-  //   if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent &&
-  //       !_cargando) {
-  //     _cargarTareas();
-  //   }
-  // }
 
   void _mostrarModalAgregarTarea() {
     showDialog(
       context: context,
       builder: (context) => AddTaskModal(
         onTaskAdded: (Task nuevaTarea) async {
-          Task tareaActualizada = await _tareasRepository.agregarTarea(nuevaTarea); // El servicio define el tipo
-          setState(() {
-            _tareas.insert(0, tareaActualizada); // Agrega la nueva tarea al inicio de la lista
-          });
+          try {
+            Task tareaActualizada = await _tareasRepository.agregarTarea(nuevaTarea);
+            setState(() {
+              _tareas.insert(0, tareaActualizada); // Agrega la nueva tarea al inicio de la lista
+            });
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error al agregar tarea: $e')),
+            );
+          }
         },
       ),
     );
   }
 
   Future<void> _eliminarTarea(int index) async {
-    await _tareasRepository.eliminarTarea(index);
-    setState(() {
-      _tareas.removeAt(index); // Elimina la tarea de la lista persistente
-    });
+    final String? taskId = _tareas[index].id;
+    if (taskId != null) {
+      try {
+        await _tareasRepository.eliminarTarea(taskId);
+        setState(() {
+          _tareas.removeAt(index); // Elimina la tarea de la lista persistente
+        });
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al eliminar tarea: $e')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error: La tarea no tiene un ID válido')),
+      );
+    }
   }
 
   void _mostrarDetallesTarea(int indice) {
@@ -124,7 +116,7 @@ class TareaScreenState extends State<TareaScreen> {
         builder: (context) => TaskDetailsScreen(
           tareas: _tareas, 
           indice: indice
-        ), // Navega a la nueva pantalla
+        ),
       ),
     );
   }
@@ -135,10 +127,22 @@ class TareaScreenState extends State<TareaScreen> {
       builder: (context) => AddTaskModal(
         taskToEdit: tarea,
         onTaskAdded: (Task tareaEditada) async {
-          Task tareaActualizada = await _tareasRepository.actualizarTarea(index, tareaEditada);
-          setState(() {
-            _tareas[index] = tareaActualizada; // Actualiza la tarea en la lista persistente
-          });
+          if (tarea.id != null) {
+            try {
+              Task tareaActualizada = await _tareasRepository.actualizarTarea(tarea.id!, tareaEditada);
+              setState(() {
+                _tareas[index] = tareaActualizada; // Actualiza la tarea en la lista persistente
+              });
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error al actualizar tarea: $e')),
+              );
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error: La tarea no tiene un ID válido')),
+            );
+          }
         },
       ),
     );
@@ -148,73 +152,66 @@ class TareaScreenState extends State<TareaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('$TareasConstantes.tituloAppbar - Total: ${_tareas.length}')
+        title: Text('${TareasConstantes.tituloAppBar} - Total: ${_tareas.length}')
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
-      body: _tareas.isEmpty && !_cargando // Verifica si no hay tareas y no se está cargando
+      body: _tareas.isEmpty && !_cargando
         ? const Center(
             child: Text(
               TareasConstantes.listaVacia,
               style: TextStyle(fontSize: 18, color: Colors.black54),
             ),
           )
-        : ListView.builder(
-        controller: _scrollController,
-        itemCount: _tareas.length + (_cargando ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == _tareas.length) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
+        : RefreshIndicator(
+            onRefresh: _recargarTareas,
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: _tareas.length + (_cargando ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == _tareas.length) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
 
-          final tarea = _tareas[index];
-          return GestureDetector(
-            onTap: () => _mostrarDetallesTarea(index), // Muestra los detalles al tocar la tarjeta
-            child:Dismissible(
-              key: Key(tarea.title),
-              direction: DismissDirection.endToStart,
-              background: Container(
-                color: Colors.red,
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: const Icon(Icons.delete, color: Colors.white),
-              ),
-              onDismissed: (direction) {
-                _eliminarTarea(index);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text(TareasConstantes.tareaEliminada)),
-                );                
+                final tarea = _tareas[index];
+                return GestureDetector(
+                  onTap: () => _mostrarDetallesTarea(index),
+                  child: Dismissible(
+                    key: Key(tarea.id ?? tarea.titulo),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white),
+                    ),
+                    onDismissed: (direction) {
+                      _eliminarTarea(index);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text(TareasConstantes.tareaEliminada)),
+                      );                
+                    },
+                    child: construirTarjetaDeportiva(
+                      tarea, 
+                      index,
+                      () => _mostrarModalEditarTarea(tarea, index),
+                    ),
+                  ),
+                );
               },
-              // Usa la nueva tarjeta deportiva,
-                child: construirTarjetaDeportiva(
-                tarea, 
-                index,
-                () => _mostrarModalEditarTarea(tarea, index), // Pasa la función de edición
-                ), 
-              // child: buildTaskCard(
-              //   tarea,
-              //   () {
-              //     _mostrarModalEditarTarea(tarea, index);
-              //   },
-              //   subtitulo: tarea.pasos != null && tarea.pasos!.isNotEmpty
-              //     ? '$PASOS_TITULO: ${tarea.pasos![0]}' // Muestra PASOS_TITULO seguido del primer paso
-              //     : '$PASOS_TITULO: No hay pasos disponibles',
-              // ),
             ),
-          );
-        },
-      ),
+          ),
       floatingActionButton: FloatingActionButton(
         onPressed: _mostrarModalAgregarTarea,
         tooltip: 'Agregar Tarea',
         child: const Icon(Icons.add),
       ),
-      bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

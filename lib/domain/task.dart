@@ -1,4 +1,8 @@
-class Task {
+import 'package:dart_mappable/dart_mappable.dart';
+part 'task.mapper.dart';
+
+@MappableClass()
+class Task with TaskMappable{
   final String title;
   final String type;
   final String? description;

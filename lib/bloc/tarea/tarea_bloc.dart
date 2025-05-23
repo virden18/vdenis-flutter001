@@ -5,15 +5,12 @@ import 'package:vdenis/bloc/tarea/tarea_state.dart';
 import 'package:vdenis/data/tarea_repository.dart';
 
 class TareaBloc extends Bloc<TareaEvent, TareaState> {
-  final TareasRepository _tareaRepository = TareasRepository();
-
-  TareaBloc() : super(TareaInitial()) {
+  final TareasRepository _tareaRepository = TareasRepository();  TareaBloc() : super(TareaInitial()) {
     on<TareaLoadEvent>(_onLoadTareas);
     on<TareaCreateEvent>(_onCreateTarea);
     on<TareaUpdateEvent>(_onUpdateTarea);
     on<TareaDeleteEvent>(_onDeleteTarea);
   }
-
   /// Maneja el evento para cargar tareas iniciales
   Future<void> _onLoadTareas(
     TareaLoadEvent event,
@@ -30,10 +27,6 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       emit(
         TareaLoaded(
           tareas: tareas,
-          hayMasTareas:
-              tareas.length >=
-              event
-                  .limite, // Si obtenemos el límite completo, asumimos que hay más
         ),
       );
     } catch (e) {
@@ -46,7 +39,6 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       );
     }
   }
-
   /// Maneja el evento para crear una nueva tarea
   Future<void> _onCreateTarea(
     TareaCreateEvent event,
@@ -67,7 +59,6 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
           TareaCreated(
             nuevaTarea: nuevaTarea,
             tareas: tareas,
-            hayMasTareas: currentState.hayMasTareas,
           ),
         );
       } catch (e) {
@@ -107,14 +98,11 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         final tareas =
             currentState.tareas.map((tarea) {
               return tarea.id == event.taskId ? tareaActualizada : tarea;
-            }).toList();
-
-        // Emitimos el estado de tarea actualizada
+            }).toList();        // Emitimos el estado de tarea actualizada
         emit(
           TareaUpdated(
             tareaActualizada: tareaActualizada,
             tareas: tareas,
-            hayMasTareas: currentState.hayMasTareas,
           ),
         );
       } catch (e) {
@@ -151,14 +139,11 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         final tareas =
             currentState.tareas
                 .where((tarea) => tarea.id != event.taskId)
-                .toList();
-
-        // Emitimos el estado de tarea eliminada
+                .toList();        // Emitimos el estado de tarea eliminada
         emit(
           TareaDeleted(
             tareaEliminadaId: event.taskId,
             tareas: tareas,
-            hayMasTareas: currentState.hayMasTareas,
           ),
         );
       } catch (e) {

@@ -11,7 +11,7 @@ abstract class TareaState extends Equatable {
 class TareaInitial extends TareaState {}
 
 /// Tipo de operación para manejar errores específicos
-enum TipoOperacionTarea { cargar, cargarMas, crear, actualizar, eliminar }
+enum TipoOperacionTarea { cargar, crear, actualizar, eliminar }
 
 /// Estado de error para cualquier operación de tareas
 class TareaError extends TareaState {
@@ -28,12 +28,9 @@ class TareaError extends TareaState {
     final base = error is ApiException 
         ? (error as ApiException)
         : error.toString();
-        
-    switch (tipoOperacion) {
+          switch (tipoOperacion) {
       case TipoOperacionTarea.cargar:
         return 'Error al cargar las tareas: $base';
-      case TipoOperacionTarea.cargarMas:
-        return 'Error al cargar más tareas: $base';
       case TipoOperacionTarea.crear:
         return 'Error al crear la tarea: $base';
       case TipoOperacionTarea.actualizar:
@@ -54,30 +51,25 @@ class TareaLoading extends TareaState {
   List<Object?> get props => [isInitialLoad];
 }
 
-/// Estado que indica que se están cargando más tareas (paginación)
-class TareaLoadingMore extends TareaState {}
+// Se eliminó la clase TareaLoadingMore que se usaba para paginación
 
 /// Estado base para cuando se han cargado las tareas
 class TareaLoaded extends TareaState {
   final List<Tarea> tareas;
-  final bool hayMasTareas;
 
   TareaLoaded({
     required this.tareas,
-    this.hayMasTareas = true,
   });
 
   @override
-  List<Object?> get props => [tareas, hayMasTareas];
+  List<Object?> get props => [tareas];
   
   /// Factory para crear una copia con nuevos valores
   TareaLoaded copyWith({
     List<Tarea>? tareas,
-    bool? hayMasTareas,
   }) {
     return TareaLoaded(
       tareas: tareas ?? this.tareas,
-      hayMasTareas: hayMasTareas ?? this.hayMasTareas,
     );
   }
 }
@@ -89,7 +81,6 @@ class TareaCreated extends TareaLoaded {
   TareaCreated({
     required this.nuevaTarea,
     required super.tareas,
-    super.hayMasTareas = true,
   });
 
   @override
@@ -103,7 +94,6 @@ class TareaUpdated extends TareaLoaded {
   TareaUpdated({
     required this.tareaActualizada,
     required super.tareas,
-    super.hayMasTareas = true,
   });
 
   @override
@@ -117,7 +107,6 @@ class TareaDeleted extends TareaLoaded {
   TareaDeleted({
     required this.tareaEliminadaId,
     required super.tareas,
-    super.hayMasTareas = true,
   });
 
   @override

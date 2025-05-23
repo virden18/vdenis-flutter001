@@ -18,20 +18,6 @@ class TareaLoadEvent extends TareaEvent {
   List<Object?> get props => [limite];
 }
 
-/// Evento para cargar más tareas (paginación)
-class TareaLoadMoreEvent extends TareaEvent {
-  final int inicio;
-  final int limite;
-  
-  TareaLoadMoreEvent({
-    required this.inicio,
-    this.limite = 5
-  });
-  
-  @override
-  List<Object?> get props => [inicio, limite];
-}
-
 /// Evento para crear una nueva tarea
 class TareaCreateEvent extends TareaEvent {
   final Tarea tarea;

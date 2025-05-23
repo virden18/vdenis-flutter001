@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/helpers/dialog_helper.dart';
-import 'package:vdenis/views/welcome_screen.dart';
 import 'package:vdenis/views/tareas_screen.dart';
+import 'package:vdenis/views/welcome_screen.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
@@ -22,7 +22,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       case 1: // Añadir Tarea
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const TareaScreen()),
+          MaterialPageRoute(builder: (context) => TareaScreen()),
         );
         break;
       case 2: // Salir

@@ -8,6 +8,7 @@ import 'package:vdenis/data/reporte_repository.dart';
 import 'package:vdenis/core/services/connectivity_service.dart';
 import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vdenis/data/tarea_repository.dart';
 import 'package:watch_it/watch_it.dart';
 
 Future<void> initLocator() async {
@@ -22,4 +23,5 @@ Future<void> initLocator() async {
   di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
+  di.registerSingleton<TareasRepository>(TareasRepository());
 }

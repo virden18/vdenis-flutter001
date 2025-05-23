@@ -1,5 +1,4 @@
-import 'dart:async';
-import 'package:vdenis/core/base_service.dart';
+import 'package:vdenis/api/service/base_service.dart';
 import 'package:vdenis/domain/login_request.dart';
 import 'package:vdenis/domain/login_response.dart';
 import 'package:vdenis/exceptions/api_exception.dart';

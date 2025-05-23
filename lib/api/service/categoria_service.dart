@@ -1,12 +1,12 @@
-import 'package:vdenis/core/base_service.dart';
-import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/categoria.dart';
 
 class CategoriaService extends BaseService {
   /// Obtiene todas las categorías desde la API
   Future<List<Categoria>> obtenerCategorias() async {
     final List<dynamic> categoriasJson = await get<List<dynamic>>(
-      ApiConstantes.categoriasEndpoint,
+      ApiConstantes.categoriaEndpoint,
       errorMessage: CategoriaConstantes.mensajeError,
     );
 
@@ -21,7 +21,7 @@ class CategoriaService extends BaseService {
   /// Retorna el objeto categoria con los datos actualizados desde el servidor (incluyendo ID)
   Future<Categoria> crearCategoria(Categoria categoria) async {
     final response = await post(
-      ApiConstantes.categoriasEndpoint,
+      ApiConstantes.categoriaEndpoint,
       data: categoria.toMap(),
       errorMessage: CategoriaConstantes.errorCreated,
     );
@@ -30,7 +30,7 @@ class CategoriaService extends BaseService {
 
   /// Edita una categoría existente en la API
   Future<Categoria> editarCategoria(Categoria categoria) async {
-    final url = '${ApiConstantes.categoriasEndpoint}/${categoria.id}';
+    final url = '${ApiConstantes.categoriaEndpoint}/${categoria.id}';
     final response = await put(
       url,
       data: categoria.toMap(),
@@ -41,7 +41,7 @@ class CategoriaService extends BaseService {
 
   /// Elimina una categoría de la API
   Future<void> eliminarCategoria(String id) async {
-    final url = '${ApiConstantes.categoriasEndpoint}/$id';
+    final url = '${ApiConstantes.categoriaEndpoint}/$id';
     await delete(url, errorMessage: CategoriaConstantes.errorDelete);
   }
 }

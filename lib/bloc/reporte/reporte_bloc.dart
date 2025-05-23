@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vdenis/bloc/reporte/reporte_event.dart';
 import 'package:vdenis/bloc/reporte/reporte_state.dart';
-import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/data/reporte_repository.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';

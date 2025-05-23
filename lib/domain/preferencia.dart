@@ -11,12 +11,4 @@ class Preferencia with PreferenciaMappable {
     required this.email,
     required this.categoriasSeleccionadas,
   });
-
-  // Factory method to create an empty Preferencia instance
-  factory Preferencia.empty() {
-    return const Preferencia(
-      email: '',
-      categoriasSeleccionadas: [],
-    );
-  }
 }

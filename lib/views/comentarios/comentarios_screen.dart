@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/comentarios/comentario_bloc.dart';
-import 'package:vdenis/bloc/comentarios/comentario_event.dart';
-
-// Importaciones de componentes
-import 'package:vdenis/components/comments/comment_app_bar.dart';
-import 'package:vdenis/components/comments/comment_search_bar.dart';
-import 'package:vdenis/components/comments/comment_list.dart';
-import 'package:vdenis/components/comments/comment_input_form.dart';
+import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
+import 'package:vdenis/bloc/comentario/comentario_event.dart';
+import 'package:vdenis/views/comentarios/components/comment_app_bar.dart';
+import 'package:vdenis/views/comentarios/components/comment_input_form.dart';
+import 'package:vdenis/views/comentarios/components/comment_list.dart';
+import 'package:vdenis/views/comentarios/components/comment_search_bar.dart';
 
 class ComentariosScreen extends StatelessWidget {
   final String noticiaId;
+  final String noticiaTitulo;
 
-  const ComentariosScreen({super.key, required this.noticiaId});
-
+  const ComentariosScreen({super.key, required this.noticiaId, required this.noticiaTitulo});
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: context.read<ComentarioBloc>()
-        ..add(LoadComentarios(noticiaId: noticiaId)),
-      child: _ComentariosScreenContent(noticiaId: noticiaId),
+        ..add(LoadComentarios(noticiaId)),
+      child: _ComentariosScreenContent(
+        noticiaId: noticiaId,
+        noticiaTitulo: noticiaTitulo,
+      ),
     );
   }
 }
 
 class _ComentariosScreenContent extends StatefulWidget {
   final String noticiaId;
+  final String noticiaTitulo;
 
-  const _ComentariosScreenContent({required this.noticiaId});
+  const _ComentariosScreenContent({required this.noticiaId, required this.noticiaTitulo});
 
   @override
   State<_ComentariosScreenContent> createState() =>
@@ -57,14 +59,28 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Cargar los comentarios iniciales
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _recargarComentarios();
+    });
+  }
+
+  void _recargarComentarios() {
+    context.read<ComentarioBloc>().add(LoadComentarios(widget.noticiaId));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CommentAppBar(
         ordenAscendente: _ordenAscendente,
         onOrdenChanged: (ascendente) {
           setState(() => _ordenAscendente = ascendente);
-          context.read<ComentarioBloc>().add(OrdenarComentarios(ascendente: ascendente));
+          context.read<ComentarioBloc>().add(OrdenarComentarios(ascendente));
         },
+        titulo: widget.noticiaTitulo,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -100,15 +116,14 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
       ),
     );
   }
-
   void _handleSearch() {
     if (_busquedaController.text.isEmpty) {
-      context.read<ComentarioBloc>().add(LoadComentarios(noticiaId: widget.noticiaId));
+      context.read<ComentarioBloc>().add(LoadComentarios(widget.noticiaId));
     } else {
       context.read<ComentarioBloc>().add(
         BuscarComentarios(
-          noticiaId: widget.noticiaId,
-          criterioBusqueda: _busquedaController.text,
+          _busquedaController.text,
+          widget.noticiaId,
         ),
       );
     }

@@ -1,18 +1,20 @@
 import 'package:dart_mappable/dart_mappable.dart';
+
 part 'comentario.mapper.dart';
 
 @MappableClass()
 class Comentario with ComentarioMappable {
+  @MappableField()
   final String? id; 
-  final String noticiaId;
+  final String noticiaId; 
   final String texto;
-  final String fecha;
-  final String autor;
-  final int likes;
-  final int dislikes;
+  final String fecha; 
+  final String autor; 
+  final int likes; 
+  final int dislikes; 
   final List<Comentario>? subcomentarios;
   final bool isSubComentario; 
-  final String? idSubComentario;
+  final String? idSubComentario; 
 
   Comentario({
     this.id, 

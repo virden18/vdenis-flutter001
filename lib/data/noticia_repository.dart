@@ -1,6 +1,6 @@
 import 'package:vdenis/api/service/noticia_service.dart';
-import 'package:vdenis/constants/constants.dart';
-import 'package:vdenis/core/base_repository.dart';
+import 'package:vdenis/constants/constantes.dart';
+import 'package:vdenis/data/base_repository.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 /// Repositorio para gestionar operaciones relacionadas con las noticias.

@@ -1,5 +1,5 @@
-import 'package:vdenis/core/base_service.dart';
-import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class NoticiaService extends BaseService {

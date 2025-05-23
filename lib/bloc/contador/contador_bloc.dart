@@ -2,18 +2,41 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/contador/contador_event.dart';
 import 'package:vdenis/bloc/contador/contador_state.dart';
 
+
 class ContadorBloc extends Bloc<ContadorEvent, ContadorState> {
-  ContadorBloc() : super(ContadorState(0)) {
-    on<Incrementar>((event, emit) {
-      emit(ContadorState(state.contador + 1));
-    });
+  ContadorBloc() : super(const ContadorState()) {
+    on<ContadorIncrementEvent>(_onIncrement);
+    on<ContadorDecrementEvent>(_onDecrement);
+    on<ContadorResetEvent>(_onReset);
+  }
 
-    on<Decrementar>((event, emit) {
-      emit(ContadorState(state.contador - 1));
-    });
+  void _onIncrement(
+    ContadorIncrementEvent event,
+    Emitter<ContadorState> emit,
+  ) {
+    emit(state.copyWith(
+      valor: state.valor + 1,
+      status: ContadorStatus.loaded,
+    ));
+  }
 
-    on<Resetear>((event, emit) {
-      emit(ContadorState(0));
-    });
+  void _onDecrement(
+    ContadorDecrementEvent event,
+    Emitter<ContadorState> emit,
+  ) {
+    emit(state.copyWith(
+      valor: state.valor - 1,
+      status: ContadorStatus.loaded,
+    ));
+  }
+
+  void _onReset(
+    ContadorResetEvent event,
+    Emitter<ContadorState> emit,
+  ) {
+    emit(state.copyWith(
+      valor: 0,
+      status: ContadorStatus.loaded,
+    ));
   }
 }

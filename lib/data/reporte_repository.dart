@@ -1,6 +1,6 @@
 import 'package:vdenis/api/service/reporte_service.dart';
-import 'package:vdenis/constants/constants.dart';
-import 'package:vdenis/core/base_repository.dart';
+import 'package:vdenis/constants/constantes.dart';
+import 'package:vdenis/data/base_repository.dart';
 import 'package:vdenis/domain/reporte.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 

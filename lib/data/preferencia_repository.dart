@@ -1,8 +1,8 @@
 import 'package:vdenis/api/service/preferencia_service.dart';
-import 'package:vdenis/core/base_repository.dart';
+import 'package:vdenis/data/base_repository.dart';
 import 'package:vdenis/domain/preferencia.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
-import 'package:vdenis/core/service/secure_storage_service.dart';
+import 'package:vdenis/helpers/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 /// Repositorio para gestionar las preferencias del usuario.

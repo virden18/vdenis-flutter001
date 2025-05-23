@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:vdenis/core/base_service.dart';
-import 'package:vdenis/constants/constants.dart';
+import 'package:vdenis/api/service/base_service.dart';
+import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 

@@ -1,12 +1,14 @@
+import 'package:equatable/equatable.dart';
 
-abstract class ContadorEvent{
+abstract class ContadorEvent extends Equatable {
+  const ContadorEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
-class Incrementar extends ContadorEvent {
-}
+class ContadorIncrementEvent extends ContadorEvent {}
 
-class Decrementar extends ContadorEvent {
-}
+class ContadorDecrementEvent extends ContadorEvent {}
 
-class Resetear extends ContadorEvent {
-}
+class ContadorResetEvent extends ContadorEvent {}

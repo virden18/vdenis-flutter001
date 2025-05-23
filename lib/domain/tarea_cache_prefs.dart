@@ -1,9 +1,9 @@
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:vdenis/domain/tarea.dart';
-part 'task_cache_prefs.mapper.dart';
+part 'tarea_cache_prefs.mapper.dart';
 
 @MappableClass()
-class TareaCachePrefs with TaskCachePrefsMappable {
+class TareaCachePrefs with TareaCachePrefsMappable {
   final String email;
   final List<Tarea> misTareas;
 

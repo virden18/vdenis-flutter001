@@ -6,19 +6,19 @@
 
 part of 'tarea.dart';
 
-class TaskMapper extends ClassMapperBase<Tarea> {
-  TaskMapper._();
+class TareaMapper extends ClassMapperBase<Tarea> {
+  TareaMapper._();
 
-  static TaskMapper? _instance;
-  static TaskMapper ensureInitialized() {
+  static TareaMapper? _instance;
+  static TareaMapper ensureInitialized() {
     if (_instance == null) {
-      MapperContainer.globals.use(_instance = TaskMapper._());
+      MapperContainer.globals.use(_instance = TareaMapper._());
     }
     return _instance!;
   }
 
   @override
-  final String id = 'Task';
+  final String id = 'Tarea';
 
   static String? _$id(Tarea v) => v.id;
   static const Field<Tarea, String> _f$id = Field('id', _$id, opt: true);
@@ -74,39 +74,39 @@ class TaskMapper extends ClassMapperBase<Tarea> {
   }
 }
 
-mixin TaskMappable {
+mixin TareaMappable {
   String toJson() {
-    return TaskMapper.ensureInitialized().encodeJson<Tarea>(this as Tarea);
+    return TareaMapper.ensureInitialized().encodeJson<Tarea>(this as Tarea);
   }
 
   Map<String, dynamic> toMap() {
-    return TaskMapper.ensureInitialized().encodeMap<Tarea>(this as Tarea);
+    return TareaMapper.ensureInitialized().encodeMap<Tarea>(this as Tarea);
   }
 
-  TaskCopyWith<Tarea, Tarea, Tarea> get copyWith =>
-      _TaskCopyWithImpl<Tarea, Tarea>(this as Tarea, $identity, $identity);
+  TareaCopyWith<Tarea, Tarea, Tarea> get copyWith =>
+      _TareaCopyWithImpl<Tarea, Tarea>(this as Tarea, $identity, $identity);
   @override
   String toString() {
-    return TaskMapper.ensureInitialized().stringifyValue(this as Tarea);
+    return TareaMapper.ensureInitialized().stringifyValue(this as Tarea);
   }
 
   @override
   bool operator ==(Object other) {
-    return TaskMapper.ensureInitialized().equalsValue(this as Tarea, other);
+    return TareaMapper.ensureInitialized().equalsValue(this as Tarea, other);
   }
 
   @override
   int get hashCode {
-    return TaskMapper.ensureInitialized().hashValue(this as Tarea);
+    return TareaMapper.ensureInitialized().hashValue(this as Tarea);
   }
 }
 
-extension TaskValueCopy<$R, $Out> on ObjectCopyWith<$R, Tarea, $Out> {
-  TaskCopyWith<$R, Tarea, $Out> get $asTask =>
-      $base.as((v, t, t2) => _TaskCopyWithImpl<$R, $Out>(v, t, t2));
+extension TareaValueCopy<$R, $Out> on ObjectCopyWith<$R, Tarea, $Out> {
+  TareaCopyWith<$R, Tarea, $Out> get $asTarea =>
+      $base.as((v, t, t2) => _TareaCopyWithImpl<$R, $Out>(v, t, t2));
 }
 
-abstract class TaskCopyWith<$R, $In extends Tarea, $Out>
+abstract class TareaCopyWith<$R, $In extends Tarea, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get pasos;
   $R call(
@@ -117,15 +117,15 @@ abstract class TaskCopyWith<$R, $In extends Tarea, $Out>
       DateTime? fecha,
       DateTime? fechaLimite,
       List<String>? pasos});
-  TaskCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+  TareaCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class _TaskCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Tarea, $Out>
-    implements TaskCopyWith<$R, Tarea, $Out> {
-  _TaskCopyWithImpl(super.value, super.then, super.then2);
+class _TareaCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Tarea, $Out>
+    implements TareaCopyWith<$R, Tarea, $Out> {
+  _TareaCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  late final ClassMapperBase<Tarea> $mapper = TaskMapper.ensureInitialized();
+  late final ClassMapperBase<Tarea> $mapper = TareaMapper.ensureInitialized();
   @override
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>? get pasos =>
       $value.pasos != null
@@ -161,6 +161,6 @@ class _TaskCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Tarea, $Out>
       pasos: data.get(#pasos, or: $value.pasos));
 
   @override
-  TaskCopyWith<$R2, Tarea, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
-      _TaskCopyWithImpl<$R2, $Out2>($value, $cast, t);
+  TareaCopyWith<$R2, Tarea, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t) =>
+      _TareaCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }

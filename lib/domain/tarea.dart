@@ -1,8 +1,8 @@
 import 'package:dart_mappable/dart_mappable.dart';
-part 'task.mapper.dart';
+part 'tarea.mapper.dart';
 
 @MappableClass()
-class Tarea with TaskMappable{
+class Tarea with TareaMappable{
   final String? id;
   final String titulo;
   final String tipo;

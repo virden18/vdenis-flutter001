@@ -6,23 +6,24 @@
 
 part of 'tarea_cache_prefs.dart';
 
-class TaskCachePrefsMapper extends ClassMapperBase<TareaCachePrefs> {
-  TaskCachePrefsMapper._();
+class TareaCachePrefsMapper extends ClassMapperBase<TareaCachePrefs> {
+  TareaCachePrefsMapper._();
 
-  static TaskCachePrefsMapper? _instance;
-  static TaskCachePrefsMapper ensureInitialized() {
+  static TareaCachePrefsMapper? _instance;
+  static TareaCachePrefsMapper ensureInitialized() {
     if (_instance == null) {
-      MapperContainer.globals.use(_instance = TaskCachePrefsMapper._());
-      TaskMapper.ensureInitialized();
+      MapperContainer.globals.use(_instance = TareaCachePrefsMapper._());
+      TareaMapper.ensureInitialized();
     }
     return _instance!;
   }
 
   @override
-  final String id = 'TaskCachePrefs';
+  final String id = 'TareaCachePrefs';
 
   static String _$email(TareaCachePrefs v) => v.email;
-  static const Field<TareaCachePrefs, String> _f$email = Field('email', _$email);
+  static const Field<TareaCachePrefs, String> _f$email =
+      Field('email', _$email);
   static List<Tarea> _$misTareas(TareaCachePrefs v) => v.misTareas;
   static const Field<TareaCachePrefs, List<Tarea>> _f$misTareas =
       Field('misTareas', _$misTareas);
@@ -50,64 +51,64 @@ class TaskCachePrefsMapper extends ClassMapperBase<TareaCachePrefs> {
   }
 }
 
-mixin TaskCachePrefsMappable {
+mixin TareaCachePrefsMappable {
   String toJson() {
-    return TaskCachePrefsMapper.ensureInitialized()
+    return TareaCachePrefsMapper.ensureInitialized()
         .encodeJson<TareaCachePrefs>(this as TareaCachePrefs);
   }
 
   Map<String, dynamic> toMap() {
-    return TaskCachePrefsMapper.ensureInitialized()
+    return TareaCachePrefsMapper.ensureInitialized()
         .encodeMap<TareaCachePrefs>(this as TareaCachePrefs);
   }
 
-  TaskCachePrefsCopyWith<TareaCachePrefs, TareaCachePrefs, TareaCachePrefs>
+  TareaCachePrefsCopyWith<TareaCachePrefs, TareaCachePrefs, TareaCachePrefs>
       get copyWith =>
-          _TaskCachePrefsCopyWithImpl<TareaCachePrefs, TareaCachePrefs>(
+          _TareaCachePrefsCopyWithImpl<TareaCachePrefs, TareaCachePrefs>(
               this as TareaCachePrefs, $identity, $identity);
   @override
   String toString() {
-    return TaskCachePrefsMapper.ensureInitialized()
+    return TareaCachePrefsMapper.ensureInitialized()
         .stringifyValue(this as TareaCachePrefs);
   }
 
   @override
   bool operator ==(Object other) {
-    return TaskCachePrefsMapper.ensureInitialized()
+    return TareaCachePrefsMapper.ensureInitialized()
         .equalsValue(this as TareaCachePrefs, other);
   }
 
   @override
   int get hashCode {
-    return TaskCachePrefsMapper.ensureInitialized()
+    return TareaCachePrefsMapper.ensureInitialized()
         .hashValue(this as TareaCachePrefs);
   }
 }
 
-extension TaskCachePrefsValueCopy<$R, $Out>
+extension TareaCachePrefsValueCopy<$R, $Out>
     on ObjectCopyWith<$R, TareaCachePrefs, $Out> {
-  TaskCachePrefsCopyWith<$R, TareaCachePrefs, $Out> get $asTaskCachePrefs =>
-      $base.as((v, t, t2) => _TaskCachePrefsCopyWithImpl<$R, $Out>(v, t, t2));
+  TareaCachePrefsCopyWith<$R, TareaCachePrefs, $Out> get $asTareaCachePrefs =>
+      $base.as((v, t, t2) => _TareaCachePrefsCopyWithImpl<$R, $Out>(v, t, t2));
 }
 
-abstract class TaskCachePrefsCopyWith<$R, $In extends TareaCachePrefs, $Out>
+abstract class TareaCachePrefsCopyWith<$R, $In extends TareaCachePrefs, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  ListCopyWith<$R, Tarea, TaskCopyWith<$R, Tarea, Tarea>> get misTareas;
+  ListCopyWith<$R, Tarea, TareaCopyWith<$R, Tarea, Tarea>> get misTareas;
   $R call({String? email, List<Tarea>? misTareas});
-  TaskCachePrefsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+  TareaCachePrefsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }
 
-class _TaskCachePrefsCopyWithImpl<$R, $Out>
+class _TareaCachePrefsCopyWithImpl<$R, $Out>
     extends ClassCopyWithBase<$R, TareaCachePrefs, $Out>
-    implements TaskCachePrefsCopyWith<$R, TareaCachePrefs, $Out> {
-  _TaskCachePrefsCopyWithImpl(super.value, super.then, super.then2);
+    implements TareaCachePrefsCopyWith<$R, TareaCachePrefs, $Out> {
+  _TareaCachePrefsCopyWithImpl(super.value, super.then, super.then2);
 
   @override
   late final ClassMapperBase<TareaCachePrefs> $mapper =
-      TaskCachePrefsMapper.ensureInitialized();
+      TareaCachePrefsMapper.ensureInitialized();
   @override
-  ListCopyWith<$R, Tarea, TaskCopyWith<$R, Tarea, Tarea>> get misTareas =>
+  ListCopyWith<$R, Tarea, TareaCopyWith<$R, Tarea, Tarea>> get misTareas =>
       ListCopyWith($value.misTareas, (v, t) => v.copyWith.$chain(t),
           (v) => call(misTareas: v));
   @override
@@ -121,7 +122,7 @@ class _TaskCachePrefsCopyWithImpl<$R, $Out>
       misTareas: data.get(#misTareas, or: $value.misTareas));
 
   @override
-  TaskCachePrefsCopyWith<$R2, TareaCachePrefs, $Out2> $chain<$R2, $Out2>(
+  TareaCachePrefsCopyWith<$R2, TareaCachePrefs, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
-      _TaskCachePrefsCopyWithImpl<$R2, $Out2>($value, $cast, t);
+      _TareaCachePrefsCopyWithImpl<$R2, $Out2>($value, $cast, t);
 }

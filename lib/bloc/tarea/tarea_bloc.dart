@@ -2,12 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/tarea/tarea_event.dart';
 import 'package:vdenis/bloc/tarea/tarea_state.dart';
+import 'package:vdenis/data/auth_repository.dart';
 import 'package:vdenis/data/tarea_repository.dart';
+import 'package:vdenis/domain/tarea.dart'; // Importamos la clase Tarea
 import 'package:watch_it/watch_it.dart';
 
 class TareaBloc extends Bloc<TareaEvent, TareaState> {
   final TareasRepository _tareaRepository = di<TareasRepository>();
-  
+  final AuthRepository _authRepository = di<AuthRepository>();
+
   TareaBloc() : super(TareaInitial()) {
     on<TareaLoadEvent>(_onLoadTareas);
     on<TareaCreateEvent>(_onCreateTarea);
@@ -24,13 +27,17 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
     emit(TareaLoading());
 
     try {
-      // Obtenemos las tareas del repositorio
-      final tareas = await _tareaRepository.obtenerTareas();
+      // Obtenemos las tareas del repositorio usando el flag para forzar recarga si es necesario
+      final tareas = await _tareaRepository.obtenerTareas(
+        forzarRecarga: event.forzarRecarga,
+      );
 
       // Emitimos el estado con las tareas cargadas
       emit(
         TareaLoaded(
           tareas: tareas,
+          desdeCache: !event.forzarRecarga,
+          ultimaActualizacion: DateTime.now(),
         ),
       );
     } catch (e) {
@@ -43,7 +50,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       );
     }
   }
-    
+
   /// Maneja el evento para crear una nueva tarea
   Future<void> _onCreateTarea(
     TareaCreateEvent event,
@@ -53,19 +60,17 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
     final currentState = state;
     if (currentState is TareaLoaded) {
       try {
+        // Creamos una copia de la tarea con el email del usuario
+        final tareaConEmail = await _agregarEmailATarea(event.tarea);
+
         // Creamos la nueva tarea
-        final nuevaTarea = await _tareaRepository.agregarTarea(event.tarea);
+        final nuevaTarea = await _tareaRepository.agregarTarea(tareaConEmail);
 
         // Añadimos la nueva tarea al inicio de la lista
         final tareas = [nuevaTarea, ...currentState.tareas];
 
         // Emitimos el estado de tarea creada
-        emit(
-          TareaCreated(
-            nuevaTarea: nuevaTarea,
-            tareas: tareas,
-          ),
-        );
+        emit(TareaCreated(nuevaTarea: nuevaTarea, tareas: tareas));
       } catch (e) {
         debugPrint('Error en _onCreateTarea: $e');
         emit(
@@ -93,24 +98,34 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
     final currentState = state;
     if (currentState is TareaLoaded) {
       try {
+        // Buscamos la tarea actual para obtener el email
+        final tareaActual = currentState.tareas.firstWhere(
+          (t) => t.id == event.taskId,
+          orElse: () => Tarea(titulo: ''),
+        );
+
+        // Aseguramos que se mantenga el email original o conseguimos uno nuevo
+        final email =
+            tareaActual.email ??
+            (await _authRepository.getUserEmail() ?? 'usuario@anonimo.com');
+
+        // Creamos una versión actualizada preservando el email
+        final tareaConEmail = event.tarea.copyWith(email: email);
+
         // Actualizamos la tarea
         final tareaActualizada = await _tareaRepository.actualizarTarea(
           event.taskId,
-          event.tarea,
+          tareaConEmail,
         );
 
         // Reemplazamos la tarea actualizada en la lista
-        final tareas = currentState.tareas.map((tarea) {
-          return tarea.id == event.taskId ? tareaActualizada : tarea;
-        }).toList();
-        
+        final tareas =
+            currentState.tareas.map((tarea) {
+              return tarea.id == event.taskId ? tareaActualizada : tarea;
+            }).toList();
+
         // Emitimos el estado de tarea actualizada
-        emit(
-          TareaUpdated(
-            tareaActualizada: tareaActualizada,
-            tareas: tareas,
-          ),
-        );
+        emit(TareaUpdated(tareaActualizada: tareaActualizada, tareas: tareas));
       } catch (e) {
         debugPrint('Error en _onUpdateTarea: $e');
         emit(
@@ -125,7 +140,8 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       }
     } else {
       // Si no hay tareas cargadas aún, primero cargamos las tareas
-      add(TareaLoadEvent());    }
+      add(TareaLoadEvent());
+    }
   }
 
   /// Maneja el evento para eliminar una tarea
@@ -141,17 +157,13 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         await _tareaRepository.eliminarTarea(event.taskId);
 
         // Filtramos la tarea eliminada de la lista
-        final tareas = currentState.tareas
-            .where((tarea) => tarea.id != event.taskId)
-            .toList();
-        
+        final tareas =
+            currentState.tareas
+                .where((tarea) => tarea.id != event.taskId)
+                .toList();
+
         // Emitimos el estado de tarea eliminada
-        emit(
-          TareaDeleted(
-            tareaEliminadaId: event.taskId,
-            tareas: tareas,
-          ),
-        );
+        emit(TareaDeleted(tareaEliminadaId: event.taskId, tareas: tareas));
       } catch (e) {
         debugPrint('Error en _onDeleteTarea: $e');
         emit(
@@ -168,5 +180,17 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       // Si no hay tareas cargadas aún, primero cargamos las tareas
       add(TareaLoadEvent());
     }
+  }
+
+  Future<Tarea> _agregarEmailATarea(Tarea tarea) async {
+    return Tarea(
+      id: tarea.id,
+      titulo: tarea.titulo,
+      tipo: tarea.tipo,
+      descripcion: tarea.descripcion,
+      fecha: tarea.fecha,
+      fechaLimite: tarea.fechaLimite,
+      email: await _authRepository.getUserEmail(),
+    );
   }
 }

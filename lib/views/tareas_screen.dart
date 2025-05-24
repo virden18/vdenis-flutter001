@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:vdenis/bloc/tarea/tarea_bloc.dart';
 import 'package:vdenis/bloc/tarea/tarea_event.dart';
 import 'package:vdenis/bloc/tarea/tarea_state.dart';
@@ -41,6 +42,18 @@ class _TareaScreenContent extends StatelessWidget {
             return Text('${TareasConstantes.tituloAppBar} - Total: $totalTareas');
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refrescar datos',
+            onPressed: () {
+              context.read<TareaBloc>().add(TareaLoadEvent(forzarRecarga: true));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text(TareasConstantes.datosActualizados)),
+              );
+            },
+          ),
+        ],
       ),
       drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
@@ -54,76 +67,99 @@ class _TareaScreenContent extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Tarea creada con éxito')),
             );
-          } else if (state is TareaUpdated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Tarea actualizada con éxito')),
-            );
           } else if (state is TareaDeleted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text(TareasConstantes.tareaEliminada)),
             );
+          } else if (state is TareaLoaded && state.desdeCache) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text(TareasConstantes.cargandoDesdeCache)),
+            );
           }
         },
         builder: (context, state) {
-          // Estado de carga inicial
-          if (state is TareaInitial || 
-              (state is TareaLoading)) {
+          if (state is TareaLoading) {
             return const Center(child: CircularProgressIndicator());
-          } 
-            // Si hay tareas cargadas
-          if (state is TareaLoaded) {
-            // Lista de tareas
+          } else if (state is TareaLoaded) {
             final tareas = state.tareas;
             
-            // Si no hay tareas
+            // Widget para mostrar la última actualización
+            final ultimaActualizacionWidget = state.ultimaActualizacion != null
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '${TareasConstantes.ultimaActualizacion} ${DateFormat(AppConstantes.formatoFecha).format(state.ultimaActualizacion!)}',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : const SizedBox.shrink();
+                
             if (tareas.isEmpty) {
-              return const Center(
-                child: Text(
-                  TareasConstantes.listaVacia,
-                  style: TextStyle(fontSize: 18, color: Colors.black54),
-                ),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ultimaActualizacionWidget,
+                  const Center(
+                    child: Text(
+                      TareasConstantes.listaVacia,
+                      style: TextStyle(fontSize: 18, color: Colors.black54),
+                    ),
+                  ),
+                ],
               );
             }
-              return RefreshIndicator(
-              onRefresh: () async {
-                context.read<TareaBloc>().add(TareaLoadEvent());
-                return Future.value();
-              },
-              child: ListView.builder(
-                itemCount: tareas.length,
-                itemBuilder: (context, index) {
-                  
-                  final tarea = tareas[index];
-                  return GestureDetector(
-                    onTap: () => _mostrarDetallesTarea(context, tareas, index),
-                    child: Dismissible(
-                      key: Key(tarea.id ?? tarea.titulo),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        color: Colors.red,
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: const Icon(Icons.delete, color: Colors.white),
-                      ),
-                      onDismissed: (direction) {
-                        if (tarea.id != null) {
-                          context.read<TareaBloc>().add(
-                            TareaDeleteEvent(tarea.id!),
-                          );
-                        }
+            
+            return Column(
+              children: [
+                // Widget que muestra la última actualización
+                ultimaActualizacionWidget,
+                
+                // Lista de tareas con indicador de recarga
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<TareaBloc>().add(TareaLoadEvent(forzarRecarga: true));
+                      return Future.value();
+                    },
+                    child: ListView.builder(
+                      itemCount: tareas.length,
+                      itemBuilder: (context, index) {
+                        final tarea = tareas[index];
+                        return GestureDetector(
+                          onTap: () => _mostrarDetallesTarea(context, tareas, index),
+                          child: Dismissible(
+                            key: Key(tarea.id ?? tarea.titulo),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              color: Colors.red,
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: const Icon(Icons.delete, color: Colors.white),
+                            ),
+                            onDismissed: (direction) {
+                              if (tarea.id != null) {
+                                context.read<TareaBloc>().add(
+                                  TareaDeleteEvent(tarea.id!),
+                                );
+                              }
+                            },
+                            child: construirTarjetaDeportiva(
+                              tarea,
+                              index,
+                              () => _mostrarModalEditarTarea(context, tarea),
+                            ),
+                          ),
+                        );
                       },
-                      child: construirTarjetaDeportiva(
-                        tarea,
-                        index,
-                        () => _mostrarModalEditarTarea(context, tarea),
-                      ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             );
           }
-            // Si hay un error
+          
+          // Si hay un error
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -136,7 +172,7 @@ class _TareaScreenContent extends StatelessWidget {
                 ),
               ],
             ),
-          );        
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -199,4 +235,5 @@ class _TareaScreenContent extends StatelessWidget {
         },
       ),
     );
-  }}
+  }
+}

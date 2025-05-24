@@ -4,6 +4,7 @@ part 'tarea.mapper.dart';
 @MappableClass()
 class Tarea with TareaMappable{
   final String? id;
+  final String? email;
   final String titulo;
   final String tipo;
   final String? descripcion;
@@ -12,6 +13,7 @@ class Tarea with TareaMappable{
 
   Tarea({
     this.id,
+    this.email,
     required this.titulo,
     this.tipo = 'normal', // Valor por defecto
     this.descripcion,

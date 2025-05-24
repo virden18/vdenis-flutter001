@@ -3,7 +3,7 @@ import 'package:vdenis/core/base_service.dart';
 import 'package:vdenis/domain/tarea.dart';
 
 class TareaService extends BaseService {
-  final String _endpoint = ApiConstantes.tareasEndpoint;
+  final String _endpoint = '${ApiConstantes.tareasEndpoint}virgilio';
 
   /// Obtiene la lista de tareas
   Future<List<Tarea>> obtenerTareas() async {

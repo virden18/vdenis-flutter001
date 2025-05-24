@@ -56,20 +56,28 @@ class TareaLoading extends TareaState {
 /// Estado base para cuando se han cargado las tareas
 class TareaLoaded extends TareaState {
   final List<Tarea> tareas;
+  final bool desdeCache;
+  final DateTime? ultimaActualizacion;
 
   TareaLoaded({
     required this.tareas,
+    this.desdeCache = false,
+    this.ultimaActualizacion,
   });
 
   @override
-  List<Object?> get props => [tareas];
+  List<Object?> get props => [tareas, desdeCache, ultimaActualizacion];
   
   /// Factory para crear una copia con nuevos valores
   TareaLoaded copyWith({
     List<Tarea>? tareas,
+    bool? desdeCache,
+    DateTime? ultimaActualizacion,
   }) {
     return TareaLoaded(
       tareas: tareas ?? this.tareas,
+      desdeCache: desdeCache ?? this.desdeCache,
+      ultimaActualizacion: ultimaActualizacion ?? this.ultimaActualizacion,
     );
   }
 }
@@ -81,6 +89,8 @@ class TareaCreated extends TareaLoaded {
   TareaCreated({
     required this.nuevaTarea,
     required super.tareas,
+    super.desdeCache = false,
+    super.ultimaActualizacion,
   });
 
   @override
@@ -94,6 +104,8 @@ class TareaUpdated extends TareaLoaded {
   TareaUpdated({
     required this.tareaActualizada,
     required super.tareas,
+    super.desdeCache = false,
+    super.ultimaActualizacion,
   });
 
   @override
@@ -107,6 +119,8 @@ class TareaDeleted extends TareaLoaded {
   TareaDeleted({
     required this.tareaEliminadaId,
     required super.tareas,
+    super.desdeCache = false,
+    super.ultimaActualizacion,
   });
 
   @override

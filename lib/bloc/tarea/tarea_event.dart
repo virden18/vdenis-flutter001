@@ -9,13 +9,15 @@ abstract class TareaEvent extends Equatable {
 /// Evento para cargar las tareas iniciales
 class TareaLoadEvent extends TareaEvent {
   final int limite;
+  final bool forzarRecarga;
   
   TareaLoadEvent({
     this.limite = 5,
+    this.forzarRecarga = false,
   });
   
   @override
-  List<Object?> get props => [limite];
+  List<Object?> get props => [limite, forzarRecarga];
 }
 
 /// Evento para crear una nueva tarea

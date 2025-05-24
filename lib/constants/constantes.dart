@@ -84,11 +84,12 @@ class TareasConstantes {
   static const String fechaLimite = 'Fecha límite: ';
   static const String tareaEliminada = 'Tarea eliminada';
   static const int limitePasos = 2;
-  static const int limiteTareas = 10;
-  static const String mensajeError = 'Error al obtener la tarea';
+  static const int limiteTareas = 10;  static const String mensajeError = 'Error al obtener la tarea';
   static const String errorCrear = 'Error al crear la tarea';
-  static const String errorEliminar = 'Error al eliminar la tarea';
   static const String errorActualizar = 'Error al actualizar la tarea';
+  static const String errorEliminar = 'Error al eliminar la tarea';  static const String datosActualizados = 'Datos actualizados';
+  static const String cargandoDesdeCache = 'Mostrando datos guardados';
+  static const String ultimaActualizacion = 'Ultima actualizacion: ';
 }
 
 // Constantes para el Juego de Preguntas

@@ -3,10 +3,11 @@ import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class NoticiaService extends BaseService {
+  final String _endpoint = ApiConstantes.noticiasEndpoint;
   /// Obtiene todas las noticias desde la API
   Future<List<Noticia>> obtenerNoticias() async {
     final List<dynamic> noticiasJson = await get<List<dynamic>>(
-      ApiConstantes.noticiasEndpoint,
+      _endpoint,
       errorMessage: NoticiasConstantes.mensajeError,
     );
 
@@ -20,7 +21,7 @@ class NoticiaService extends BaseService {
   /// Crea una nueva noticia en la API
   Future<Noticia> crearNoticia(Noticia noticia) async {
     final response = await post(
-      ApiConstantes.noticiasEndpoint,
+      _endpoint,
       data: noticia.toMap(),
       errorMessage: NoticiasConstantes.errorCreated,
     );
@@ -29,7 +30,7 @@ class NoticiaService extends BaseService {
 
   /// Edita una noticia existente en la API
   Future<Noticia> editarNoticia(Noticia noticia) async {
-    final url = '${ApiConstantes.noticiasEndpoint}/${noticia.id}';
+    final url = '$_endpoint/${noticia.id}';
     final response = await put(
       url,
       data: noticia.toMap(),
@@ -40,7 +41,7 @@ class NoticiaService extends BaseService {
 
   /// Elimina una noticia existente en la API
   Future<void> eliminarNoticia(String id) async {
-    final url = '${ApiConstantes.noticiasEndpoint}/$id';
+    final url = '$_endpoint/$id';
     await delete(url, errorMessage: NoticiasConstantes.errorDelete);
   }
 }

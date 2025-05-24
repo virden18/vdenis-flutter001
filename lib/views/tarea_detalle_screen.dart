@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/components/task_card.dart';
 import 'package:vdenis/helpers/task_card_helper.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 
-class TaskDetailsScreen extends StatelessWidget {
-  final List<Task> tareas;
+class TareaDetalleScreen extends StatelessWidget {
+  final List<Tarea> tareas;
   final int indice;
 
-  const TaskDetailsScreen({super.key, required this.tareas, required this.indice});
+  const TareaDetalleScreen({super.key, required this.tareas, required this.indice});
 
   @override
   Widget build(BuildContext context) {
-    final Task tarea = tareas[indice];
+    final Tarea tarea = tareas[indice];
     final String imageUrl = 'https://picsum.photos/200/300?random=$indice';
     final String fechaLimiteDato = tarea.fechaLimite != null
         ? '${tarea.fechaLimite!.day}/${tarea.fechaLimite!.month}/${tarea.fechaLimite!.year}'
@@ -29,7 +29,7 @@ class TaskDetailsScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TaskDetailsScreen(
+                        builder: (context) => TareaDetalleScreen(
                           tareas: tareas,
                           indice: indice - 1,
                         ),
@@ -46,7 +46,7 @@ class TaskDetailsScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => TaskDetailsScreen(
+                        builder: (context) => TareaDetalleScreen(
                           tareas: tareas,
                           indice: indice + 1,
                         ),

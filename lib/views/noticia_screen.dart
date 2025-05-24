@@ -46,43 +46,44 @@ class _NoticiaScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<NoticiaBloc, NoticiaState>(
       listener: (context, state) {
-        if (state is NoticiaError) {
-          SnackBarHelper.manejarError(
-            context,
-            state.error,
-          );
-        }else if (state is NoticiaCreated) {
-          SnackBarHelper.mostrarExito(
-            context,
-            mensaje: NoticiasConstantes.successCreated,
-          );
-        }else if (state is NoticiaUpdated) {
-          SnackBarHelper.mostrarExito(
-            context,
-            mensaje: NoticiasConstantes.successUpdated,
-          );
-        }else if (state is NoticiaDeleted) {
-          SnackBarHelper.mostrarExito(
-            context,
-            mensaje: NoticiasConstantes.successDeleted,
-          );
-        }else if (state is NoticiaFiltered) {
-          SnackBarHelper.mostrarExito(
-            context,
-            mensaje: "Noticias filtradas correctamente",
-          );
-        }else if (state is NoticiaLoaded) { 
-          if (state.noticias.isEmpty) {
-            SnackBarHelper.mostrarInfo(
+        switch (state) {
+          case NoticiaError():
+            SnackBarHelper.manejarError(
               context,
-              mensaje: NoticiasConstantes.listaVacia,
+              state.error,
             );
-          }else{
+          case NoticiaCreated():
             SnackBarHelper.mostrarExito(
               context,
-              mensaje: 'Noticias cargadas correctamente',
+              mensaje: NoticiasConstantes.successCreated,
             );
-          }
+          case NoticiaUpdated():
+            SnackBarHelper.mostrarExito(
+              context,
+              mensaje: NoticiasConstantes.successUpdated,
+            );
+          case NoticiaDeleted():
+            SnackBarHelper.mostrarExito(
+              context,
+              mensaje: NoticiasConstantes.successDeleted,
+            );
+          case NoticiaFiltered():
+            SnackBarHelper.mostrarExito(
+              context,
+              mensaje: "Noticias filtradas correctamente",
+            );
+          case NoticiaLoaded():
+            if (state.noticias.isEmpty) {
+              SnackBarHelper.mostrarInfo(
+                context,
+                mensaje: NoticiasConstantes.listaVacia,
+              );
+            } else{
+              SnackBarHelper.mostrarExito(
+                context,
+                mensaje: 'Noticias cargadas correctamente',
+              );
+            }
         }
       },
       builder: (context, state) {

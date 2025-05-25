@@ -22,9 +22,9 @@ class TareaMapper extends ClassMapperBase<Tarea> {
 
   static String? _$id(Tarea v) => v.id;
   static const Field<Tarea, String> _f$id = Field('id', _$id, opt: true);
-  static String? _$email(Tarea v) => v.email;
-  static const Field<Tarea, String> _f$email =
-      Field('email', _$email, opt: true);
+  static String? _$usuario(Tarea v) => v.usuario;
+  static const Field<Tarea, String> _f$usuario =
+      Field('usuario', _$usuario, opt: true);
   static String _$titulo(Tarea v) => v.titulo;
   static const Field<Tarea, String> _f$titulo = Field('titulo', _$titulo);
   static String _$tipo(Tarea v) => v.tipo;
@@ -43,7 +43,7 @@ class TareaMapper extends ClassMapperBase<Tarea> {
   @override
   final MappableFields<Tarea> fields = const {
     #id: _f$id,
-    #email: _f$email,
+    #usuario: _f$usuario,
     #titulo: _f$titulo,
     #tipo: _f$tipo,
     #descripcion: _f$descripcion,
@@ -54,7 +54,7 @@ class TareaMapper extends ClassMapperBase<Tarea> {
   static Tarea _instantiate(DecodingData data) {
     return Tarea(
         id: data.dec(_f$id),
-        email: data.dec(_f$email),
+        usuario: data.dec(_f$usuario),
         titulo: data.dec(_f$titulo),
         tipo: data.dec(_f$tipo),
         descripcion: data.dec(_f$descripcion),
@@ -110,7 +110,7 @@ abstract class TareaCopyWith<$R, $In extends Tarea, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call(
       {String? id,
-      String? email,
+      String? usuario,
       String? titulo,
       String? tipo,
       String? descripcion,
@@ -128,7 +128,7 @@ class _TareaCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Tarea, $Out>
   @override
   $R call(
           {Object? id = $none,
-          Object? email = $none,
+          Object? usuario = $none,
           String? titulo,
           String? tipo,
           Object? descripcion = $none,
@@ -136,7 +136,7 @@ class _TareaCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Tarea, $Out>
           Object? fechaLimite = $none}) =>
       $apply(FieldCopyWithData({
         if (id != $none) #id: id,
-        if (email != $none) #email: email,
+        if (usuario != $none) #usuario: usuario,
         if (titulo != null) #titulo: titulo,
         if (tipo != null) #tipo: tipo,
         if (descripcion != $none) #descripcion: descripcion,
@@ -146,7 +146,7 @@ class _TareaCopyWithImpl<$R, $Out> extends ClassCopyWithBase<$R, Tarea, $Out>
   @override
   Tarea $make(CopyWithData data) => Tarea(
       id: data.get(#id, or: $value.id),
-      email: data.get(#email, or: $value.email),
+      usuario: data.get(#usuario, or: $value.usuario),
       titulo: data.get(#titulo, or: $value.titulo),
       tipo: data.get(#tipo, or: $value.tipo),
       descripcion: data.get(#descripcion, or: $value.descripcion),

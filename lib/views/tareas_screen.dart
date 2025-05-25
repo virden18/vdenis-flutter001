@@ -17,10 +17,10 @@ class TareaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TareaBloc()..add(TareaLoadEvent()),
-      child: const _TareaScreenContent(),
-    );
+    // Usamos el BlocProvider.value para usar la instancia global del TareaBloc
+    // y cargamos las tareas al entrar a la pantalla
+    context.read<TareaBloc>().add(TareaLoadEvent());
+    return const _TareaScreenContent();
   }
 }
 

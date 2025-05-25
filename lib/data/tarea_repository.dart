@@ -54,7 +54,7 @@ class TareasRepository extends BaseRepository<Tarea> {
       
       // Filtramos las tareas por el email del usuario actual
       final List<Tarea> tareasFiltradas = tareas.where((tarea) => 
-        tarea.email == emailUsuario
+        tarea.usuario == emailUsuario
       ).toList();
       
       debugPrint('Filtrando tareas por email: $emailUsuario. Total: ${tareasFiltradas.length}');
@@ -77,14 +77,14 @@ class TareasRepository extends BaseRepository<Tarea> {
         validarEntidad(tarea);
         
         // Verificamos si ya tiene email, de lo contrario lo obtenemos
-        final tareaConEmail = tarea.email == null || tarea.email!.isEmpty
+        final tareaConEmail = tarea.usuario == null || tarea.usuario!.isEmpty
           ? Tarea(
               titulo: tarea.titulo,
               tipo: tarea.tipo,
               descripcion: tarea.descripcion,
               fecha: tarea.fecha,
               fechaLimite: tarea.fechaLimite,
-              email: await di<AuthRepository>().getUserEmail() ?? 'usuario@anonimo.com'
+              usuario: await di<AuthRepository>().getUserEmail() ?? 'usuario@anonimo.com'
             )
           : tarea;
             // Enviamos la tarea a la API
@@ -92,8 +92,7 @@ class TareasRepository extends BaseRepository<Tarea> {
         
         // Actualizamos solo la caché local sin hacer GET adicional
         final tareasCacheadas = await _cacheService.obtenerTareas() ?? [];
-        
-        // Agregamos la nueva tarea al inicio de la lista de caché
+      
         final nuevasTareas = [nuevaTarea, ...tareasCacheadas];
         
         // Guardamos la caché actualizada
@@ -142,13 +141,13 @@ class TareasRepository extends BaseRepository<Tarea> {
         // Buscamos la tarea original para preservar el email si no se ha proporcionado
         final tareaOriginal = tareasCacheadas.firstWhere(
           (t) => t.id == taskId,
-          orElse: () => Tarea(titulo: '', email: '') // Tarea vacía si no se encuentra
+          orElse: () => Tarea(titulo: '', usuario: '') // Tarea vacía si no se encuentra
         );
         
         // Asegurar que se mantiene el email original
-        final String email = (tareaActualizada.email != null && tareaActualizada.email!.isNotEmpty) ?
-            tareaActualizada.email! :
-            (tareaOriginal.email ?? await di<AuthRepository>().getUserEmail() ?? 'usuario@anonimo.com');
+        final String email = (tareaActualizada.usuario != null && tareaActualizada.usuario!.isNotEmpty) ?
+            tareaActualizada.usuario! :
+            (tareaOriginal.usuario ?? await di<AuthRepository>().getUserEmail() ?? 'usuario@anonimo.com');
             
         // Crear objeto con el email asegurado
         final tareaConEmail = Tarea(
@@ -158,7 +157,7 @@ class TareasRepository extends BaseRepository<Tarea> {
           descripcion: tareaActualizada.descripcion,
           fecha: tareaActualizada.fecha,
           fechaLimite: tareaActualizada.fechaLimite,
-          email: email
+          usuario: email
         );
           // Actualizar en la API
         final tareaConCambios = await _tareaService.actualizarTarea(taskId, tareaConEmail);

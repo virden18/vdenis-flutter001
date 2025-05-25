@@ -21,7 +21,7 @@ class TareaCacheService {
 
       // Creamos el objeto de cache
       final tareaCachePrefs = TareaCachePrefs(
-        email: email,
+        usuario: email,
         misTareas: tareas,
       );
 
@@ -56,7 +56,7 @@ class TareaCacheService {
       final tareaCachePrefs = TareaCachePrefsMapper.fromJson(jsonData);
       
       // Verificamos que las tareas pertenecen al usuario actual
-      if (tareaCachePrefs.email != currentEmail) {
+      if (tareaCachePrefs.usuario != currentEmail) {
         // Las tareas pertenecen a otro usuario, borramos la caché
         await _sharedPreferences.remove(_cacheKey);
         return null;

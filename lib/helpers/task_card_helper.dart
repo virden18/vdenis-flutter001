@@ -82,14 +82,14 @@ class CommonWidgetsHelper {
   }
 }
 
-Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
+Widget construirTarjetaDeportiva(BuildContext context, Tarea tarea, int indice, VoidCallback onEdit) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Espaciado entre tarjetas
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
     child: ListTile(
-      contentPadding: const EdgeInsets.all(16.0), // Padding interno del ListTile
-      tileColor: Colors.white, // Fondo blanco para el ListTile
+      contentPadding: const EdgeInsets.all(16.0),
+      tileColor: Colors.white,
       shape: CommonWidgetsHelper.buildRoundedBorder(),
-      leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo), // Ícono dinámico
+      leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo),
       title: Row(
         children: [
           Checkbox(
@@ -97,16 +97,13 @@ Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
             activeColor: Colors.green,
             onChanged: (bool? newValue) {
               if (newValue != null && tarea.id != null) {
-                // Disparar evento para actualizar el estado de la tarea
-                BuildContext? context = _getGlobalContext();
-                if (context != null) {
-                  context.read<TareaBloc>().add(
-                    TareaCompletadaEvent(
-                      tareaId: tarea.id!,
-                      completada: newValue,
-                    ),
-                  );
-                }
+                // Ahora podemos usar directamente el contexto
+                context.read<TareaBloc>().add(
+                  TareaCompletadaEvent(
+                    tareaId: tarea.id!,
+                    completada: newValue,
+                  ),
+                );
               }
             },
           ),
@@ -119,34 +116,19 @@ Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
         ],
       ),
       trailing: IconButton(
-        onPressed: onEdit, // Llama a la función de edición
+        onPressed: onEdit,
         icon: const Icon(Icons.edit, size: 16),
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.grey, // Color del texto
+          foregroundColor: Colors.grey,
         ),
       ),
       subtitle: CommonWidgetsHelper.buildInfoLines(
         tarea.descripcion ?? '',
         '${TareasConstantes.tipoTarea}${tarea.tipo}',
         '${TareasConstantes.fechaLimite}${_formatDate(tarea.fechaLimite ?? DateTime.now())}',
-      ), // Líneas de información
+      ),
     ),
   );
-}
-
-// Función auxiliar para obtener el BuildContext global para poder acceder al BlocProvider
-BuildContext? _getGlobalContext() {
-  // En una aplicación real, usaríamos Navigator.of(context) que debería estar disponible
-  // donde se construye la tarjeta, pero como este es un helper estático, necesitamos
-  // alguna forma de obtener el contexto. Una opción es pasar el contexto como parámetro
-  // a la función construirTarjetaDeportiva. 
-  
-  // Aquí usamos una forma simplificada asumiendo que la función se llama desde un widget
-  // que tiene acceso al contexto. En la implementación real, deberíamos modificar los 
-  // parámetros de la función para incluir el contexto.
-  
-  // Por ahora, retornamos null y esto debe ser adaptado en la llamada real.
-  return null;
 }
 
 String _formatDate(DateTime date) {

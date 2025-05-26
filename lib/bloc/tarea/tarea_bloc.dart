@@ -16,6 +16,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
     on<TareaCreateEvent>(_onCreateTarea);
     on<TareaUpdateEvent>(_onUpdateTarea);
     on<TareaDeleteEvent>(_onDeleteTarea);
+    on<TareaCompletadaEvent>(_onCompletadaTarea);
   }
 
   /// Maneja el evento para cargar tareas iniciales
@@ -208,5 +209,58 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       usuario: await _authRepository.getUserEmail(),
       completada: tarea.completada,
     );
+  }
+
+  Future<void> _onCompletadaTarea(
+    TareaCompletadaEvent event,
+    Emitter<TareaState> emit,
+  ) async {
+    // Guardamos el estado actual para preservar las tareas ya cargadas
+    final currentState = state;
+    if (currentState is TareaLoaded) {
+      try {
+        // Buscamos la tarea que queremos marcar
+        final tareaIndex = currentState.tareas.indexWhere(
+          (t) => t.id == event.tareaId,
+        );
+        
+        if (tareaIndex >= 0) {
+          final tareaOriginal = currentState.tareas[tareaIndex];
+          
+          final tareaActualizada = tareaOriginal.copyWith(
+            completada: event.completada,
+          );
+          
+          // Actualizamos la caché directamente sin llamar a la API
+          await _tareaRepository.actualizarTareaEnCache(tareaActualizada);
+          
+          // Actualizamos la lista de tareas en memoria
+          List<Tarea> nuevasTareas = List.from(currentState.tareas);
+          nuevasTareas[tareaIndex] = tareaActualizada;
+          
+          // Emitimos el estado actualizado
+          emit(
+            TareaCompletada(
+              tareaId: event.tareaId,
+              completada: event.completada,
+              tareas: nuevasTareas,
+              desdeCache: true,
+              ultimaActualizacion: DateTime.now(),
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Error en _onCompletarTarea: $e');
+        emit(
+          TareaError(
+            e is Exception ? e : Exception(e.toString()),
+            TipoOperacionTarea.completar,
+          ),
+        );
+        
+        // Restauramos el estado anterior después del error
+        emit(currentState);
+      }
+    }
   }
 }

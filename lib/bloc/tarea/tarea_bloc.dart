@@ -108,7 +108,6 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         // Buscamos la tarea actual para obtener el email
         final tareaActual = currentState.tareas.firstWhere(
           (t) => t.id == event.taskId,
-          orElse: () => Tarea(titulo: ''),
         );
 
         // Aseguramos que se mantenga el email original o conseguimos uno nuevo
@@ -121,7 +120,6 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
 
         // Actualizamos la tarea
         final tareaActualizada = await _tareaRepository.actualizarTarea(
-          event.taskId,
           tareaConEmail,
         );
 
@@ -208,6 +206,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       fecha: tarea.fecha,
       fechaLimite: tarea.fechaLimite,
       usuario: await _authRepository.getUserEmail(),
+      completada: tarea.completada,
     );
   }
 }

@@ -19,7 +19,7 @@ class TareaScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Usamos el BlocProvider.value para usar la instancia global del TareaBloc
     // y cargamos las tareas al entrar a la pantalla
-    context.read<TareaBloc>().add(TareaLoadEvent());
+    context.read<TareaBloc>().add(TareaLoadEvent(forzarRecarga: false));
     return const _TareaScreenContent();
   }
 }
@@ -72,9 +72,7 @@ class _TareaScreenContent extends StatelessWidget {
               const SnackBar(content: Text(TareasConstantes.tareaEliminada)),
             );
           } else if (state is TareaLoaded && state.desdeCache) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text(TareasConstantes.cargandoDesdeCache)),
-            );
+                   
           }
         },
         builder: (context, state) {

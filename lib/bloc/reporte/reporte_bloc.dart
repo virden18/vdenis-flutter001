@@ -40,7 +40,7 @@ class ReporteBloc extends Bloc<ReporteEvent, ReporteState> {
         // Este caso no debería ocurrir dado que el método lanza excepciones en caso de error
         // Pero lo incluimos por completitud
         emit(const ReporteError(
-          errorMessage: ReporteConstantes.errorCrearReporte,
+          errorMessage: ReporteConstantes.errorCrear,
         ));
       }
     } on ApiException catch (e) {
@@ -53,7 +53,7 @@ class ReporteBloc extends Bloc<ReporteEvent, ReporteState> {
       // Para cualquier otra excepción, registrar y emitir un error genérico
       debugPrint('Error al enviar reporte: $e');
       emit(const ReporteError(
-        errorMessage: ReporteConstantes.errorCrearReporte,
+        errorMessage: ReporteConstantes.errorCrear,
       ));
     }
   }

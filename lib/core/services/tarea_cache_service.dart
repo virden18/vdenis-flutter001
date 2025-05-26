@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:vdenis/domain/tarea.dart';
@@ -32,7 +33,7 @@ class TareaCacheService {
       await _sharedPreferences.setString(_cacheKey, jsonData);
     } catch (e) {
       // Si hay un error, simplemente no guardamos en caché
-      print('Error al guardar tareas en caché: $e');
+      debugPrint('Error al guardar tareas en caché: $e');
     }
   }
 
@@ -65,7 +66,7 @@ class TareaCacheService {
       return tareaCachePrefs.misTareas;
     } catch (e) {
       // Si hay un error, simplemente retornamos null
-      print('Error al obtener tareas desde caché: $e');
+      debugPrint('Error al obtener tareas desde caché: $e');
       return null;
     }
   }
@@ -75,7 +76,7 @@ class TareaCacheService {
     try {
       await _sharedPreferences.remove(_cacheKey);
     } catch (e) {
-      print('Error al limpiar caché de tareas: $e');
+      debugPrint('Error al limpiar caché de tareas: $e');
     }
   }
 

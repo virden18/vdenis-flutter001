@@ -25,11 +25,6 @@ class SharedPreferencesService {
   }
 
   /// Guarda un objeto en SharedPreferences
-  ///
-  /// [key]: Clave única para identificar el objeto
-  /// [value]: Objeto a guardar (debe ser serializable a JSON)
-  /// [toJson]: Función que convierte el objeto a Map<String, dynamic>
-  ///
   /// Retorna true si se guardó correctamente, false en caso contrario
   Future<bool> saveObject<T>({
     required String key,
@@ -47,11 +42,6 @@ class SharedPreferencesService {
   }
 
   /// Lee un objeto desde SharedPreferences
-  ///
-  /// [key]: Clave única con la que se guardó el objeto
-  /// [fromJson]: Función que convierte un Map<String, dynamic> al objeto de tipo T
-  /// [defaultValue]: Valor por defecto si no se encuentra la clave
-  ///
   /// Retorna el objeto leído o el valor por defecto si no existe
   T? getObject<T>({
     required String key,
@@ -73,12 +63,6 @@ class SharedPreferencesService {
   }
 
   /// Actualiza un objeto existente o lo crea si no existe
-  ///
-  /// [key]: Clave única para identificar el objeto
-  /// [updateFn]: Función que recibe el objeto actual (o null) y retorna el objeto actualizado
-  /// [fromJson]: Función que convierte un Map<String, dynamic> al objeto de tipo T
-  /// [toJson]: Función que convierte el objeto a Map<String, dynamic>
-  ///
   /// Retorna true si se actualizó correctamente, false en caso contrario
   Future<bool> updateObject<T>({
     required String key,
@@ -109,11 +93,6 @@ class SharedPreferencesService {
   }
 
   /// Guarda una lista de objetos en SharedPreferences
-  ///
-  /// [key]: Clave única para identificar la lista
-  /// [values]: Lista de objetos a guardar
-  /// [toJson]: Función que convierte cada objeto a Map<String, dynamic>
-  ///
   /// Retorna true si se guardó correctamente, false en caso contrario
   Future<bool> saveList<T>({
     required String key,
@@ -132,10 +111,6 @@ class SharedPreferencesService {
   }
 
   /// Lee una lista de objetos desde SharedPreferences
-  ///
-  /// [key]: Clave única con la que se guardó la lista
-  /// [fromJson]: Función que convierte un Map<String, dynamic> al objeto de tipo T
-  ///
   /// Retorna la lista leída o una lista vacía si no existe
   List<T> getList<T>({
     required String key,

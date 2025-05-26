@@ -1,185 +1,181 @@
-import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:vdenis/api/service/tareas_service.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/core/base_repository.dart';
-import 'package:vdenis/core/services/tarea_cache_service.dart';
-import 'package:vdenis/data/auth_repository.dart';
 import 'package:vdenis/domain/tarea.dart';
+import 'package:vdenis/domain/tarea_cache_prefs.dart';
+import 'package:vdenis/core/services/secure_storage_service.dart';
+import 'package:vdenis/core/services/shared_preferences_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 class TareasRepository extends BaseRepository<Tarea> {
-  final TareaService _tareaService = TareaService();
-  final TareaCacheService _cacheService = TareaCacheService();
-  
+  final _tareaService = di<TareaService>();
+  final _secureStorage = di<SecureStorageService>();
+  final _sharedPreferences = di<SharedPreferencesService>();
+  // Definimos una clave constante para almacenar/recuperar las tareas en caché
+  static const String _tareasCacheKey = 'tareas_cache_prefs';
+  String? usuarioAutenticado;
+
+  // Funciones auxiliares para mapear objetos
+  TareaCachePrefs _fromJson(Map<String, dynamic> json) =>
+      TareaCachePrefsMapper.fromMap(json);
+  Map<String, dynamic> _toJson(TareaCachePrefs cache) => cache.toMap();
+
+  TareasRepository();
+
+  //Trae el usuario autenticado desde el secure storage
+  Future<String> _obtenerUsuarioAutenticado() async {
+    usuarioAutenticado ??= await _secureStorage.getUserEmail();
+    return usuarioAutenticado!;
+  }
+
   /// Valida los campos de la entidad Tarea
   @override
   void validarEntidad(Tarea tarea) {
-    validarNoVacio(tarea.titulo, ValidacionConstantes.tituloNoticia);
-    if (tarea.fecha != null) {
-      validarFechaNoFutura(
-        tarea.fecha!,
-        ValidacionConstantes.fechaNoticia,
-      );
-    }
+    validarNoVacio(tarea.titulo, ValidacionConstantes.tituloTarea);
+    //agregar validaciones que correspondan
   }
-    /// Obtiene todas las tareas con estrategia cache-first, filtrando por el email del usuario actual
-  Future<List<Tarea>> obtenerTareas({bool forzarRecarga = false}) async {
-    return manejarExcepcion(() async {
-      // Obtenemos el email del usuario actual para filtrar las tareas
-      final String? emailUsuario = await di<AuthRepository>().getUserEmail();
-      if (emailUsuario == null || emailUsuario.isEmpty) {
-        // Si no hay usuario autenticado, retornamos lista vacía
-        debugPrint('No hay usuario autenticado, retornando lista de tareas vacía');
-        return [];
-      }
-      
-      // Si se fuerza la recarga, ignoramos la caché
-      List<Tarea> tareas;
-      if (forzarRecarga) {
-        tareas = await _cargarDesdeLaAPI();
-      } else {
-        // Intentamos obtener los datos desde la caché primero
-        final tareasDesdeCachee = await _cacheService.obtenerTareas();
-        
-        // Si tenemos datos en caché, los usamos
-        if (tareasDesdeCachee != null && tareasDesdeCachee.isNotEmpty) {
-          debugPrint('Tareas cargadas desde la caché local');
-          tareas = tareasDesdeCachee;
-        } else {
-          // Si no hay caché, cargamos desde la API
-          tareas = await _cargarDesdeLaAPI();
-        }
-      }
-      
-      // Filtramos las tareas por el email del usuario actual
-      final List<Tarea> tareasFiltradas = tareas.where((tarea) => 
-        tarea.usuario == emailUsuario
-      ).toList();
-      
-      debugPrint('Filtrando tareas por email: $emailUsuario. Total: ${tareasFiltradas.length}');
-      return tareasFiltradas;
-    }, mensajeError: TareasConstantes.mensajeError);
-  }
-  /// Carga las tareas desde la API y actualiza la caché
-  Future<List<Tarea>> _cargarDesdeLaAPI() async {
-    final tareas = await _tareaService.obtenerTareas();
-    // Actualizamos la caché
-    await _cacheService.guardarTareas(tareas);
-    await _cacheService.actualizarTimestamp();
-    debugPrint('Tareas cargadas desde la API y guardadas en caché. Total: ${tareas.length}');
-    return tareas;
-  }/// Agrega una nueva tarea y actualiza la caché
-  Future<Tarea> agregarTarea(Tarea tarea) async {
-    return manejarExcepcion(
-      () async {
-        // Validamos y nos aseguramos que la tarea tenga el email del usuario actual
-        validarEntidad(tarea);
-        
-        // Verificamos si ya tiene email, de lo contrario lo obtenemos
-        final tareaConEmail = tarea.usuario == null || tarea.usuario!.isEmpty
-          ? Tarea(
-              titulo: tarea.titulo,
-              tipo: tarea.tipo,
-              descripcion: tarea.descripcion,
-              fecha: tarea.fecha,
-              fechaLimite: tarea.fechaLimite,
-              usuario: await di<AuthRepository>().getUserEmail() ?? 'usuario@anonimo.com'
-            )
-          : tarea;
-            // Enviamos la tarea a la API
-        final nuevaTarea = await _tareaService.crearTarea(tareaConEmail);
-        
-        // Actualizamos solo la caché local sin hacer GET adicional
-        final tareasCacheadas = await _cacheService.obtenerTareas() ?? [];
-      
-        final nuevasTareas = [nuevaTarea, ...tareasCacheadas];
-        
-        // Guardamos la caché actualizada
-        await _cacheService.guardarTareas(nuevasTareas);
-        await _cacheService.actualizarTimestamp();
-        
-        debugPrint('Tarea creada y caché actualizada, ID: ${nuevaTarea.id}');
-        
-        return nuevaTarea;
-      },
-      mensajeError: TareasConstantes.errorCrear,
+
+  /// Obtiene el contenido de la caché actual
+  Future<TareaCachePrefs?> _obtenerCache({
+    TareaCachePrefs? defaultValue,
+  }) async {
+    return _sharedPreferences.getObject<TareaCachePrefs>(
+      key: _tareasCacheKey,
+      fromJson: _fromJson,
+      defaultValue: defaultValue,
     );
   }
 
+  /// Guarda una lista de tareas en la caché
+  Future<bool> _guardarEnCache(List<Tarea> tareas) async {
+    final usuario = await _obtenerUsuarioAutenticado();
+    return _sharedPreferences.saveObject<TareaCachePrefs>(
+      key: _tareasCacheKey,
+      value: TareaCachePrefs(usuario: usuario, misTareas: tareas),
+      toJson: _toJson,
+    );
+  }
+
+  /// Actualiza la caché usando una función de transformación
+  ///
+  /// [updateFn]: Función que recibe la caché actual y retorna una nueva versión
+  /// La caché siempre debe existir cuando se llama a este método, ya que se inicializa en obtenerTareas
+  Future<bool> _actualizarCache(
+    TareaCachePrefs Function(TareaCachePrefs cache) updateFn,
+  ) async {
+    return _sharedPreferences.updateObject<TareaCachePrefs>(
+      key: _tareasCacheKey,
+      updateFn:
+          (current) => updateFn(current!), // Asumimos que current nunca es nulo
+      fromJson: _fromJson,
+      toJson: _toJson,
+    );
+  }
+
+  /// Obtiene todas las tareas del usuario desde la API
+  Future<List<Tarea>> obtenerTareasUsuario(String usuario) async {
+    List<Tarea> tareasUsuario = await manejarExcepcion(
+      () => _tareaService.obtenerTareas(usuario),
+      mensajeError: TareasConstantes.mensajeError,
+    );
+    return tareasUsuario;
+  }
+
+  /// Obtiene todas las tareas con estrategia cache-first
+  Future<List<Tarea>> obtenerTareas({bool forzarRecarga = false}) async {
+    return manejarExcepcion(() async {
+      List<Tarea> tareas = [];
+      final usuario = await _obtenerUsuarioAutenticado();
+
+      // Obtenemos el objeto desde SharedPreferences con un valor por defecto
+      TareaCachePrefs? tareasCache = await _obtenerCache(
+        defaultValue: TareaCachePrefs(usuario: usuario, misTareas: tareas),
+      );
+
+      // Si no coincide el usuario actual con el de la caché, invalidamos la caché
+      if (usuario != tareasCache?.usuario) {
+        await _sharedPreferences.remove(_tareasCacheKey);
+        tareasCache = null;
+      }
+
+      // Si se fuerza la recarga, ignoramos la caché
+      // Si no esta forzada la recarga y tenemos datos en caché, los usamos
+      if (forzarRecarga != true && tareasCache != null && tareasCache.misTareas.isNotEmpty) {
+        tareas = tareasCache.misTareas;
+      } else {
+        // Si no hay caché, cargamos desde la API
+        tareas = await obtenerTareasUsuario(usuario);
+        await _guardarEnCache(tareas);
+      }
+      return tareas;
+    }, mensajeError: TareasConstantes.mensajeError);
+  }
+
+  /// Agrega una nueva tarea y actualiza la caché
+  Future<Tarea> agregarTarea(Tarea tarea) async {
+    return manejarExcepcion(() async {
+      validarEntidad(tarea);
+      final usuario = await _obtenerUsuarioAutenticado();
+
+      // Verificamos si ya tiene email, de lo contrario lo obtenemos
+      final tareaConEmail =
+          (tarea.usuario!.isEmpty) ? tarea.copyWith(usuario: usuario) : tarea;
+
+      // Enviamos la tarea a la API
+      final nuevaTarea = await _tareaService.crearTarea(
+        tareaConEmail,
+      ); // Actualizamos la caché usando el método auxiliar
+      await _actualizarCache(
+        (cache) => cache.copyWith(misTareas: [...cache.misTareas, nuevaTarea]),
+      );
+      return nuevaTarea;
+    }, mensajeError: TareasConstantes.errorCrear);
+  }
+
   /// Elimina una tarea y actualiza la caché
-  Future<void> eliminarTarea(String taskId) async {
-    return manejarExcepcion(
-      () async {
-        validarId(taskId);        // Eliminamos la tarea en la API
-        await _tareaService.eliminarTarea(taskId);
-        
-        // Actualizamos solo la caché local sin hacer GET adicional
-        final tareasCacheadas = await _cacheService.obtenerTareas() ?? [];
-        
-        // Filtramos la tarea eliminada de la caché
-        final tareasFiltradas = tareasCacheadas.where((t) => t.id != taskId).toList();
-        
-        // Guardamos la caché actualizada
-        await _cacheService.guardarTareas(tareasFiltradas);
-        await _cacheService.actualizarTimestamp();
-        
-        debugPrint('Tarea eliminada y caché actualizada, ID: $taskId');
-      },
-      mensajeError: TareasConstantes.errorEliminar,
-    );
+  Future<void> eliminarTarea(String tareaId) async {
+    return manejarExcepcion(() async {
+      validarId(tareaId);
+      await _tareaService.eliminarTarea(
+        tareaId,
+      ); // Actualizamos la caché en un solo paso usando el método auxiliar
+      await _actualizarCache((cache) {
+        // Filtramos la tarea eliminada
+        final tareasFiltradas =
+            cache.misTareas.where((t) => t.id != tareaId).toList();
+
+        // Creamos una nueva instancia con la lista filtrada
+        return cache.copyWith(misTareas: tareasFiltradas);
+      });
+    }, mensajeError: TareasConstantes.errorEliminar);
   }
+
   /// Actualiza una tarea existente y la caché
-  Future<Tarea> actualizarTarea(String taskId, Tarea tareaActualizada) async {
-    return manejarExcepcion(      () async {
-        validarId(taskId);
-        validarEntidad(tareaActualizada);
-        
-        // Obtenemos las tareas desde la caché local, no de la API
-        final tareasCacheadas = await _cacheService.obtenerTareas() ?? [];
-        
-        // Buscamos la tarea original para preservar el email si no se ha proporcionado
-        final tareaOriginal = tareasCacheadas.firstWhere(
-          (t) => t.id == taskId,
-          orElse: () => Tarea(titulo: '', usuario: '') // Tarea vacía si no se encuentra
-        );
-        
-        // Asegurar que se mantiene el email original
-        final String email = (tareaActualizada.usuario != null && tareaActualizada.usuario!.isNotEmpty) ?
-            tareaActualizada.usuario! :
-            (tareaOriginal.usuario ?? await di<AuthRepository>().getUserEmail() ?? 'usuario@anonimo.com');
-            
-        // Crear objeto con el email asegurado
-        final tareaConEmail = Tarea(
-          id: taskId,
-          titulo: tareaActualizada.titulo,
-          tipo: tareaActualizada.tipo,
-          descripcion: tareaActualizada.descripcion,
-          fecha: tareaActualizada.fecha,
-          fechaLimite: tareaActualizada.fechaLimite,
-          usuario: email
-        );
-          // Actualizar en la API
-        final tareaConCambios = await _tareaService.actualizarTarea(taskId, tareaConEmail);
-        
-        // Actualizamos la caché local reemplazando solo la tarea modificada
-        final nuevasTareas = tareasCacheadas.map((tarea) {
-          return tarea.id == taskId ? tareaConCambios : tarea;
-        }).toList();
-        
-        debugPrint('Tarea actualizada con ID: $taskId');
-        
-        await _cacheService.guardarTareas(nuevasTareas);
-        await _cacheService.actualizarTimestamp();
-        
-        return tareaConCambios;
-      },
-      mensajeError: TareasConstantes.errorActualizar,
-    );
+  Future<Tarea> actualizarTarea(Tarea tarea) async {
+    return manejarExcepcion(() async {
+      validarId(tarea.id);
+      validarEntidad(tarea);
+
+      // Enviamos la tarea a la API
+      final tareaActualizada = await _tareaService.actualizarTarea(
+        tarea,
+      ); // Actualizamos la caché en un solo paso usando el método auxiliar
+      await _actualizarCache((cache) {
+        // Creamos una nueva lista reemplazando la tarea actualizada
+        final nuevasTareas =
+            cache.misTareas.map((t) {
+              return t.id == tarea.id ? tareaActualizada : t;
+            }).toList();
+
+        // Creamos una nueva instancia con la lista actualizada
+        return cache.copyWith(misTareas: nuevasTareas);
+      });
+      return tareaActualizada;
+    }, mensajeError: TareasConstantes.errorActualizar);
   }
-  
-  /// Forzar la recarga de tareas desde la API
-  Future<List<Tarea>> recargarTareas() async {
-    return obtenerTareas(forzarRecarga: true);
+
+  /// Limpia la caché del repositorio
+  Future<void> limpiarCache() async {
+    usuarioAutenticado = null;
   }
 }

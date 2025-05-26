@@ -69,6 +69,7 @@ class ApiConstantes {
   static const String preferenciasEndpoint = '/preferenciasEmail';
   static const String comentariosEndpoint = '/comentarios';
   static const String reportesEndpoint = '/reportes';
+  static const String tareasEndpoint = '/tareas';
 }
 
 // Constantes para la pantalla de Tareas
@@ -76,14 +77,19 @@ class TareasConstantes {
   static const String tituloAppBar = 'Mis Tareas';
   static const String listaVacia = 'No hay tareas';
   static const String tipoTarea = 'Tipo: ';
-  static const String taskTypeNormal = 'normal';
-  static const String taskTypeUrgent = 'urgente';
+  static const String tareaTipoNormal = 'normal';
+  static const String tareaTipoUrgente = 'urgente';
   static const String taskDescription = 'Descripción: ';
   static const String pasosTitulo = 'Pasos para completar: ';
   static const String fechaLimite = 'Fecha límite: ';
   static const String tareaEliminada = 'Tarea eliminada';
   static const int limitePasos = 2;
-  static const int limiteTareas = 10;
+  static const int limiteTareas = 10;  static const String mensajeError = 'Error al obtener la tarea';
+  static const String errorCrear = 'Error al crear la tarea';
+  static const String errorActualizar = 'Error al actualizar la tarea';
+  static const String errorEliminar = 'Error al eliminar la tarea';  static const String datosActualizados = 'Datos actualizados';
+  static const String cargandoDesdeCache = 'Mostrando datos guardados';
+  static const String ultimaActualizacion = 'Ultima actualizacion: ';
 }
 
 // Constantes para el Juego de Preguntas

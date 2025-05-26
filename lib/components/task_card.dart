@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/helpers/task_card_helper.dart';
-import 'package:vdenis/domain/task.dart';
+import 'package:vdenis/domain/tarea.dart';
 import 'package:vdenis/constants/constantes.dart';
 
 class TaskCard extends StatelessWidget {
-  final Task tarea;
+  final Tarea tarea;
   final String imageUrl;
   final String fechaLimiteDato;
   final VoidCallback onBackPressed;
@@ -44,18 +44,9 @@ class TaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Título
-                CommonWidgetsHelper.buildBoldTitle(tarea.title),
-                CommonWidgetsHelper.buildSpacing(), // Espacio entre el título y la descripción
-                // Pasos (máximo 3 líneas)
-                if (tarea.pasos != null && tarea.pasos!.isNotEmpty)
-                  CommonWidgetsHelper.buildInfoLines(
-                    tarea.pasos![0],
-                    tarea.pasos!.length > 1 ? tarea.pasos![1] : null,
-                    tarea.pasos!.length > 2 ? tarea.pasos![2] : null,
-                  )
-                else
-                  CommonWidgetsHelper.buildNoStepsText(),
+                CommonWidgetsHelper.buildBoldTitle(tarea.titulo),
                 CommonWidgetsHelper.buildSpacing(),
+                CommonWidgetsHelper.buildInfoLines(tarea.descripcion ?? ''), // Espacio entre el título y la descripción
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea el botón a la derecha
                   children: [

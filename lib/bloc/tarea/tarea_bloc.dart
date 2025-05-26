@@ -64,13 +64,20 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         final tareaConEmail = await _agregarEmailATarea(event.tarea);
 
         // Creamos la nueva tarea
-        final nuevaTarea = await _tareaRepository.agregarTarea(tareaConEmail);
-
-        // Añadimos la nueva tarea al inicio de la lista
-        final tareas = [nuevaTarea, ...currentState.tareas];
+        final nuevaTarea = await _tareaRepository.agregarTarea(
+          tareaConEmail,
+        ); // Añadimos la nueva tarea al inicio de la lista (no al final)
+        final tareas = [ ...currentState.tareas, nuevaTarea];
 
         // Emitimos el estado de tarea creada
-        emit(TareaCreated(nuevaTarea: nuevaTarea, tareas: tareas));
+        emit(
+          TareaCreated(
+            nuevaTarea: nuevaTarea,
+            tareas: tareas,
+            desdeCache: true, // Indicamos que viene de la caché
+            ultimaActualizacion: DateTime.now(), // Actualizamos la fecha
+          ),
+        );
       } catch (e) {
         debugPrint('Error en _onCreateTarea: $e');
         emit(
@@ -101,20 +108,18 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         // Buscamos la tarea actual para obtener el email
         final tareaActual = currentState.tareas.firstWhere(
           (t) => t.id == event.taskId,
-          orElse: () => Tarea(titulo: ''),
         );
 
         // Aseguramos que se mantenga el email original o conseguimos uno nuevo
-        final email =
-            tareaActual.email ??
+        final usuarioActual =
+            tareaActual.usuario ??
             (await _authRepository.getUserEmail() ?? 'usuario@anonimo.com');
 
         // Creamos una versión actualizada preservando el email
-        final tareaConEmail = event.tarea.copyWith(email: email);
+        final tareaConEmail = event.tarea.copyWith(usuario: usuarioActual);
 
         // Actualizamos la tarea
         final tareaActualizada = await _tareaRepository.actualizarTarea(
-          event.taskId,
           tareaConEmail,
         );
 
@@ -122,10 +127,15 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         final tareas =
             currentState.tareas.map((tarea) {
               return tarea.id == event.taskId ? tareaActualizada : tarea;
-            }).toList();
-
-        // Emitimos el estado de tarea actualizada
-        emit(TareaUpdated(tareaActualizada: tareaActualizada, tareas: tareas));
+            }).toList(); // Emitimos el estado de tarea actualizada
+        emit(
+          TareaUpdated(
+            tareaActualizada: tareaActualizada,
+            tareas: tareas,
+            desdeCache: true, // Indicamos que viene de la caché
+            ultimaActualizacion: DateTime.now(), // Actualizamos la fecha
+          ),
+        );
       } catch (e) {
         debugPrint('Error en _onUpdateTarea: $e');
         emit(
@@ -160,10 +170,15 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         final tareas =
             currentState.tareas
                 .where((tarea) => tarea.id != event.taskId)
-                .toList();
-
-        // Emitimos el estado de tarea eliminada
-        emit(TareaDeleted(tareaEliminadaId: event.taskId, tareas: tareas));
+                .toList(); // Emitimos el estado de tarea eliminada
+        emit(
+          TareaDeleted(
+            tareaEliminadaId: event.taskId,
+            tareas: tareas,
+            desdeCache: true, // Indicamos que viene de la caché
+            ultimaActualizacion: DateTime.now(), // Actualizamos la fecha
+          ),
+        );
       } catch (e) {
         debugPrint('Error en _onDeleteTarea: $e');
         emit(
@@ -190,7 +205,8 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       descripcion: tarea.descripcion,
       fecha: tarea.fecha,
       fechaLimite: tarea.fechaLimite,
-      email: await _authRepository.getUserEmail(),
+      usuario: await _authRepository.getUserEmail(),
+      completada: tarea.completada,
     );
   }
 }

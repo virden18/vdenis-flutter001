@@ -21,22 +21,22 @@ class TareaCachePrefsMapper extends ClassMapperBase<TareaCachePrefs> {
   @override
   final String id = 'TareaCachePrefs';
 
-  static String _$email(TareaCachePrefs v) => v.email;
-  static const Field<TareaCachePrefs, String> _f$email =
-      Field('email', _$email);
+  static String _$usuario(TareaCachePrefs v) => v.usuario;
+  static const Field<TareaCachePrefs, String> _f$usuario =
+      Field('usuario', _$usuario);
   static List<Tarea> _$misTareas(TareaCachePrefs v) => v.misTareas;
   static const Field<TareaCachePrefs, List<Tarea>> _f$misTareas =
       Field('misTareas', _$misTareas);
 
   @override
   final MappableFields<TareaCachePrefs> fields = const {
-    #email: _f$email,
+    #usuario: _f$usuario,
     #misTareas: _f$misTareas,
   };
 
   static TareaCachePrefs _instantiate(DecodingData data) {
     return TareaCachePrefs(
-        email: data.dec(_f$email), misTareas: data.dec(_f$misTareas));
+        usuario: data.dec(_f$usuario), misTareas: data.dec(_f$misTareas));
   }
 
   @override
@@ -94,7 +94,7 @@ extension TareaCachePrefsValueCopy<$R, $Out>
 abstract class TareaCachePrefsCopyWith<$R, $In extends TareaCachePrefs, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, Tarea, TareaCopyWith<$R, Tarea, Tarea>> get misTareas;
-  $R call({String? email, List<Tarea>? misTareas});
+  $R call({String? usuario, List<Tarea>? misTareas});
   TareaCachePrefsCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }
@@ -112,13 +112,14 @@ class _TareaCachePrefsCopyWithImpl<$R, $Out>
       ListCopyWith($value.misTareas, (v, t) => v.copyWith.$chain(t),
           (v) => call(misTareas: v));
   @override
-  $R call({String? email, List<Tarea>? misTareas}) => $apply(FieldCopyWithData({
-        if (email != null) #email: email,
+  $R call({String? usuario, List<Tarea>? misTareas}) =>
+      $apply(FieldCopyWithData({
+        if (usuario != null) #usuario: usuario,
         if (misTareas != null) #misTareas: misTareas
       }));
   @override
   TareaCachePrefs $make(CopyWithData data) => TareaCachePrefs(
-      email: data.get(#email, or: $value.email),
+      usuario: data.get(#usuario, or: $value.usuario),
       misTareas: data.get(#misTareas, or: $value.misTareas));
 
   @override

@@ -1,12 +1,14 @@
 class ComentarioConstantes {
   static const String mensajeCargando = 'Cargando comentarios...';
   static const String listaVacia = 'No hay comentarios disponibles';
-  static const String errorNoComentario = 'Comentario no encontrado';
+  static const String errorNotFound = 'Comentario no encontrado';
   static const String successCreated = 'Comentario agregado exitosamente';
   static const String successReaction = 'Reacción registrada exitosamente';
   static const String successSubcomentario = 'Subcomentario agregado exitosamente';
   static const String errorServer = 'Error del servidor en comentario';
   static const String mensajeError = 'Error al obtener comentarios';
+  static const String errorUnauthorized = 'No autorizado para acceder a comentario';
+  static const String errorInvalidData = 'Datos inválidos en comentario';
 }
 
 class CategoriaConstantes{
@@ -20,6 +22,7 @@ class CategoriaConstantes{
   static const String errorUpdated = 'Error al editar la categoría';
   static const String successDeleted = 'Categoria eliminada exitosamente';
   static const String errorDelete = 'Error al eliminar la categoría';
+  static const String errorAdd = 'Error al agregar categoría';
   static const String successCreated = 'Categoria creada exitosamente';
   static const String errorCreated = 'Error al crear la categoría';
   static const String errorUnauthorized = 'No autorizado para acceder a categoría';
@@ -30,10 +33,15 @@ class CategoriaConstantes{
 class ReporteConstantes {
   static const String reporteCreado = 'Reporte enviado con éxito';
   static const String noticiaNoExiste = 'La noticia reportada no existe';
-  static const String errorCrearReporte = 'Error al crear el reporte';
+  static const String errorEliminarReportes = 'Error al eliminar los reportes de la noticia';
+  static const String errorCrear = 'Error al crear el reporte';
   static const String errorObtenerReportes = 'Error al obtener reportes';
   static const String listaVacia = 'No hay reportes disponibles';
   static const String mensajeCargando = 'Cargando reportes...';
+  static const String errorUnauthorized = 'No autorizado para acceder a reporte';
+  static const String errorInvalidData = 'Datos inválidos en reporte';
+  static const String errorServer = 'Error del servidor en reporte';
+  static const String errorNotFound = 'Reporte no encontrado';
 }
 
 
@@ -61,6 +69,8 @@ class AppConstantes {
   static const String conexionInterrumpida = 'La conexión fue interrumpida';
   static const String errorRecuperarRecursos = 'Error al recuperar recursos del servidor';
   static const String errorCriticoServidor = 'Error crítico en el servidor';
+  static const String notUser = 'No hay usuario autenticado';
+  static const String errorCache = 'Error al actualizar caché local';
 }
 
 class ApiConstantes {
@@ -69,7 +79,28 @@ class ApiConstantes {
   static const String preferenciasEndpoint = '/preferenciasEmail';
   static const String comentariosEndpoint = '/comentarios';
   static const String reportesEndpoint = '/reportes';
+  static const String tareasCachePrefsEndpoint = '/tareasPreferencias';
   static const String tareasEndpoint = '/tareas';
+}
+
+class TareasCachePrefsConstantes {
+  static const String tituloApp = 'Preferencias de Tareas';
+  static const String mensajeCargando = 'Cargando preferencias de tareas...';
+  static const String listaVacia = 'No hay preferencias de tareas disponibles';
+  static const String mensajeError = 'Error al obtener preferencias de tareas';
+  static const String errorNotFound = 'Preferencias de tareas no encontradas';
+  static const String successUpdated = 'Preferencias de tareas actualizadas exitosamente';
+  static const String errorUpdated = 'Error al editar las preferencias de tareas';
+  static const String successDeleted = 'Preferencias de tareas eliminadas exitosamente';
+  static const String errorDelete = 'Error al eliminar las preferencias de tareas';
+  static const String errorAdd = 'Error al agregar preferencias de tareas';
+  static const String successCreated = 'Preferencias de tareas creadas exitosamente';
+  static const String errorCreated = 'Error al crear las preferencias de tareas';
+  static const String errorUnauthorized = 'No autorizado para acceder a preferencias de tareas';
+  static const String errorInvalidData = 'Datos inválidos en preferencias de tareas';
+  static const String errorServer = 'Error del servidor en preferencias de tareas';
+  static const String errorSync = 'Error al sincronizar preferencias de tareas';
+  static const String successSync = 'Preferencias de tareas sincronizadas correctamente';
 }
 
 // Constantes para la pantalla de Tareas
@@ -77,19 +108,22 @@ class TareasConstantes {
   static const String tituloAppBar = 'Mis Tareas';
   static const String listaVacia = 'No hay tareas';
   static const String tipoTarea = 'Tipo: ';
-  static const String tareaTipoNormal = 'normal';
-  static const String tareaTipoUrgente = 'urgente';
+  static const String taskTypeNormal = 'normal';
+  static const String taskTypeUrgent = 'urgente';
   static const String taskDescription = 'Descripción: ';
   static const String pasosTitulo = 'Pasos para completar: ';
   static const String fechaLimite = 'Fecha límite: ';
   static const String tareaEliminada = 'Tarea eliminada';
   static const int limitePasos = 2;
-  static const int limiteTareas = 10;  static const String mensajeError = 'Error al obtener la tarea';
-  static const String errorCrear = 'Error al crear la tarea';
+  static const int limiteTareas = 10;
+  static const String mensajeError = 'Error al obtener tareas';
+  static const String errorEliminar = 'Error al eliminar la tarea';
   static const String errorActualizar = 'Error al actualizar la tarea';
-  static const String errorEliminar = 'Error al eliminar la tarea';  static const String datosActualizados = 'Datos actualizados';
-  static const String cargandoDesdeCache = 'Mostrando datos guardados';
-  static const String ultimaActualizacion = 'Ultima actualizacion: ';
+  static const String errorCrear = 'Error al crear la tarea';
+  static const String actualizandoTareas = 'Actualizando tareas...';
+  static const String datosActualizados = 'Datos actualizados correctamente';
+  static const String ultimaActualizacion = 'Última actualización: ';
+  static const String cargandoTareas = 'Cargando tareas...';
 }
 
 // Constantes para el Juego de Preguntas
@@ -130,6 +164,7 @@ class NoticiasConstantes {
   static const String errorUpdated = 'Error al editar la noticia';
   static const String errorDelete = 'Error al eliminar la noticia';
   static const String errorFilter = "Error al filtrar noticias";
+  static const String errorVerificarNoticiaExiste = 'Error al verificar si la noticia existe';  static const String errorActualizarContadorReportes = 'Error al actualizar el contador de reportes';
 }
 
 class ConectividadConstantes {
@@ -157,8 +192,8 @@ class ValidacionConstantes {
   // static const String imagen = 'imagen';
   // static const String url = 'URL';
   // static const String titulo = 'título';
-  // static const String fecha = 'fecha';
-  // static const String email = 'correo electrónico';
+  static const String fecha = 'La fecha';
+  static const String email = 'email del usuario';
   // static const String precio = 'precio';
   // static const String cantidad = 'cantidad';
   
@@ -169,4 +204,21 @@ class ValidacionConstantes {
   static const String descripcionNoticia = 'La descripción de la noticia';
   static const String fuenteNoticia = 'La fuente de la noticia';
   static const String fechaNoticia = 'La fecha de la publicación de la noticia';
+  static const String tituloTarea = 'El título de la tarea';
+}
+
+class PreferenciaConstantes {
+  static const String mensajeError = 'Error al obtener categorías';
+  // static const String mensajeCargando = 'Cargando preferencias...';
+  // static const String listaVacia = 'No hay preferencias disponibles';
+  // static const String errorNoPreferencia = 'Preferencia no encontrada';
+  // static const String successUpdated = 'Preferencia actualizada exitosamente';
+  static const String errorUpdated = 'Error al guardar preferencias';
+  // static const String successCreated = 'Preferencia creada exitosamente';
+  static const String errorCreated = 'Error al crear la preferencia';
+  static const String errorServer = 'Error del servidor en preferencia';
+  static const String errorUnauthorized = 'No autorizado para acceder a preferencia';
+  static const String errorInvalidData = 'Datos inválidos en preferencia';
+  static const String errorNotFound = 'Preferencia no encontrada';
+  static const String errorInit = 'Error al inicializar preferencias';
 }

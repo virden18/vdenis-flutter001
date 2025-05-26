@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:vdenis/domain/tarea.dart';
@@ -21,7 +22,7 @@ class TareaCacheService {
 
       // Creamos el objeto de cache
       final tareaCachePrefs = TareaCachePrefs(
-        email: email,
+        usuario: email,
         misTareas: tareas,
       );
 
@@ -32,7 +33,7 @@ class TareaCacheService {
       await _sharedPreferences.setString(_cacheKey, jsonData);
     } catch (e) {
       // Si hay un error, simplemente no guardamos en caché
-      print('Error al guardar tareas en caché: $e');
+      debugPrint('Error al guardar tareas en caché: $e');
     }
   }
 
@@ -56,7 +57,7 @@ class TareaCacheService {
       final tareaCachePrefs = TareaCachePrefsMapper.fromJson(jsonData);
       
       // Verificamos que las tareas pertenecen al usuario actual
-      if (tareaCachePrefs.email != currentEmail) {
+      if (tareaCachePrefs.usuario != currentEmail) {
         // Las tareas pertenecen a otro usuario, borramos la caché
         await _sharedPreferences.remove(_cacheKey);
         return null;
@@ -65,7 +66,7 @@ class TareaCacheService {
       return tareaCachePrefs.misTareas;
     } catch (e) {
       // Si hay un error, simplemente retornamos null
-      print('Error al obtener tareas desde caché: $e');
+      debugPrint('Error al obtener tareas desde caché: $e');
       return null;
     }
   }
@@ -75,7 +76,7 @@ class TareaCacheService {
     try {
       await _sharedPreferences.remove(_cacheKey);
     } catch (e) {
-      print('Error al limpiar caché de tareas: $e');
+      debugPrint('Error al limpiar caché de tareas: $e');
     }
   }
 

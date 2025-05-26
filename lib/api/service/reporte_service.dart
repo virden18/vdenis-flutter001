@@ -38,14 +38,14 @@ class ReporteService extends BaseService {
       await post(
         ApiConstantes.reportesEndpoint,
         data: reporteData,
-        errorMessage: ReporteConstantes.errorCrearReporte,
+        errorMessage: ReporteConstantes.errorCrear,
         // Si se requiere autenticación para reportar, añadir: requireAuthToken: true
       );
     } catch (e) {
       if (e is ApiException) {
         rethrow;
       }
-      throw ApiException(ReporteConstantes.errorCrearReporte);
+      throw ApiException(ReporteConstantes.errorCrear);
     }
   }
 

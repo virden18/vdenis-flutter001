@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/components/task_card.dart';
+import 'package:vdenis/components/tarea_card.dart';
 import 'package:vdenis/helpers/task_card_helper.dart';
 import 'package:vdenis/domain/tarea.dart';
 
@@ -65,7 +65,7 @@ class TareaDetalleScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
               child: Center(
-                child: TaskCard(
+                child: TareaCard(
               tarea: tarea,
               imageUrl: imageUrl,
               fechaLimiteDato: fechaLimiteDato,

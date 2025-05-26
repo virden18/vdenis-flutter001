@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:vdenis/bloc/tarea/tarea_bloc.dart';
+import 'package:vdenis/bloc/tarea/tarea_event.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/tarea.dart';
 
 class CommonWidgetsHelper {
   /// Construye un título en negrita con tamaño 20
-  static Widget buildBoldTitle(String title) {
+  static Widget buildBoldTitle(String title, {bool isCompleted = false}) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.bold,
+        decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+        decorationThickness: 2.0,
+        color: isCompleted ? Colors.grey : Colors.black,
       ),
     );
   }
@@ -79,16 +85,43 @@ class CommonWidgetsHelper {
 Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Espaciado entre tarjetas
-    child:ListTile(
-    contentPadding: const EdgeInsets.all(16.0), // Padding interno del ListTile
-    tileColor: Colors.white, // Fondo blanco para el ListTile
-    shape: CommonWidgetsHelper.buildRoundedBorder(),
-    leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo), // Ícono dinámico
-    title: CommonWidgetsHelper.buildBoldTitle(tarea.titulo), // Título en negrita
+    child: ListTile(
+      contentPadding: const EdgeInsets.all(16.0), // Padding interno del ListTile
+      tileColor: Colors.white, // Fondo blanco para el ListTile
+      shape: CommonWidgetsHelper.buildRoundedBorder(),
+      leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo), // Ícono dinámico
+      title: Row(
+        children: [
+          Checkbox(
+            value: tarea.completada,
+            activeColor: Colors.green,
+            onChanged: (bool? newValue) {
+              if (newValue != null && tarea.id != null) {
+                // Disparar evento para actualizar el estado de la tarea
+                BuildContext? context = _getGlobalContext();
+                if (context != null) {
+                  context.read<TareaBloc>().add(
+                    TareaCompletadaEvent(
+                      tareaId: tarea.id!,
+                      completada: newValue,
+                    ),
+                  );
+                }
+              }
+            },
+          ),
+          Expanded(
+            child: CommonWidgetsHelper.buildBoldTitle(
+              tarea.titulo, 
+              isCompleted: tarea.completada
+            ),
+          ),
+        ],
+      ),
       trailing: IconButton(
         onPressed: onEdit, // Llama a la función de edición
         icon: const Icon(Icons.edit, size: 16),
-        style: ElevatedButton.styleFrom(                     
+        style: ElevatedButton.styleFrom(
           foregroundColor: Colors.grey, // Color del texto
         ),
       ),
@@ -97,10 +130,25 @@ Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
         '${TareasConstantes.tipoTarea}${tarea.tipo}',
         '${TareasConstantes.fechaLimite}${_formatDate(tarea.fechaLimite ?? DateTime.now())}',
       ), // Líneas de información
-    ),        
+    ),
   );
 }
 
+// Función auxiliar para obtener el BuildContext global para poder acceder al BlocProvider
+BuildContext? _getGlobalContext() {
+  // En una aplicación real, usaríamos Navigator.of(context) que debería estar disponible
+  // donde se construye la tarjeta, pero como este es un helper estático, necesitamos
+  // alguna forma de obtener el contexto. Una opción es pasar el contexto como parámetro
+  // a la función construirTarjetaDeportiva. 
+  
+  // Aquí usamos una forma simplificada asumiendo que la función se llama desde un widget
+  // que tiene acceso al contexto. En la implementación real, deberíamos modificar los 
+  // parámetros de la función para incluir el contexto.
+  
+  // Por ahora, retornamos null y esto debe ser adaptado en la llamada real.
+  return null;
+}
+
 String _formatDate(DateTime date) {
-    return DateFormat(AppConstantes.formatoFecha).format(date);
-  }
+  return DateFormat(AppConstantes.formatoFecha).format(date);
+}

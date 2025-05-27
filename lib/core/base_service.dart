@@ -11,8 +11,7 @@ import 'package:watch_it/watch_it.dart' show di;
 class BaseService {
   late final Dio _dio;
   final SecureStorageService _secureStorage = SecureStorageService();
-  
-  /// Constructor que inicializa la configuración de Dio con los parámetros base
+
   BaseService() {
     _dio = Dio(
       BaseOptions(
@@ -57,7 +56,7 @@ class BaseService {
     }
     // falta los otros endpoints
     final statusCode = e.response?.statusCode;
-    
+
     // Aplicar código de estado al tipo de recurso
     switch (statusCode) {
       case 400:
@@ -105,26 +104,23 @@ class BaseService {
     }
   }
 
-    /// Método privado que ejecuta una petición HTTP y maneja los errores de forma centralizada
+  /// Método privado que ejecuta una petición HTTP y maneja los errores de forma centralizada
   Future<T> _executeRequest<T>(
     Future<Response<dynamic>> Function() requestFn,
     String errorMessage,
   ) async {
     try {
       final connectivityService = di<ConnectivityService>();
-      // Verificar la conectividad antes de realizar la solicitud HTTP 
+      // Verificar la conectividad antes de realizar la solicitud HTTP
       await connectivityService.checkConnectivity();
-      
+
       // Proceder con la solicitud HTTP si hay conectividad
       final response = await requestFn();
-      
+
       if (response.statusCode == 200) {
         return response.data as T;
       } else {
-        throw ApiException(
-          errorMessage,
-          statusCode: response.statusCode,
-        );
+        throw ApiException(errorMessage, statusCode: response.statusCode);
       }
     } on DioException catch (e) {
       final endpoint = e.requestOptions.path;
@@ -138,32 +134,51 @@ class BaseService {
       throw ApiException('Error inesperado: ${e.toString()}');
     }
   }
+
   /// Método genérico para realizar solicitudes GET
   Future<T> get<T>(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorGetDefault,
     bool requireAuthToken = false,
-  }) async {
-    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
+  }) {
     return _executeRequest<T>(
       () => _dio.get(
         endpoint,
         queryParameters: queryParameters,
-        options: options,
       ),
       errorMessage,
     );
   }
+
   /// Método genérico para realizar solicitudes POST
   Future<dynamic> post(
     String endpoint, {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorCreateDefault,
-    bool requireAuthToken = false,
+    bool requireAuthToken = true,
+  }) {
+    return _executeRequest<dynamic>(
+      () => _dio.post(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+      ),
+      errorMessage,
+    );
+  }
+
+  /// Método genérico para realizar solicitudes POST sin token de autorización
+  Future<dynamic> postUnauthorized(
+    String endpoint, {
+    required dynamic data,
+    Map<String, dynamic>? queryParameters,
+    String errorMessage = AppConstantes.errorCreateDefault,
   }) async {
-    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
+    final options = await _getRequestOptions(
+      requireAuthToken: false
+    );
     return _executeRequest<dynamic>(
       () => _dio.post(
         endpoint,
@@ -174,15 +189,18 @@ class BaseService {
       errorMessage,
     );
   }
+
   /// Método genérico para realizar solicitudes PUT
   Future<dynamic> put(
     String endpoint, {
     required dynamic data,
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorUpdateDefault,
-    bool requireAuthToken = false,
+    bool requireAuthToken = true,
   }) async {
-    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
+    final options = await _getRequestOptions(
+      requireAuthToken: requireAuthToken,
+    );
     return _executeRequest<dynamic>(
       () => _dio.put(
         endpoint,
@@ -199,9 +217,11 @@ class BaseService {
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorDeleteDefault,
-    bool requireAuthToken = false,
+    bool requireAuthToken = true,
   }) async {
-    final options = await _getRequestOptions(requireAuthToken: requireAuthToken);
+    final options = await _getRequestOptions(
+      requireAuthToken: requireAuthToken,
+    );
     return _executeRequest<dynamic>(
       () => _dio.delete(
         endpoint,

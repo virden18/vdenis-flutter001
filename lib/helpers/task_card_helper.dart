@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:vdenis/bloc/tarea/tarea_bloc.dart';
+import 'package:vdenis/bloc/tarea/tarea_event.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/tarea.dart';
 
 class CommonWidgetsHelper {
   /// Construye un título en negrita con tamaño 20
-  static Widget buildBoldTitle(String title) {
+  static Widget buildBoldTitle(String title, {bool isCompleted = false}) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.bold,
+        decoration: isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+        decorationThickness: 2.0,
+        color: isCompleted ? Colors.grey : Colors.black,
       ),
     );
   }
@@ -76,31 +82,55 @@ class CommonWidgetsHelper {
   }
 }
 
-Widget construirTarjetaDeportiva(Tarea tarea, int indice, VoidCallback onEdit) {
+Widget construirTarjetaDeportiva(BuildContext context, Tarea tarea, int indice, VoidCallback onEdit) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Espaciado entre tarjetas
-    child:ListTile(
-    contentPadding: const EdgeInsets.all(16.0), // Padding interno del ListTile
-    tileColor: Colors.white, // Fondo blanco para el ListTile
-    shape: CommonWidgetsHelper.buildRoundedBorder(),
-    leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo), // Ícono dinámico
-    title: CommonWidgetsHelper.buildBoldTitle(tarea.titulo), // Título en negrita
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    child: ListTile(
+      contentPadding: const EdgeInsets.all(16.0),
+      tileColor: Colors.white,
+      shape: CommonWidgetsHelper.buildRoundedBorder(),
+      leading: CommonWidgetsHelper.buildLeadingIcon(tarea.tipo),
+      title: Row(
+        children: [
+          Checkbox(
+            value: tarea.completada,
+            activeColor: Colors.green,
+            onChanged: (bool? newValue) {
+              if (newValue != null && tarea.id != null) {
+                // Ahora podemos usar directamente el contexto
+                context.read<TareaBloc>().add(
+                  TareaCompletadaEvent(
+                    tareaId: tarea.id!,
+                    completada: newValue,
+                  ),
+                );
+              }
+            },
+          ),
+          Expanded(
+            child: CommonWidgetsHelper.buildBoldTitle(
+              tarea.titulo, 
+              isCompleted: tarea.completada
+            ),
+          ),
+        ],
+      ),
       trailing: IconButton(
-        onPressed: onEdit, // Llama a la función de edición
+        onPressed: onEdit,
         icon: const Icon(Icons.edit, size: 16),
-        style: ElevatedButton.styleFrom(                     
-          foregroundColor: Colors.grey, // Color del texto
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.grey,
         ),
       ),
       subtitle: CommonWidgetsHelper.buildInfoLines(
         tarea.descripcion ?? '',
         '${TareasConstantes.tipoTarea}${tarea.tipo}',
         '${TareasConstantes.fechaLimite}${_formatDate(tarea.fechaLimite ?? DateTime.now())}',
-      ), // Líneas de información
-    ),        
+      ),
+    ),
   );
 }
 
 String _formatDate(DateTime date) {
-    return DateFormat(AppConstantes.formatoFecha).format(date);
-  }
+  return DateFormat(AppConstantes.formatoFecha).format(date);
+}

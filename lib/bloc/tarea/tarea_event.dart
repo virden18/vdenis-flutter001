@@ -53,3 +53,17 @@ class TareaDeleteEvent extends TareaEvent {
   @override
   List<Object?> get props => [taskId];
 }
+
+/// Evento para marcar una tarea como completada o no completada
+class TareaCompletadaEvent extends TareaEvent {
+  final String tareaId;
+  final bool completada;
+
+  TareaCompletadaEvent({
+    required this.tareaId,
+    required this.completada,
+  });
+
+  @override
+  List<Object?> get props => [tareaId, completada];
+}

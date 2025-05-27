@@ -100,7 +100,9 @@ class TareasRepository extends BaseRepository<Tarea> {
 
       // Si se fuerza la recarga, ignoramos la caché
       // Si no esta forzada la recarga y tenemos datos en caché, los usamos
-      if (forzarRecarga != true && tareasCache != null && tareasCache.misTareas.isNotEmpty) {
+      if (forzarRecarga != true &&
+          tareasCache != null &&
+          tareasCache.misTareas.isNotEmpty) {
         tareas = tareasCache.misTareas;
       } else {
         // Si no hay caché, cargamos desde la API
@@ -171,6 +173,30 @@ class TareasRepository extends BaseRepository<Tarea> {
         return cache.copyWith(misTareas: nuevasTareas);
       });
       return tareaActualizada;
+    }, mensajeError: TareasConstantes.errorActualizar);
+  }
+
+  /// Actualiza solo la caché de una tarea sin llamar a la API
+  Future<Tarea> actualizarTareaEnCache(Tarea tarea) async {
+    return manejarExcepcion(() async {
+      final tareasCacheadas = await _obtenerCache();
+
+      if (tareasCacheadas != null) {
+        // Encontramos la tarea a actualizar
+        final List<Tarea> tareas = List.from(tareasCacheadas.misTareas);
+        final index = tareas.indexWhere((t) => t.id == tarea.id);
+
+        if (index >= 0) {
+          // Actualizamos la tarea en la lista
+          tareas[index] = tarea;
+
+          // Guardamos la lista actualizada en la caché
+          await _guardarEnCache(tareas);
+        }
+      }
+
+      // Retornamos la tarea actualizada
+      return tarea;
     }, mensajeError: TareasConstantes.errorActualizar);
   }
 

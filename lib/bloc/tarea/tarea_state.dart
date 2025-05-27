@@ -11,7 +11,7 @@ abstract class TareaState extends Equatable {
 class TareaInitial extends TareaState {}
 
 /// Tipo de operación para manejar errores específicos
-enum TipoOperacionTarea { cargar, crear, actualizar, eliminar }
+enum TipoOperacionTarea { cargar, crear, actualizar, eliminar, completar }
 
 /// Estado de error para cualquier operación de tareas
 class TareaError extends TareaState {
@@ -22,7 +22,6 @@ class TareaError extends TareaState {
 
   @override
   List<Object?> get props => [error, tipoOperacion];
-
   /// Método para obtener un mensaje de error amigable según el tipo de operación
   String get mensaje {
     final base = error is ApiException 
@@ -37,6 +36,8 @@ class TareaError extends TareaState {
         return 'Error al actualizar la tarea: $base';
       case TipoOperacionTarea.eliminar:
         return 'Error al eliminar la tarea: $base';
+      case TipoOperacionTarea.completar:
+        return 'Error al cambiar el estado de la tarea: $base';
     }
   }
 }
@@ -125,4 +126,21 @@ class TareaDeleted extends TareaLoaded {
 
   @override
   List<Object?> get props => [tareaEliminadaId, ...super.props];
+}
+
+/// Estado para cuando se ha marcado una tarea como completada o no completada
+class TareaCompletada extends TareaLoaded {
+  final String tareaId;
+  final bool completada;
+
+  TareaCompletada({
+    required this.tareaId,
+    required this.completada,
+    required super.tareas,
+    super.desdeCache = false,
+    super.ultimaActualizacion,
+  });
+
+  @override
+  List<Object?> get props => [tareaId, completada, ...super.props];
 }

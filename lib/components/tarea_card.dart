@@ -3,13 +3,13 @@ import 'package:vdenis/helpers/task_card_helper.dart';
 import 'package:vdenis/domain/tarea.dart';
 import 'package:vdenis/constants/constantes.dart';
 
-class TaskCard extends StatelessWidget {
+class TareaCard extends StatelessWidget {
   final Tarea tarea;
   final String imageUrl;
   final String fechaLimiteDato;
   final VoidCallback onBackPressed;
 
-  const TaskCard({
+  const TareaCard({
     super.key,
     required this.tarea,
     required this.imageUrl,

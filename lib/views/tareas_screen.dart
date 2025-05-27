@@ -128,7 +128,7 @@ class _TareaScreenContent extends StatelessWidget {
                     content: Text(
                       state.completada
                           ? 'Tarea marcada como completada'
-                          : 'Tarea demarcada',
+                          : 'Tarea desmarcada',
                     ),
                     backgroundColor:
                         state.completada ? Colors.green : Colors.orange,

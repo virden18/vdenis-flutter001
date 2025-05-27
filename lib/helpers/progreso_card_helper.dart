@@ -66,6 +66,20 @@ class ProgresoCardHelper extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 8),
+            
+            // Texto que muestra tareas completadas
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                '${contadorState.tareasCompletadas}/${contadorState.totalTareas} Tareas completadas',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
           ],
         ),
       ),

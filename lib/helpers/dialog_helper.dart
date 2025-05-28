@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/auth/auth_bloc.dart';
 import 'package:vdenis/bloc/auth/auth_event.dart';
-import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
-import 'package:vdenis/bloc/noticia/noticia_event.dart';
 import 'package:vdenis/data/preferencia_repository.dart';
 import 'package:vdenis/views/login_screen.dart';
 import 'package:get_it/get_it.dart';
@@ -62,17 +60,6 @@ class DialogHelper {
                 
                 // Limpiar caché de preferencias ANTES del logout y redirección
                 preferenciasRepo.invalidarCache();
-                
-                // Obtener referencia al NoticiaBloc para reiniciar sus filtros
-                if (context.mounted) {
-                  try {
-                    final noticiaBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
-                    // Reiniciar los filtros del NoticiaBloc
-                    noticiaBloc.add(FetchNoticiasEvent());
-                  } catch (e) {
-                    // Ignorar si NoticiaBloc no está disponible
-                  }
-                }
                 
                 // Usar el BLoC para manejar el cierre de sesión
                 if (context.mounted) {

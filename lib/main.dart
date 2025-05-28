@@ -14,7 +14,6 @@ import 'package:vdenis/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
 // Importaciones adicionales para el NoticiaBloc
 import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
-import 'package:vdenis/bloc/noticia/noticia_event.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -40,14 +39,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ReporteBloc()),
         BlocProvider(create: (context) => AuthBloc()),
         // Agregamos NoticiaBloc como un provider global para mantener el estado entre navegaciones
-        BlocProvider<NoticiaBloc>(
-          create: (context) {
-            final noticiaBloc = NoticiaBloc();
-            // Primero cargar todas las noticias
-            noticiaBloc.add(FetchNoticiasEvent());
-            return noticiaBloc;
-          },
-        ),
+        BlocProvider<NoticiaBloc>(create: (context) => NoticiaBloc()),
         BlocProvider(create: (context) => TareaBloc()),
       ],
       child: MaterialApp(

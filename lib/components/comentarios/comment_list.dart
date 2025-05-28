@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_event.dart';
 import 'package:vdenis/bloc/comentario/comentario_state.dart';
+import 'package:vdenis/components/comentarios/comment_card.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/helpers/snackbar_helper.dart';
-import 'package:vdenis/components/comentarios/comment_card.dart';
 
-class CommentList extends StatelessWidget {
+class CommentList extends StatefulWidget {
   final String noticiaId;
   final Function(String, String) onResponderComentario;
 
@@ -16,6 +16,15 @@ class CommentList extends StatelessWidget {
     required this.noticiaId,
     required this.onResponderComentario,
   });
+
+  @override
+  State<CommentList> createState() => _CommentListState();
+}
+
+class _CommentListState extends State<CommentList> {
+  // Track which comments have their subcomments expanded
+  final Map<String, bool> _expandedComments = {};
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ComentarioBloc, ComentarioState>(
@@ -32,8 +41,10 @@ class CommentList extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: Container(
-                  color: const Color(0x0D000000), 
-                  child: const Center(child: CircularProgressIndicator()),
+                  color: const Color(0x0D000000), // Negro con 20% opacidad
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               ),
             ],
@@ -49,7 +60,6 @@ class CommentList extends StatelessWidget {
   }
 
   Widget _buildList(BuildContext context, List<Comentario> comentarios) {
-    // Recibir context
     if (comentarios.isEmpty) {
       return const Center(
         child: Text(
@@ -59,20 +69,75 @@ class CommentList extends StatelessWidget {
       );
     }
 
+    // Separate top-level comments and subcomments
+    final topLevelComments = comentarios.where((c) => c.idSubComentario == null).toList();
+    final subComments = <String, List<Comentario>>{};
+    for (var comment in comentarios.where((c) => c.idSubComentario != null)) {
+      subComments.putIfAbsent(comment.idSubComentario!, () => []).add(comment);
+    }
+
     return ListView.separated(
-      itemCount: comentarios.length,
-      itemBuilder:
-          (context, index) => CommentCard(
-            comentario: comentarios[index],
-            noticiaId: noticiaId,
-            onResponder: onResponderComentario,
-          ),
-      separatorBuilder: (_, __) => const SizedBox(height: 4),
+      itemCount: topLevelComments.length,
+      itemBuilder: (context, index) {
+        final comentario = topLevelComments[index];
+        final commentSubComments = subComments[comentario.id] ?? [];
+
+        // Toggle state for this comment's subcomments
+        final isExpanded = _expandedComments[comentario.id] ?? false;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Render the parent comment
+            CommentCard(
+              comentario: comentario,
+              noticiaId: widget.noticiaId,
+              onResponder: widget.onResponderComentario,
+            ),
+            if (commentSubComments.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _expandedComments[comentario.id!] = !isExpanded;
+                      });
+                    },
+                    child: Text(
+                      isExpanded ? 'Show Less' : 'Show More (${commentSubComments.length})',
+                      style: const TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                ],
+              ),
+              if (isExpanded)
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, top: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: commentSubComments.map((subComment) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: CommentCard(
+                          comentario: subComment,
+                          noticiaId: widget.noticiaId,
+                          onResponder: widget.onResponderComentario,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+            ],
+          ],
+        );
+      },
+      separatorBuilder: (_, __) => const Divider(),
     );
   }
 
   Widget _buildErrorState(BuildContext context) {
-    // Recibir context como parámetro
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -85,10 +150,7 @@ class CommentList extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           ElevatedButton(
-            onPressed:
-                () =>
-                    context.read<ComentarioBloc>()
-                      ..add(LoadComentarios(noticiaId)),
+            onPressed: () => context.read<ComentarioBloc>().add(LoadComentarios(widget.noticiaId)),
             child: const Text('Reintentar'),
           ),
         ],

@@ -10,8 +10,9 @@ import 'package:watch_it/watch_it.dart' show di;
 /// Clase base para servicios API que proporciona funcionalidad común
 class BaseService {
   late final Dio _dio;
-  final SecureStorageService _secureStorage = SecureStorageService();
+  final _secureStorage = di<SecureStorageService>();
 
+  /// Constructor que inicializa la configuración de Dio con los parámetros base
   BaseService() {
     _dio = Dio(
       BaseOptions(
@@ -53,6 +54,21 @@ class BaseService {
       errorUnauthorized = NoticiasConstantes.errorUnauthorized;
       errorBadRequest = NoticiasConstantes.errorInvalidData;
       errorServer = NoticiasConstantes.errorServer;
+    } else if (endpoint.contains(ApiConstantes.preferenciasEndpoint)) {
+      errorNotFound = PreferenciaConstantes.errorNotFound;
+      errorUnauthorized = PreferenciaConstantes.errorUnauthorized;
+      errorBadRequest = PreferenciaConstantes.errorInvalidData;
+      errorServer = PreferenciaConstantes.errorServer;
+    } else if (endpoint.contains(ApiConstantes.reportesEndpoint)) {
+      errorNotFound = ReporteConstantes.errorNotFound;
+      errorUnauthorized = ReporteConstantes.errorUnauthorized;
+      errorBadRequest = ReporteConstantes.errorInvalidData;
+      errorServer = ReporteConstantes.errorServer;
+    } else if (endpoint.contains(ApiConstantes.comentariosEndpoint)) {
+      errorNotFound = ComentarioConstantes.errorNotFound;
+      errorUnauthorized = ComentarioConstantes.errorUnauthorized;
+      errorBadRequest = ComentarioConstantes.errorInvalidData;
+      errorServer = ComentarioConstantes.errorServer;
     }
     // falta los otros endpoints
     final statusCode = e.response?.statusCode;
@@ -89,18 +105,33 @@ class BaseService {
       case 577:
       case 578:
         // Errores de conexión proxy de Beeceptor
-        return ApiException(AppConstantes.errorConexionProxy, statusCode: statusCode);
+        return ApiException(
+          AppConstantes.errorConexionProxy,
+          statusCode: statusCode,
+        );
       case 580:
         // Cliente desconectado (socket hang up)
-        return ApiException(AppConstantes.conexionInterrumpida, statusCode: 580);
+        return ApiException(
+          AppConstantes.conexionInterrumpida,
+          statusCode: 580,
+        );
       case 581:
         // Error al recuperar archivo en Beeceptor
-        return ApiException(AppConstantes.errorRecuperarRecursos, statusCode: 581);
+        return ApiException(
+          AppConstantes.errorRecuperarRecursos,
+          statusCode: 581,
+        );
       case 599:
         // Error crítico en Beeceptor
-        return ApiException(AppConstantes.errorCriticoServidor, statusCode: 599);
+        return ApiException(
+          AppConstantes.errorCriticoServidor,
+          statusCode: 599,
+        );
       default:
-        return ApiException('Error desconocido en $endpoint', statusCode: statusCode);
+        return ApiException(
+          'Error desconocido en $endpoint',
+          statusCode: statusCode,
+        );
     }
   }
 
@@ -140,12 +171,16 @@ class BaseService {
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorGetDefault,
-    bool requireAuthToken = false,
-  }) {
+    bool requireAuthToken = true,
+  }) async {
+    final options = await _getRequestOptions(
+      requireAuthToken: requireAuthToken,
+    );
     return _executeRequest<T>(
       () => _dio.get(
         endpoint,
         queryParameters: queryParameters,
+        options: options,
       ),
       errorMessage,
     );
@@ -158,26 +193,9 @@ class BaseService {
     Map<String, dynamic>? queryParameters,
     String errorMessage = AppConstantes.errorCreateDefault,
     bool requireAuthToken = true,
-  }) {
-    return _executeRequest<dynamic>(
-      () => _dio.post(
-        endpoint,
-        data: data,
-        queryParameters: queryParameters,
-      ),
-      errorMessage,
-    );
-  }
-
-  /// Método genérico para realizar solicitudes POST sin token de autorización
-  Future<dynamic> postUnauthorized(
-    String endpoint, {
-    required dynamic data,
-    Map<String, dynamic>? queryParameters,
-    String errorMessage = AppConstantes.errorCreateDefault,
   }) async {
     final options = await _getRequestOptions(
-      requireAuthToken: false
+      requireAuthToken: requireAuthToken,
     );
     return _executeRequest<dynamic>(
       () => _dio.post(
@@ -232,25 +250,60 @@ class BaseService {
     );
   }
 
+  /// Método genérico para realizar solicitudes PATCH (actualización parcial)
+  Future<dynamic> patch(
+    String endpoint, {
+    required dynamic data,
+    Map<String, dynamic>? queryParameters,
+    String errorMessage = AppConstantes.errorUpdateDefault,
+    bool requireAuthToken = true,
+  }) async {
+    final options = await _getRequestOptions(
+      requireAuthToken: requireAuthToken,
+    );
+    return _executeRequest<dynamic>(
+      () => _dio.patch(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      ),
+      errorMessage,
+    );
+  }
+
   /// Obtiene opciones de solicitud con token de autenticación si es requerido
-  Future<Options> _getRequestOptions({bool requireAuthToken = false}) async {
+  Future<Options> _getRequestOptions({bool requireAuthToken = true}) async {
     final options = Options();
-    
+
     if (requireAuthToken) {
       final jwt = await _secureStorage.getJwt();
       if (jwt != null && jwt.isNotEmpty) {
-        options.headers = {
-          ...(options.headers ?? {}),
-          'X-Auth-Token': jwt,
-        };
+        options.headers = {...(options.headers ?? {}), 'X-Auth-Token': jwt};
       } else {
-        throw ApiException(
-          AppConstantes.tokenNoEncontrado,
-          statusCode: 401,
-        );
+        throw ApiException(AppConstantes.tokenNoEncontrado, statusCode: 401);
       }
     }
-    
+
     return options;
+  }
+
+  /// Método genérico para realizar solicitudes POST sin token de autorización
+  Future<dynamic> postUnauthorized(
+    String endpoint, {
+    required dynamic data,
+    Map<String, dynamic>? queryParameters,
+    String errorMessage = AppConstantes.errorCreateDefault,
+  }) async {
+    final options = await _getRequestOptions(requireAuthToken: false);
+    return _executeRequest<dynamic>(
+      () => _dio.post(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      ),
+      errorMessage,
+    );
   }
 }

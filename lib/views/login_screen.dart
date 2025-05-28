@@ -50,7 +50,7 @@ class LoginScreen extends StatelessWidget {
             // Mostrar error
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBarComponent.crear(
-                mensaje: state.error,
+                mensaje: state.error.message,
                 color: Colors.red,
                 duracion: const Duration(seconds: 4),
               ),

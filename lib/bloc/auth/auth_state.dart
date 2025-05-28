@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vdenis/exceptions/api_exception.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -16,7 +17,7 @@ class AuthAuthenticated extends AuthState {}
 class AuthUnauthenticated extends AuthState {}
 
 class AuthFailure extends AuthState {
-  final String error;
+  final ApiException error;
 
   const AuthFailure(this.error);
 

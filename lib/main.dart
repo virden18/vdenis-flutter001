@@ -5,6 +5,7 @@ import 'package:vdenis/bloc/auth/auth_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
 import 'package:vdenis/bloc/reporte/reporte_bloc.dart';
 import 'package:vdenis/bloc/tarea/tarea_bloc.dart';
+import 'package:vdenis/core/services/shared_preferences_service.dart';
 import 'package:vdenis/di/locator.dart';
 import 'package:vdenis/bloc/contador/contador_bloc.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_bloc.dart';
@@ -16,15 +17,32 @@ import 'package:watch_it/watch_it.dart';
 import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
-  await initLocator(); // Carga el archivo .env
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    
+    // Cargar variables de entorno
+    await dotenv.load(fileName: ".env");
+    
+    // Inicializar servicios y dependencias
+    await initLocator();
+    await SharedPreferencesService().init();
+    
+    // Limpiar datos de sesión anterior
+    final secureStorage = di<SecureStorageService>();
+    await secureStorage.clearJwt();
+    await secureStorage.clearUserEmail();
 
-  // Eliminar cualquier token guardado para forzar el inicio de sesión
-  final secureStorage = di<SecureStorageService>();
-  await secureStorage.clearJwt();
-  await secureStorage.clearUserEmail();
-
-  runApp(const MyApp());
+    runApp(const MyApp());
+  } catch (e) {
+    debugPrint('Error durante la inicialización: $e');
+    runApp(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text('Error al iniciar la aplicación: $e'),
+        ),
+      ),
+    ));
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -40,7 +58,10 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => AuthBloc()),
         // Agregamos NoticiaBloc como un provider global para mantener el estado entre navegaciones
         BlocProvider<NoticiaBloc>(create: (context) => NoticiaBloc()),
-        BlocProvider(create: (context) => TareaBloc()),
+                BlocProvider<TareaBloc>(
+          create: (context) => TareaBloc(),
+          lazy: false, // Esto asegura que el bloc se cree inmediatamente
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

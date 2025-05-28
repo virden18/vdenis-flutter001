@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/tarea/tarea_event.dart';
 import 'package:vdenis/bloc/tarea/tarea_state.dart';
-import 'package:vdenis/data/auth_repository.dart';
+import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:vdenis/data/tarea_repository.dart';
 import 'package:vdenis/domain/tarea.dart'; // Importamos la clase Tarea
 import 'package:watch_it/watch_it.dart';
 
 class TareaBloc extends Bloc<TareaEvent, TareaState> {
   final TareasRepository _tareaRepository = di<TareasRepository>();
-  final AuthRepository _authRepository = di<AuthRepository>();
+  final SecureStorageService _secureStorage = di<SecureStorageService>();
 
   TareaBloc() : super(TareaInitial()) {
     on<TareaLoadEvent>(_onLoadTareas);
@@ -114,7 +114,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
         // Aseguramos que se mantenga el email original o conseguimos uno nuevo
         final usuarioActual =
             tareaActual.usuario ??
-            (await _authRepository.getUserEmail() ?? 'usuario@anonimo.com');
+            (await _secureStorage.getUserEmail() ?? 'usuario@anonimo.com');
 
         // Creamos una versión actualizada preservando el email
         final tareaConEmail = event.tarea.copyWith(usuario: usuarioActual);
@@ -206,7 +206,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
       descripcion: tarea.descripcion,
       fecha: tarea.fecha,
       fechaLimite: tarea.fechaLimite,
-      usuario: await _authRepository.getUserEmail(),
+      usuario: await _secureStorage.getUserEmail(),
       completada: tarea.completada,
     );
   }

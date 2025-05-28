@@ -1,10 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
-import 'package:vdenis/bloc/noticia/noticia_event.dart';
 import 'package:vdenis/data/auth_repository.dart';
 import 'package:vdenis/bloc/auth/auth_event.dart';
 import 'package:vdenis/bloc/auth/auth_state.dart';
 import 'package:vdenis/data/preferencia_repository.dart';
+import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -13,7 +12,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(): super(AuthInitial()) {
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
-    on<AuthCheckRequested>(_onAuthCheckRequested);
   }
 
   Future<void> _onAuthLoginRequested(
@@ -23,7 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       if (event.email.isEmpty || event.password.isEmpty) {
-        emit(const AuthFailure('El usuario y la contraseña son obligatorios'));
+        emit(AuthFailure(ApiException('El usuario y la contraseña son obligatorios')));
         return;
       }
       
@@ -34,10 +32,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (success) {
         emit(AuthAuthenticated());
       } else {
-        emit(const AuthFailure('Credenciales inválidas'));
+        emit(AuthFailure(ApiException('Credenciales inválidas')));
       }
     } catch (e) {
-      emit( AuthFailure( e.toString()));
+      emit( AuthFailure(ApiException('Error al iniciar sesión')));
     }
   }
 
@@ -48,33 +46,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await _authRepository.logout();
-      // Limpiar la caché de preferencias
-      di<PreferenciaRepository>().invalidarCache();
-      
-      // Reiniciar el NoticiaBloc para que no mantenga noticias del usuario anterior
-      final noticiaBloc = di<NoticiaBloc>();
-      noticiaBloc.add(ResetNoticiaEvent());
-      
+      di<PreferenciaRepository>().invalidarCache();      
       emit(AuthInitial());
     } catch (e) {
-      emit(AuthFailure('Error al cerrar sesión: ${e.toString()}'));
-    }
-  }
-
-  Future<void> _onAuthCheckRequested(
-    AuthCheckRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(AuthLoading());
-    try {
-      final isAuthenticated = await _authRepository.isAuthenticated();
-      if (isAuthenticated) {
-        emit(AuthAuthenticated());
-      } else {
-        emit(AuthUnauthenticated());
-      }
-    } catch (e) {
-      emit(AuthFailure(e.toString()));
+      emit(AuthFailure(ApiException('Error al cerrar sesión')));
     }
   }
 }

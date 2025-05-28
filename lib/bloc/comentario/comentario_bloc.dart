@@ -28,7 +28,9 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     try {
       final comentarios = await _comentarioRepository
           .obtenerComentariosPorNoticia(event.noticiaId);
-      emit(ComentarioLoaded(comentarios, event.noticiaId));
+      emit(
+        ComentarioLoaded(comentarios: comentarios, noticiaId: event.noticiaId),
+      );
     } catch (e) {
       if (e is ApiException) {
         emit(
@@ -55,7 +57,9 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
       final comentarios = await _comentarioRepository
           .obtenerComentariosPorNoticia(event.noticiaId);
 
-      emit(ComentarioLoaded(comentarios, event.noticiaId));
+      emit(
+        ComentarioLoaded(comentarios: comentarios, noticiaId: event.noticiaId),
+      );
     } catch (e) {
       if (e is ApiException) {
         emit(
@@ -118,9 +122,9 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
 
       emit(
         ComentariosFiltrados(
-          comentariosFiltrados,
-          event.noticiaId,
-          event.terminoBusqueda,
+          comentarios: comentariosFiltrados,
+          noticiaId: event.noticiaId,
+          terminoBusqueda: event.terminoBusqueda,
         ),
       );
     } catch (e) {
@@ -157,9 +161,9 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
       // Emitimos un nuevo estado con los comentarios ordenados
       emit(
         ComentariosOrdenados(
-          comentarios,
-          currentState.noticiaId,
-          event.ascendente ? 'fecha:asc' : 'fecha:desc',
+          comentarios: comentarios,
+          noticiaId: currentState.noticiaId,
+          criterioOrden: event.ascendente ? 'fecha:asc' : 'fecha:desc',
         ),
       );
     } else {
@@ -172,42 +176,64 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
         ),
       );
     }
-  }  Future<void> _onAddReaccion(
+  }
+
+  Future<void> _onAddReaccion(
     AddReaccion event,
     Emitter<ComentarioState> emit,
   ) async {
-    // Guardar el estado actual para no perderlo
-    ComentarioState? estadoActual = state;
-
-    // Si estamos en un estado de comentarios cargados, podemos proceder
-    if (estadoActual is ComentarioLoaded) {
-      // Sólo verificamos que estemos en un estado válido
-    } else {
-      // Si no tenemos un estado cargado, no podemos actualizar
-      emit(ComentarioError(
-        'No se pueden actualizar las reacciones en este momento',
-        ApiException('No hay comentarios cargados para actualizar'),
-        TipoOperacionComentario.reaccionar,
-      ));
-      return;
-    }
-    
+    final currentState = state;
     try {
-      // Aplicar la reacción sin emitir un estado de carga para evitar parpadeos en la UI
-      await _comentarioRepository.reaccionarComentario(
-        event.comentarioId,
-        event.tipoReaccion,
-        event.incrementar,
-        event.comentarioPadreId,
-      );
-      
-      // No emitimos ningún estado nuevo, la recarga se manejará desde los widgets
+      emit(ReaccionLoading());
+      // Llamamos al repositorio para persistir el cambio
+      final comentarioResponse = await _comentarioRepository.reaccionarComentario(
+            comentarioId: event.comentarioId,
+            tipoReaccion: event.tipoReaccion,
+          );
+
+      if (currentState is ComentarioLoaded) {
+        final comentarios = List<Comentario>.from(currentState.comentarios);
+        final comentarioIndex = comentarios.indexWhere(
+          (c) => c.id == event.comentarioId,
+        );
+
+        if (comentarioIndex != -1) {
+          comentarios[comentarioIndex] = comentarioResponse;
+          emit(
+            ComentarioLoaded(
+              comentarios: comentarios,
+              noticiaId: currentState.noticiaId,
+            ),
+          );
+        } else {
+          final comentariosActualizados =
+              comentarios.map((comentario) {
+                final subcomentarios = comentario.subcomentarios ?? [];
+                final subIndex = subcomentarios.indexWhere(
+                  (sc) => sc.id == event.comentarioId,
+                );
+                if (subIndex != -1) {
+                  subcomentarios[subIndex] = comentarioResponse;
+                  return subcomentarios[subIndex];
+                }
+                return comentario;
+              }).toList();
+          emit(
+            ComentarioLoaded(
+              comentarios: comentariosActualizados,
+              noticiaId: currentState.noticiaId,
+            ),
+          );
+        }
+      }
     } catch (e) {
-      emit(ComentarioError(
-        'Error al reaccionar al comentario', 
-        e is ApiException ? e : ApiException(e.toString()),
-        TipoOperacionComentario.reaccionar,
-      ));
+      emit(
+        ComentarioError(
+          'Error al reaccionar al comentario',
+          e is ApiException ? e : ApiException(e.toString()),
+          TipoOperacionComentario.reaccionar,
+        ),
+      );
     }
   }
 
@@ -224,7 +250,12 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
       final comentarios = await _comentarioRepository
           .obtenerComentariosPorNoticia(event.subcomentario.noticiaId);
 
-      emit(ComentarioLoaded(comentarios, event.subcomentario.noticiaId));
+      emit(
+        ComentarioLoaded(
+          comentarios: comentarios,
+          noticiaId: event.subcomentario.noticiaId,
+        ),
+      );
     } catch (e) {
       if (e is ApiException) {
         emit(

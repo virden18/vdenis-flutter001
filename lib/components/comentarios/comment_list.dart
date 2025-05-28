@@ -18,20 +18,28 @@ class CommentList extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ComentarioBloc, ComentarioState>(      
+    return BlocConsumer<ComentarioBloc, ComentarioState>(
       listener: (context, state) {
         if (state is ComentarioError) {
-          SnackBarHelper.manejarError(
-            context,
-            state.error,
-          );
+          SnackBarHelper.manejarError(context, state.error);
         }
       },
       builder: (context, state) {
         if (state is ComentarioLoading) {
-          return const Center(child: CircularProgressIndicator());        
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is ReaccionLoading) {
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: Container(
+                  color: const Color(0x0D000000), 
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ),
+            ],
+          );
         } else if (state is ComentarioLoaded) {
-          return _buildList(context, state.comentarios); 
+          return _buildList(context, state.comentarios);
         } else if (state is ComentarioError) {
           return _buildErrorState(context);
         }
@@ -40,7 +48,8 @@ class CommentList extends StatelessWidget {
     );
   }
 
-  Widget _buildList(BuildContext context, List<Comentario> comentarios) { // Recibir context
+  Widget _buildList(BuildContext context, List<Comentario> comentarios) {
+    // Recibir context
     if (comentarios.isEmpty) {
       return const Center(
         child: Text(
@@ -52,16 +61,18 @@ class CommentList extends StatelessWidget {
 
     return ListView.separated(
       itemCount: comentarios.length,
-      itemBuilder: (context, index) => CommentCard(
-        comentario: comentarios[index],
-        noticiaId: noticiaId,
-        onResponder: onResponderComentario,
-      ),
+      itemBuilder:
+          (context, index) => CommentCard(
+            comentario: comentarios[index],
+            noticiaId: noticiaId,
+            onResponder: onResponderComentario,
+          ),
       separatorBuilder: (_, __) => const SizedBox(height: 4),
     );
   }
 
-  Widget _buildErrorState(BuildContext context) { // Recibir context como parámetro
+  Widget _buildErrorState(BuildContext context) {
+    // Recibir context como parámetro
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -72,9 +83,12 @@ class CommentList extends StatelessWidget {
             'Error al cargar comentarios',
             style: TextStyle(color: Colors.red[700]),
           ),
-          const SizedBox(height: 8),          ElevatedButton(
-            onPressed: () => context.read<ComentarioBloc>()
-              ..add(LoadComentarios(noticiaId)),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed:
+                () =>
+                    context.read<ComentarioBloc>()
+                      ..add(LoadComentarios(noticiaId)),
             child: const Text('Reintentar'),
           ),
         ],

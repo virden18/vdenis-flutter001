@@ -52,12 +52,11 @@ class ComentarioService extends BaseService {
   }
 
   /// Registra una reacción (like o dislike) a un comentario o subcomentario
-  Future<void> reaccionarComentario({
+  Future<Comentario> reaccionarComentario({
     required String comentarioId,
     required String tipoReaccion,
   }) async {
     try {
-      // Obtenemos todos los comentarios
       final data = await get('/comentarios', requireAuthToken: false);
 
       if (data is! List) {
@@ -66,12 +65,10 @@ class ComentarioService extends BaseService {
 
       final List<dynamic> comentarios = data;
 
-      // Primero, buscamos si es un comentario principal
       final comentarioIndex = comentarios.indexWhere(
         (c) => c['id'] == comentarioId,
       );
 
-      // Si lo encontramos como comentario principal
       if (comentarioIndex != -1) {
         Map<String, dynamic> comentarioActualizado = Map<String, dynamic>.from(
           comentarios[comentarioIndex],
@@ -80,15 +77,13 @@ class ComentarioService extends BaseService {
         int currentLikes = comentarioActualizado['likes'] ?? 0;
         int currentDislikes = comentarioActualizado['dislikes'] ?? 0;
 
-        // Actualizar contadores
         if (tipoReaccion == 'like') {
           currentLikes += 1;
         } else if (tipoReaccion == 'dislike') {
           currentDislikes += 1;
         }
 
-        // Enviar actualización
-        await put(
+        final response = await put(
           '/comentarios/$comentarioId',
           data: {
             'noticiaId': comentarioActualizado['noticiaId'],
@@ -104,9 +99,8 @@ class ComentarioService extends BaseService {
           requireAuthToken: true,
         );
 
-        // Respuesta exitosa, retornamos
-        return;
-      }      // Recorrer todos los comentarios principales
+        return ComentarioMapper.fromMap(response);
+      } // Recorrer todos los comentarios principales
       for (int i = 0; i < comentarios.length; i++) {
         final comentarioPrincipal = comentarios[i];
 
@@ -119,7 +113,8 @@ class ComentarioService extends BaseService {
 
           // Buscar en los subcomentarios si alguno coincide con el ID
           for (int j = 0; j < subcomentarios.length; j++) {
-            final subcomentario = subcomentarios[j];            // Si encontramos el ID en el subcomentario
+            final subcomentario =
+                subcomentarios[j]; // Si encontramos el ID en el subcomentario
             if (subcomentario['id'] == comentarioId ||
                 subcomentario['idSubComentario'] == comentarioId) {
               // Crear una copia del subcomentario para actualizarlo
@@ -129,21 +124,21 @@ class ComentarioService extends BaseService {
               // Actualizar los contadores según el tipo de reacción
               int currentLikes = subcomentarioActualizado['likes'] ?? 0;
               int currentDislikes = subcomentarioActualizado['dislikes'] ?? 0;
-              
+
               // Incrementar el contador adecuado
               if (tipoReaccion == 'like') {
                 currentLikes += 1;
               } else if (tipoReaccion == 'dislike') {
                 currentDislikes += 1;
               }
-              
+
               // Asignar los valores actualizados
               subcomentarioActualizado['likes'] = currentLikes;
               subcomentarioActualizado['dislikes'] = currentDislikes;
               // Actualizar la lista de subcomentarios
               subcomentarios[j] = subcomentarioActualizado;
               // Actualizar el comentario principal con la nueva lista de subcomentarios
-              await put(
+              final response = await put(
                 '/comentarios/${comentarioPrincipal['id']}',
                 data: {
                   'noticiaId': comentarioPrincipal['noticiaId'],
@@ -158,16 +153,14 @@ class ComentarioService extends BaseService {
                 },
                 requireAuthToken: true,
               );
-
-              return;
+              return ComentarioMapper.fromMap(response);
             }
           }
         }
       }
-
-      throw ApiException(ComentarioConstantes.errorServer, statusCode: 404);
-    } on DioException catch (e) {
-      debugPrint('❌ DioException en reaccionarComentario: ${e.toString()}');
+      throw ApiException(
+        'No se reaccionó a ningún comentario o subcomentario con ID',
+      );
     } catch (e) {
       if (e is ApiException) {
         rethrow;
@@ -199,10 +192,7 @@ class ComentarioService extends BaseService {
 
       final comentarioData = data;
 
-      // Verificar si estamos intentando añadir un subcomentario a otro subcomentario
       if (comentarioData['isSubComentario'] == true) {
-        // Si no tiene campo de subcomentarios, es probable que estemos intentando
-        // añadir un subcomentario a otro subcomentario, lo cual no está permitido
         return {
           'success': false,
           'message':
@@ -210,14 +200,6 @@ class ComentarioService extends BaseService {
         };
       }
 
-      // Verificar si ya existe un subcomentario (opcional, puedes permitir múltiples subcomentarios)
-      if ((comentarioData['subcomentarios'] as List).isNotEmpty) {
-        // Si quieres permitir varios subcomentarios, comenta o elimina esta verificación
-        // return {
-        //   'success': false,
-        //   'message': 'Este comentario ya contiene un subcomentario, no es posible agregar otro'
-        // };
-      }      // Crear el nuevo subcomentario explícitamente SIN campo de subcomentarios
       final nuevoSubcomentario = Comentario(
         id: subcomentarioId, // Asignamos un ID único para este subcomentario
         noticiaId: comentarioData['noticiaId'],

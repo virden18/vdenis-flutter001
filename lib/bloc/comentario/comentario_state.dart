@@ -15,10 +15,13 @@ class ComentarioLoaded extends ComentarioState {
   final List<Comentario> comentarios;
   final String noticiaId;
 
-  ComentarioLoaded(this.comentarios, this.noticiaId);
+  ComentarioLoaded({required this.comentarios, required this.noticiaId});
 
   @override
   List<Object?> get props => [comentarios, noticiaId];
+}
+
+class ReaccionLoading extends ComentarioState {
 }
 
 class NumeroComentariosLoaded extends ComentarioState {
@@ -55,11 +58,11 @@ class ComentarioError extends ComentarioState {
 class ComentariosFiltrados extends ComentarioLoaded {
   final String terminoBusqueda;
 
-  ComentariosFiltrados(
-    super.comentarios,
-    super.noticiaId,
-    this.terminoBusqueda,
-  );
+  ComentariosFiltrados({
+    required super.comentarios,
+    required super.noticiaId,
+    required this.terminoBusqueda,
+  });
 
   @override
   List<Object?> get props => [...super.props, terminoBusqueda];
@@ -68,11 +71,11 @@ class ComentariosFiltrados extends ComentarioLoaded {
 class ComentariosOrdenados extends ComentarioLoaded {
   final String criterioOrden;
 
-  ComentariosOrdenados(
-    super.comentarios,
-    super.noticiaId,
-    this.criterioOrden,
-  );
+  ComentariosOrdenados({
+    required super.comentarios,
+    required super.noticiaId,
+    required this.criterioOrden,
+  });
 
   @override
   List<Object?> get props => [...super.props, criterioOrden];

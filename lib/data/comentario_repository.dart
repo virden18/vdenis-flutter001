@@ -61,17 +61,14 @@ class ComentarioRepository extends CacheableRepository<Comentario> {
     return manejarExcepcion(() async {
       validarNoVacio(noticiaId, 'ID de la noticia');
       
-      // Si ya tenemos la caché para esta noticia, la usamos
       if (_comentariosPorNoticia.containsKey(noticiaId)) {
         return _comentariosPorNoticia[noticiaId]!;
       }
-      
-      // Si es la noticia actual, usamos la funcionalidad del CacheableRepository
+    
       if (noticiaId == _noticiaSeleccionadaId) {
         return await obtenerDatos(forzarRecarga: true);
       }
-      
-      // Si es otra noticia, la obtenemos y cacheamos
+     
       final comentarios = await _comentarioService.obtenerComentariosPorNoticia(noticiaId);
       _comentariosPorNoticia[noticiaId] = comentarios;
       return comentarios;
@@ -90,24 +87,22 @@ class ComentarioRepository extends CacheableRepository<Comentario> {
     }, mensajeError: 'Error al agregar comentario');
   }
 
-  /// Obtiene el número de comentarios para una noticia específica
   Future<int> obtenerNumeroComentarios(String noticiaId) async {
     return manejarExcepcion(() {
       validarNoVacio(noticiaId, 'ID de la noticia');
       return _comentarioService.obtenerNumeroComentarios(noticiaId);
     }, mensajeError: 'Error al obtener número de comentarios');
-  }  /// Registra una reacción (like o dislike) a un comentario
-  Future<void> reaccionarComentario(
-    String comentarioId, 
-    String tipo, 
-    bool incrementar,
-    String? comentarioPadreId
-  ) async {
+  }  
+
+  /// Registra una reacción (like o dislike) a un comentario
+  Future<Comentario> reaccionarComentario({
+    required String comentarioId, 
+    required String tipoReaccion, 
+  }) async {
     return manejarExcepcion(() async {
       validarNoVacio(comentarioId, 'ID del comentario');
-      
-      // Validar el tipo de reacción
-      if (tipo != 'like' && tipo != 'dislike') {
+
+      if (tipoReaccion != 'like' && tipoReaccion != 'dislike') {
         throw ApiException(
           'El tipo de reacción debe ser "like" o "dislike".',
           statusCode: 400,
@@ -116,19 +111,19 @@ class ComentarioRepository extends CacheableRepository<Comentario> {
       
       try {
         // Realizar la llamada a la API para registrar la reacción
-        await _comentarioService.reaccionarComentario(
+        final response = await _comentarioService.reaccionarComentario(
           comentarioId: comentarioId, 
-          tipoReaccion: tipo  
+          tipoReaccion: tipoReaccion  
         );
         
-        // Invalidar TODA la caché para asegurar que se recarguen los datos frescos
         invalidarCache();
+        return response;
       } catch (e) {
-        // Si hay un error, asegurarse de que se propague
         rethrow;
       }
     }, mensajeError: 'Error al registrar reacción');
   }
+
   /// Agrega un subcomentario a un comentario existente
   /// Los subcomentarios no pueden tener a su vez subcomentarios
   Future<void> agregarSubcomentario(Comentario subcomentario) async {

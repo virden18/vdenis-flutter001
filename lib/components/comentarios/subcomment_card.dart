@@ -112,13 +112,6 @@ class SubcommentCard extends StatelessWidget {
         padreId,
       ),
     );
-    
-    // Luego forzamos la recarga de comentarios para actualizar la UI
-    // No usamos context dentro del Future.delayed
-    Future.delayed(const Duration(milliseconds: 500), () {
-      comentarioBloc.add(
-        LoadComentarios(currentNoticiaId),
-      );
-    });
+    comentarioBloc.add(LoadComentarios(currentNoticiaId));
   }
 }

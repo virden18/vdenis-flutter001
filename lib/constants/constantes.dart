@@ -222,3 +222,12 @@ class PreferenciaConstantes {
   static const String errorNotFound = 'Preferencia no encontrada';
   static const String errorInit = 'Error al inicializar preferencias';
 }
+
+class AcercaDeConstantes {
+  static const String sobreNosotros = 'Sobre Nosotros';
+  static const String tituloSodep = 'SODEP S.A.';
+  static const String sobreSodep = 'Somos una empresa formada por profesionales en el área de TIC con amplia experiencia en diferentes lenguajes y la capacidad de adaptarnos a la herramienta que mejor sirva para solucionar el problema.';
+  static const String logo = 'assets/images/logo_sodep.png';
+  static const String valoresSodepianos = 'Valores Sodepianos';
+  static const String contacto = 'Contacto';
+}

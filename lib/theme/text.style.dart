@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vdenis/theme/colors.dart';
 
 class AppTextStyles {
   static TextStyle get heading3xl {
     return GoogleFonts.inter(
       fontSize: 36,
       fontWeight: FontWeight.w700,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -14,7 +15,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 30,
       fontWeight: FontWeight.w700,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -22,7 +23,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 24,
       fontWeight: FontWeight.w700,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -30,7 +31,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 20,
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -38,7 +39,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 18,
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -46,7 +47,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 14,
       fontWeight: FontWeight.w600,
-      color: Colors.white,
+      color: AppColors.gray01,
     );
   }
 
@@ -54,16 +55,15 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 13,
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
-  // Body styles (Body/lg)
   static TextStyle get bodyLg {
     return GoogleFonts.inter(
       fontSize: 14,
       fontWeight: FontWeight.w400,
-      color: Colors.black,
+      color: AppColors.neutralGray,
     );
   }
 
@@ -71,7 +71,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 14,
       fontWeight: FontWeight.w400,
-      color: Colors.black,
+      color: AppColors.neutralGray,
       decoration: TextDecoration.underline,
     );
   }
@@ -80,7 +80,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 14,
       fontWeight: FontWeight.w500, // Medium weight
-      color: Colors.black,
+      color: AppColors.neutralGray,
     );
   }
 
@@ -88,7 +88,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 14,
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -97,7 +97,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 13,
       fontWeight: FontWeight.w400,
-      color: Colors.black,
+      color: AppColors.neutralGray,
     );
   }
 
@@ -105,7 +105,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 13,
       fontWeight: FontWeight.w400,
-      color: Colors.black,
+      color: AppColors.neutralGray,
       decoration: TextDecoration.underline,
     );
   }
@@ -114,7 +114,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 13,
       fontWeight: FontWeight.w500,
-      color: Colors.black,
+      color: AppColors.neutralGray,
     );
   }
 
@@ -122,7 +122,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 13,
       fontWeight: FontWeight.w500,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -130,7 +130,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 13,
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -139,7 +139,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 12,
       fontWeight: FontWeight.w400,
-      color: Colors.black,
+      color: AppColors.neutralGray,
     );
   }
 
@@ -147,7 +147,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 12,
       fontWeight: FontWeight.w400,
-      color: Colors.black,
+      color: AppColors.neutralGray,
       decoration: TextDecoration.underline,
     );
   }
@@ -156,7 +156,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 12,
       fontWeight: FontWeight.w500,
-      color: Colors.black,
+      color: AppColors.neutralGray,
     );
   }
 
@@ -164,7 +164,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 12,
       fontWeight: FontWeight.w500,
-      color: Colors.black,
+      color: AppColors.neutralGray,
       decoration: TextDecoration.underline,
     );
   }
@@ -173,7 +173,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 12,
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 
@@ -182,7 +182,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 11,
       fontWeight: FontWeight.w400,
-      color: Colors.black,
+      color: AppColors.neutralGray,
     );
   }
 
@@ -190,7 +190,7 @@ class AppTextStyles {
     return GoogleFonts.inter(
       fontSize: 11,
       fontWeight: FontWeight.w600,
-      color: Colors.black,
+      color: AppColors.primaryDarkBlue,
     );
   }
 }

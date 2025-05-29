@@ -9,6 +9,7 @@ class AppTheme {
     primaryColor: AppColors.primary,
     scaffoldBackgroundColor: AppColors.surface,
     disabledColor: AppColors.neutralGray,
+
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.primaryDarkBlue,
       scrolledUnderElevation: 0,
@@ -20,6 +21,7 @@ class AppTheme {
         fontFamily: 'Inter',
       ),
     ),
+
     navigationBarTheme: NavigationBarThemeData(
       indicatorColor: Colors.transparent,
       backgroundColor: AppColors.gray01,
@@ -41,8 +43,8 @@ class AppTheme {
         },
       ),
     ),
-    radioTheme:
-    RadioThemeData(fillColor: WidgetStateProperty.resolveWith<Color>(
+
+    radioTheme: RadioThemeData(fillColor: WidgetStateProperty.resolveWith<Color>(
           (Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
@@ -65,6 +67,7 @@ class AppTheme {
         return AppColors.gray05;
       },
     )),
+
     checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith<Color>(
               (Set<WidgetState> states) {
@@ -77,6 +80,7 @@ class AppTheme {
           },
         ),
         side: const BorderSide(color: AppColors.gray05)),
+
     cardTheme: CardTheme(
       color: AppColors.gray01,
       elevation: 0,
@@ -85,6 +89,7 @@ class AppTheme {
         side: const BorderSide(color: AppColors.gray05),
       ),
     ),
+
     filledButtonTheme: FilledButtonThemeData(
       style: TextButton.styleFrom(
         backgroundColor: AppColors.primary,
@@ -95,6 +100,7 @@ class AppTheme {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       ),
     ),
+
     tabBarTheme: TabBarTheme(
       indicatorSize: TabBarIndicatorSize.tab,
       dividerColor: Colors.transparent,
@@ -107,6 +113,7 @@ class AppTheme {
         borderRadius: BorderRadius.all(Radius.circular(80)),
       ),
     ),
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         textStyle:
@@ -114,6 +121,7 @@ class AppTheme {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       ),
     ),
+
     textTheme: TextTheme(
       // Display styles
       displayLarge: AppTextStyles.heading3xl,
@@ -140,6 +148,7 @@ class AppTheme {
       labelMedium: AppTextStyles.bodyMdSemiBold,
       labelSmall: AppTextStyles.bodyXsSemiBold,
     ),
+
     colorScheme: const ColorScheme.light(
       primary: AppColors.primaryDarkBlue,
       secondary: AppColors.primaryLightBlue, 
@@ -150,6 +159,7 @@ class AppTheme {
       onError: AppColors.gray01,
     ),
   );
+  
   static final BoxDecoration sectionBorderGray05 = BoxDecoration(
     borderRadius: BorderRadius.circular(5),
     border: Border.all(color: AppColors.gray05),

@@ -11,6 +11,7 @@ import 'package:vdenis/bloc/contador/contador_bloc.dart';
 import 'package:vdenis/bloc/connectivity/connectivity_bloc.dart';
 import 'package:vdenis/components/connectivity_wrapper.dart';
 import 'package:vdenis/core/services/secure_storage_service.dart';
+import 'package:vdenis/theme/theme.dart';
 import 'package:vdenis/views/login_screen.dart';
 import 'package:watch_it/watch_it.dart';
 // Importaciones adicionales para el NoticiaBloc
@@ -64,10 +65,8 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
-        ),
+        title: 'Vdenis App Demo',
+        theme: AppTheme.bootcampTheme,
         debugShowCheckedModeBanner: false,
         builder: (context, child) {
           // Envolvemos con nuestro ConnectivityWrapper

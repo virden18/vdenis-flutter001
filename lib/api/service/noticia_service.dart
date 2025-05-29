@@ -3,11 +3,10 @@ import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class NoticiaService extends BaseService {
-  final String _endpoint = ApiConstantes.noticiasEndpoint;
   /// Obtiene todas las noticias desde la API
   Future<List<Noticia>> obtenerNoticias() async {
     final List<dynamic> noticiasJson = await get<List<dynamic>>(
-      _endpoint,
+      ApiConstantes.noticiasEndpoint,
       errorMessage: NoticiasConstantes.mensajeError,
     );
 
@@ -21,7 +20,7 @@ class NoticiaService extends BaseService {
   /// Crea una nueva noticia en la API
   Future<Noticia> crearNoticia(Noticia noticia) async {
     final response = await post(
-      _endpoint,
+      ApiConstantes.noticiasEndpoint,
       data: noticia.toMap(),
       errorMessage: NoticiasConstantes.errorCreated,
     );
@@ -30,7 +29,7 @@ class NoticiaService extends BaseService {
 
   /// Edita una noticia existente en la API
   Future<Noticia> editarNoticia(Noticia noticia) async {
-    final url = '$_endpoint/${noticia.id}';
+    final url = '${ApiConstantes.noticiasEndpoint}/${noticia.id}';
     final response = await put(
       url,
       data: noticia.toMap(),
@@ -41,7 +40,28 @@ class NoticiaService extends BaseService {
 
   /// Elimina una noticia existente en la API
   Future<void> eliminarNoticia(String id) async {
-    final url = '$_endpoint/$id';
+    final url = '${ApiConstantes.noticiasEndpoint}/$id';
     await delete(url, errorMessage: NoticiasConstantes.errorDelete);
   }
+  /// Verifica si una noticia existe en la API
+  Future<void> verificarNoticiaExiste(String noticiaId) async {
+    await get(
+      '${ApiConstantes.noticiasEndpoint}?noticiaId=$noticiaId',
+      errorMessage: NoticiasConstantes.errorVerificarNoticiaExiste,
+    );
+  }
+  /// Incrementa el contador de reportes de una noticia
+  Future<Map<String, dynamic>> incrementarContadorReportes(String noticiaId, int valor) async {
+    final url = '${ApiConstantes.noticiasEndpoint}/$noticiaId';
+
+    // Usamos PATCH para actualizar parcialmente solo el contador de reportes
+    final response = await patch(
+      url,
+      data: {'contadorReportes': valor}, 
+      errorMessage: NoticiasConstantes.errorActualizarContadorReportes,
+    );
+
+    return response as Map<String, dynamic>;
+  }
+
 }

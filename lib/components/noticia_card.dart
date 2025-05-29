@@ -169,7 +169,7 @@ class NoticiaCard extends StatelessWidget {
                         // Si no se proporcionó un callback, usar el diálogo de reportes directamente
                         ReporteDialog.mostrarDialogoReporte(
                           context: context,
-                          noticiaId: noticia.id!,
+                          noticia: noticia,
                         );
                       }
                     },

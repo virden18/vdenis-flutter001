@@ -108,7 +108,7 @@ class SideMenu extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.stars), // Ícono para el contador
+            leading: const Icon(Icons.info), // Ícono para el contador
             title: const Text('Acerca de'),
             onTap: () {
               Navigator.pushReplacement(

@@ -164,7 +164,9 @@ class NoticiasConstantes {
   static const String errorUpdated = 'Error al editar la noticia';
   static const String errorDelete = 'Error al eliminar la noticia';
   static const String errorFilter = "Error al filtrar noticias";
-  static const String errorVerificarNoticiaExiste = 'Error al verificar si la noticia existe';  static const String errorActualizarContadorReportes = 'Error al actualizar el contador de reportes';
+  static const String errorVerificarNoticiaExiste = 'Error al verificar si la noticia existe';  
+  static const String errorActualizarContadorReportes = 'Error al actualizar el contador de reportes';
+  static const String errorActualizarContadorComentarios = 'Error al actualizar el contador de comentarios';
 }
 
 class ConectividadConstantes {

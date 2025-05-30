@@ -60,10 +60,24 @@ class NoticiaRepository extends BaseRepository<Noticia> {
   }
 
   /// Incrementa el contador de reportes de una noticia y devuelve solo los campos actualizados
-  Future<Map<String, dynamic>> incrementarContadorReportes(String noticiaId, int valor) async {
+  Future<Map<String, dynamic>> incrementarContadorReportes(
+    String noticiaId,
+    int valor,
+  ) async {
     return manejarExcepcion(() {
       validarId(noticiaId);
       return _noticiaService.incrementarContadorReportes(noticiaId, valor);
     }, mensajeError: NoticiasConstantes.errorActualizarContadorReportes);
+  }
+
+  /// Incrementa el contador de comentarios de una noticia y devuelve solo los campos actualizados
+  Future<Map<String, dynamic>> incrementarContadorComentarios(
+    String noticiaId,
+    int valor,
+  ) async {
+    return manejarExcepcion(() {
+      validarId(noticiaId);
+      return _noticiaService.incrementarContadorComentarios(noticiaId, valor);
+    }, mensajeError: NoticiasConstantes.errorActualizarContadorComentarios);
   }
 }

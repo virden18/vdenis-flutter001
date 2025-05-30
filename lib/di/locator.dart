@@ -1,3 +1,4 @@
+import 'package:vdenis/api/service/comentario_service.dart';
 import 'package:vdenis/api/service/tareas_service.dart';
 import 'package:vdenis/bloc/reporte/reporte_bloc.dart';
 import 'package:vdenis/core/services/shared_preferences_service.dart';
@@ -20,10 +21,11 @@ Future<void> initLocator() async {
   di.registerLazySingleton<SharedPreferencesService>(() => SharedPreferencesService());
   di.registerLazySingleton<SecureStorageService>(() => SecureStorageService());
   di.registerLazySingleton<ConnectivityService>(() => ConnectivityService());
-  
+
   // Servicios de API
   di.registerLazySingleton<TareaService>(() => TareaService());
-  
+  di.registerLazySingleton<ComentarioService>(() => ComentarioService());
+
   // Repositorios
   di.registerSingleton<CategoriaRepository>(CategoriaRepository());
   di.registerLazySingleton<PreferenciaRepository>(() => PreferenciaRepository());
@@ -32,7 +34,7 @@ Future<void> initLocator() async {
   di.registerLazySingleton<AuthRepository>(() => AuthRepository());
   di.registerSingleton<ReporteRepository>(ReporteRepository());
   di.registerLazySingleton<TareasRepository>(() => TareasRepository());
-  
+
   // BLoCs
   di.registerFactory<ReporteBloc>(() => ReporteBloc());
 }

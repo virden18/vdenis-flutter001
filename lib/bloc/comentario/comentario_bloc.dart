@@ -2,21 +2,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_event.dart';
 import 'package:vdenis/bloc/comentario/comentario_state.dart';
 import 'package:vdenis/data/comentario_repository.dart';
+import 'package:vdenis/data/noticia_repository.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
 class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
   final ComentarioRepository _comentarioRepository = di<ComentarioRepository>();
+  // Utilizamos la inyección de dependencias para acceder a NoticiaBLoc
+  final _noticiaRepository = di<NoticiaRepository>();
 
   ComentarioBloc() : super(ComentarioInitial()) {
     on<LoadComentarios>(_onLoadComentarios);
     on<AddComentario>(_onAddComentario);
-    on<GetNumeroComentarios>(_onGetNumeroComentarios);
     on<BuscarComentarios>(_onBuscarComentarios);
     on<OrdenarComentarios>(_onOrdenarComentarios);
     on<AddReaccion>(_onAddReaccion);
     on<AddSubcomentario>(_onAddSubcomentario);
+    on<ActualizarContadorComentarios>(_onActualizarContadorComentarios);
   }
 
   Future<void> _onLoadComentarios(
@@ -33,13 +36,7 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
       );
     } catch (e) {
       if (e is ApiException) {
-        emit(
-          ComentarioError(
-            'Error al cargar comentarios',
-            e,
-            TipoOperacionComentario.cargar,
-          ),
-        );
+        emit(ComentarioError(e));
       }
     }
   }
@@ -48,50 +45,27 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     AddComentario event,
     Emitter<ComentarioState> emit,
   ) async {
+    List<Comentario> comentariosActuales = [];
+    if (state is ComentarioLoaded) {
+      comentariosActuales = [...(state as ComentarioLoaded).comentarios];
+    }
     emit(ComentarioLoading());
 
     try {
-      await _comentarioRepository.agregarComentario(event.comentario);
-
-      // Recargar los comentarios para mostrar la lista actualizada
-      final comentarios = await _comentarioRepository
-          .obtenerComentariosPorNoticia(event.noticiaId);
-
+      final comentario = await _comentarioRepository.agregarComentario(
+        event.comentario,
+      );
+      // Agregar el nuevo comentario a la lista actual
+      final comentariosActualizadas = [...comentariosActuales, comentario];
       emit(
-        ComentarioLoaded(comentarios: comentarios, noticiaId: event.noticiaId),
+        ComentarioLoaded(
+          comentarios: comentariosActualizadas,
+          noticiaId: event.noticiaId,
+        ),
       );
     } catch (e) {
       if (e is ApiException) {
-        emit(
-          ComentarioError(
-            'Error al agregar comentario',
-            e,
-            TipoOperacionComentario.agregar,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _onGetNumeroComentarios(
-    GetNumeroComentarios event,
-    Emitter<ComentarioState> emit,
-  ) async {
-    emit(ComentarioLoading());
-
-    try {
-      final numeroComentarios = await _comentarioRepository
-          .obtenerNumeroComentarios(event.noticiaId);
-      emit(NumeroComentariosLoaded(numeroComentarios, event.noticiaId));
-    } catch (e) {
-      if (e is ApiException) {
-        emit(
-          ComentarioError(
-            'Error al obtener número de comentarios',
-            e,
-            TipoOperacionComentario.obtenerNumero,
-          ),
-        );
+        emit(ComentarioError(e));
       }
     }
   }
@@ -100,44 +74,33 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     BuscarComentarios event,
     Emitter<ComentarioState> emit,
   ) async {
+    List<Comentario> comentariosActuales = [];
+    if (state is ComentarioLoaded) {
+      comentariosActuales = [...(state as ComentarioLoaded).comentarios];
+    }
     emit(ComentarioLoading());
 
-    try {
-      final todosComentarios = await _comentarioRepository
-          .obtenerComentariosPorNoticia(event.noticiaId);
+    final comentariosFiltrados =
+        comentariosActuales.where((comentario) {
+          // Busca en el texto, autor o fecha del comentario
+          return comentario.texto.toLowerCase().contains(
+                event.terminoBusqueda.toLowerCase(),
+              ) ||
+              comentario.autor.toLowerCase().contains(
+                event.terminoBusqueda.toLowerCase(),
+              ) ||
+              comentario.fecha.toLowerCase().contains(
+                event.terminoBusqueda.toLowerCase(),
+              );
+        }).toList();
 
-      final comentariosFiltrados =
-          todosComentarios.where((comentario) {
-            // Busca en el texto, autor o fecha del comentario
-            return comentario.texto.toLowerCase().contains(
-                  event.terminoBusqueda.toLowerCase(),
-                ) ||
-                comentario.autor.toLowerCase().contains(
-                  event.terminoBusqueda.toLowerCase(),
-                ) ||
-                comentario.fecha.toLowerCase().contains(
-                  event.terminoBusqueda.toLowerCase(),
-                );
-          }).toList();
-
-      emit(
-        ComentariosFiltrados(
-          comentarios: comentariosFiltrados,
-          noticiaId: event.noticiaId,
-          terminoBusqueda: event.terminoBusqueda,
-        ),
-      );
-    } catch (e) {
-      if (e is ApiException) {
-        emit(
-          ComentarioError(
-            'Error al buscar comentarios',
-            e,
-            TipoOperacionComentario.buscar,
-          ),
-        );
-      }
-    }
+    emit(
+      ComentariosFiltrados(
+        comentarios: comentariosFiltrados,
+        noticiaId: event.noticiaId,
+        terminoBusqueda: event.terminoBusqueda,
+      ),
+    );
   }
 
   Future<void> _onOrdenarComentarios(
@@ -170,9 +133,10 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
       // Si no tenemos estado cargado, no podemos ordenar nada
       emit(
         ComentarioError(
-          'No hay comentarios para ordenar',
-          ApiException('No hay comentarios cargados para ordenar'),
-          TipoOperacionComentario.ordenar,
+          ApiException(
+            'No hay comentarios cargados para ordenar',
+            statusCode: 404,
+          ),
         ),
       );
     }
@@ -186,10 +150,8 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     try {
       emit(ReaccionLoading());
       // Llamamos al repositorio para persistir el cambio
-      final comentarioResponse = await _comentarioRepository.reaccionarComentario(
-            comentarioId: event.comentarioId,
-            tipoReaccion: event.tipoReaccion,
-          );
+      final comentarioResponse = await _comentarioRepository
+          .reaccionarComentario(event.comentarioId, event.tipoReaccion);
 
       if (currentState is ComentarioLoaded) {
         final comentarios = List<Comentario>.from(currentState.comentarios);
@@ -227,13 +189,7 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
         }
       }
     } catch (e) {
-      emit(
-        ComentarioError(
-          'Error al reaccionar al comentario',
-          e is ApiException ? e : ApiException(e.toString()),
-          TipoOperacionComentario.reaccionar,
-        ),
-      );
+      emit(ComentarioError(e is ApiException ? e : ApiException(e.toString())));
     }
   }
 
@@ -241,30 +197,65 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     AddSubcomentario event,
     Emitter<ComentarioState> emit,
   ) async {
+    List<Comentario> comentariosActuales = [];
+    if (state is ComentarioLoaded) {
+      comentariosActuales = [...(state as ComentarioLoaded).comentarios];
+    }
     emit(ComentarioLoading());
 
     try {
-      await _comentarioRepository.agregarSubcomentario(event.subcomentario);
+      final subComentario = await _comentarioRepository.agregarSubcomentario(
+        event.subcomentario,
+      );
 
-      // Recargar los comentarios para mostrar la lista actualizada
-      final comentarios = await _comentarioRepository
-          .obtenerComentariosPorNoticia(event.subcomentario.noticiaId);
+      // Agregar el nuevo subcomentario al comentario padre
+      final comentarioPadreIndex = comentariosActuales.indexWhere(
+        (c) => c.id == event.subcomentario.idSubComentario,
+      );
+
+      comentariosActuales[comentarioPadreIndex] =
+          comentariosActuales[comentarioPadreIndex].copyWith(
+            subcomentarios: [
+              ...?comentariosActuales[comentarioPadreIndex].subcomentarios,
+              subComentario,
+            ],
+          );
 
       emit(
         ComentarioLoaded(
-          comentarios: comentarios,
+          comentarios: comentariosActuales,
           noticiaId: event.subcomentario.noticiaId,
         ),
       );
     } catch (e) {
       if (e is ApiException) {
-        emit(
-          ComentarioError(
-            'Error al agregar subcomentario',
-            e,
-            TipoOperacionComentario.agregarSubcomentario,
-          ),
-        );
+        emit(ComentarioError(e));
+      }
+    }
+  }
+
+  Future<void> _onActualizarContadorComentarios(
+    ActualizarContadorComentarios event,
+    Emitter<ComentarioState> emit,
+  ) async {
+    emit(ComentarioLoading());
+
+    try {
+      await _noticiaRepository.incrementarContadorComentarios(
+        event.noticiaId,
+        event.cantidad,
+      );
+
+      // Emitimos un estado para indicar que el contador fue actualizado
+      emit(
+        ContadorComentariosActualizado(
+          noticiaId: event.noticiaId,
+          contadorComentarios: event.cantidad,
+        ),
+      );
+    } catch (e) {
+      if (e is ApiException) {
+        emit(ComentarioError(e));
       }
     }
   }

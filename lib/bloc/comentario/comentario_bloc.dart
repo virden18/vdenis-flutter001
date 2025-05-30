@@ -147,12 +147,11 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     Emitter<ComentarioState> emit,
   ) async {
     final currentState = state;
+    emit(ReaccionLoading());
     try {
-      emit(ReaccionLoading());
       // Llamamos al repositorio para persistir el cambio
       final comentarioResponse = await _comentarioRepository
           .reaccionarComentario(event.comentarioId, event.tipoReaccion);
-
       if (currentState is ComentarioLoaded) {
         final comentarios = List<Comentario>.from(currentState.comentarios);
         final comentarioIndex = comentarios.indexWhere(
@@ -221,6 +220,7 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
             ],
           );
 
+      add(LoadComentarios(event.subcomentario.noticiaId));
       emit(
         ComentarioLoaded(
           comentarios: comentariosActuales,

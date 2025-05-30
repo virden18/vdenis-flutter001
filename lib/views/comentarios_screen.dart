@@ -60,15 +60,7 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
 
   @override
   void initState() {
-    super.initState();
-    // Cargar los comentarios iniciales
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _recargarComentarios();
-    });
-  }
-
-  void _recargarComentarios() {
-    context.read<ComentarioBloc>().add(LoadComentarios(widget.noticiaId));
+    super.initState(); 
   }
 
   @override

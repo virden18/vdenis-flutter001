@@ -16,9 +16,7 @@ class ComentarioService extends BaseService {
     );
     return comentariosJson
         .map<Comentario>(
-          (json) => ComentarioMapper.fromMap(json as Map<String, dynamic>),
-        )
-        .toList();
+          (json) => ComentarioMapper.fromMap(json as Map<String, dynamic>)).toList();
   }
 
   /// Agrega un nuevo comentario a una noticia
@@ -129,12 +127,10 @@ class ComentarioService extends BaseService {
     required String comentarioId, // ID del comentario principal
     required Comentario subComentario, 
   }) async {
-    final comentario = await obtenerComentarioPorId(comentarioId: comentarioId);
-    final subComentariosActualizados = [
-      ...?comentario.subcomentarios,
-      subComentario,
-    ];
-    comentario.copyWith(subcomentarios: subComentariosActualizados);
+    Comentario comentario = await obtenerComentarioPorId(comentarioId: comentarioId);
+    final subComentariosActualizados = [...?comentario.subcomentarios, subComentario];
+
+    comentario = comentario.copyWith(subcomentarios: subComentariosActualizados);
 
     final response = await put(
      '$_url/$comentarioId',

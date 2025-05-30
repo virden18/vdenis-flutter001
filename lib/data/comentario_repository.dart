@@ -76,11 +76,13 @@ class ComentarioRepository extends BaseRepository<Comentario> {
     return manejarExcepcion(() async {
       validarSubcomentario(subcomentario);
       final comentarioPadreId = subcomentario.idSubComentario!;
+
       //Asignar un ID único al subcomentario y autor al comentario
       subcomentario = subcomentario.copyWith(
         id: 'sub_${DateTime.now().millisecondsSinceEpoch}_${subcomentario.texto.hashCode}',
         autor: await _secureStorageService.getUserEmail(),      
       );
+      
       final response = await _comentarioService.agregarSubcomentario(
         comentarioId: comentarioPadreId,
         subComentario: subcomentario,          

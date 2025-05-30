@@ -137,43 +137,101 @@ class NoticiaCard extends StatelessWidget {
                     onPressed: () {
                       // Acción para marcar como favorito
                     },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.comment),
-                    onPressed: () {
-                      // Navegar a la vista de comentarios
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder:
-                              (context) => ComentariosScreen(
-                                noticiaId: noticia.id!,
-                                noticiaTitulo: noticia.titulo,
+                  ),                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.comment),
+                        onPressed: () {
+                          // Navegar a la vista de comentarios
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => ComentariosScreen(
+                                    noticiaId: noticia.id!,
+                                    noticiaTitulo: noticia.titulo,
+                                  ),
+                            ),
+                          );
+                        },
+                        tooltip: 'Ver comentarios',
+                      ),
+                      if (noticia.contadorComentarios != null && noticia.contadorComentarios! > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              noticia.contadorComentarios! > 99 ? '99+' : noticia.contadorComentarios.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
                               ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
-                      );
-                    },
-                    tooltip: 'Ver comentarios',
-                  ),                  IconButton(
+                    ],
+                  ),IconButton(
                     icon: const Icon(Icons.share),
                     onPressed: () {
                       // Acción para compartir
                     },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.flag),
-                    onPressed: () {
-                      // Acción para reportar noticia
-                      if (onReport != null) {
-                        onReport!();
-                      } else {
-                        // Si no se proporcionó un callback, usar el diálogo de reportes directamente
-                        ReporteDialog.mostrarDialogoReporte(
-                          context: context,
-                          noticia: noticia,
-                        );
-                      }
-                    },
-                    tooltip: 'Reportar noticia',
+                  ),                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.flag),
+                        onPressed: () {
+                          // Acción para reportar noticia
+                          if (onReport != null) {
+                            onReport!();
+                          } else {
+                            // Si no se proporcionó un callback, usar el diálogo de reportes directamente
+                            ReporteDialog.mostrarDialogoReporte(
+                              context: context,
+                              noticia: noticia,
+                            );
+                          }
+                        },
+                        tooltip: 'Reportar noticia',
+                      ),
+                      if (noticia.contadorReportes != null && noticia.contadorReportes! > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              noticia.contadorReportes! > 99 ? '99+' : noticia.contadorReportes.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
+import 'package:vdenis/bloc/noticia/noticia_event.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/noticia.dart';
 import 'package:intl/intl.dart';
@@ -106,7 +109,7 @@ class NoticiaCard extends StatelessWidget {
                       child: Image.network(
                         noticia.urlImagen.isNotEmpty
                             ? noticia.urlImagen
-                            : 'https://via.placeholder.com/100', // Imagen por defecto si no hay URL
+                            : 'https://picsum.photos/200/300', 
                         height: 80, // Altura de la imagen
                         width: 100,
                         fit: BoxFit.cover,
@@ -137,14 +140,14 @@ class NoticiaCard extends StatelessWidget {
                     onPressed: () {
                       // Acción para marcar como favorito
                     },
-                  ),                  Stack(
+                  ),
+                  Stack(
                     alignment: Alignment.center,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.comment),
-                        onPressed: () {
-                          // Navegar a la vista de comentarios
-                          Navigator.of(context).push(
+                        onPressed: () async {
+                          await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder:
                                   (context) => ComentariosScreen(
@@ -153,6 +156,10 @@ class NoticiaCard extends StatelessWidget {
                                   ),
                             ),
                           );
+                          // Al volver, actualiza las noticias
+                          if (context.mounted) {
+                            context.read<NoticiaBloc>().add(FetchNoticiasEvent());
+                          }
                         },
                         tooltip: 'Ver comentarios',
                       ),

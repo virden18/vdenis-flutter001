@@ -6,7 +6,6 @@ import 'package:vdenis/bloc/categoria/categoria_state.dart';
 import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
 import 'package:vdenis/bloc/noticia/noticia_event.dart';
 import 'package:vdenis/bloc/noticia/noticia_state.dart';
-import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/floating_add_button.dart';
 import 'package:vdenis/components/formulario_noticia.dart';
 import 'package:vdenis/components/last_updated_header.dart';
@@ -100,19 +99,16 @@ class _NoticiaScreenContent extends StatelessWidget {
                 icon: const Icon(Icons.filter_list),
                 tooltip: 'Filtrar por categorías',
                 onPressed: () async {
-                  // Obtener el NoticiaBloc antes de navegar
-                  final noticiaBloc = context.read<NoticiaBloc>();
-                  // Navegar a la pantalla de preferencias proporcionando el NoticiaBloc actual
+                  final noticiaBloc = context.read<NoticiaBloc>();       
                   await Navigator.push(
-                    context,                    MaterialPageRoute(
+                    context,                    
+                    MaterialPageRoute(
                       builder: (context) => BlocProvider.value(
                         value: noticiaBloc,
                         child: const PreferenciaScreen(),
                       ),
                     ),
                   );
-                  // No necesitamos hacer nada más aquí porque la pantalla de preferencias
-                  // ya se encarga de emitir el evento de filtrado al NoticiaBloc
                 },
               ),
               IconButton(
@@ -141,8 +137,6 @@ class _NoticiaScreenContent extends StatelessWidget {
             builder: (context, categoriaState) {
               return FloatingAddButton(
                 onPressed: () async {
-
-                  // Si las categorías aún se están cargando, inicia la carga
                   if (categoriaState is! CategoriaLoaded) {
                     context.read<CategoriaBloc>().add(CategoriaInitEvent());
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -159,22 +153,16 @@ class _NoticiaScreenContent extends StatelessWidget {
                     child: FormularioNoticia(categorias: categorias),
                   );
 
-                  // Si se obtuvo una categoría del formulario y el contexto sigue montado
                   if (noticia != null && context.mounted) {
-                    // Usar el BLoC para crear la categoría
                     context.read<NoticiaBloc>().add(
                       AddNoticiaEvent(noticia),
                     );
                   }
                 },
                 tooltip: 'Agregar Noticia',
-              );              
+              );
             },            
           ),
-          bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 0,
-          ),
-
         );        
       }
     );
@@ -246,7 +234,8 @@ class _NoticiaScreenContent extends StatelessWidget {
                 },
                 onDismissed: (direction) {
                   context.read<NoticiaBloc>().add(DeleteNoticiaEvent(noticia.id!));
-                },                child: NoticiaCard(
+                },                
+                child: NoticiaCard(
                   noticia: noticia,
                   onReport: () {
                     // Mostrar el diálogo de reportes

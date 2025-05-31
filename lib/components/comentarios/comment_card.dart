@@ -18,7 +18,7 @@ class CommentCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {    // La fecha ya viene formateada del backend, la usamos directamente
+  Widget build(BuildContext context) { 
     final fecha = comentario.fecha;
 
     return Card(
@@ -102,7 +102,8 @@ class CommentCard extends StatelessWidget {
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: comentario.subcomentarios!.length,                itemBuilder: (context, index) => SubcommentCard(
+                itemCount: comentario.subcomentarios!.length,                
+                itemBuilder: (context, index) => SubcommentCard(
                   subcomentario: comentario.subcomentarios![index],
                   noticiaId: noticiaId,
                 ),

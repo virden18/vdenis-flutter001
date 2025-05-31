@@ -203,7 +203,7 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     emit(ComentarioLoading());
 
     try {
-      final subComentario = await _comentarioRepository.agregarSubcomentario(
+      final comentarioPrincipalConSub = await _comentarioRepository.agregarSubcomentario(
         event.subcomentario,
       );
 
@@ -213,14 +213,9 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
       );
 
       comentariosActuales[comentarioPadreIndex] =
-          comentariosActuales[comentarioPadreIndex].copyWith(
-            subcomentarios: [
-              ...?comentariosActuales[comentarioPadreIndex].subcomentarios,
-              subComentario,
-            ],
-          );
+        comentarioPrincipalConSub.copyWith(
+          subcomentarios: comentarioPrincipalConSub.subcomentarios);
 
-      add(LoadComentarios(event.subcomentario.noticiaId));
       emit(
         ComentarioLoaded(
           comentarios: comentariosActuales,

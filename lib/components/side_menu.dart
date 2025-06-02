@@ -14,118 +14,141 @@ class SideMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Drawer(
+      backgroundColor: theme.scaffoldBackgroundColor,
       child: ListView(
-        // padding: EdgeInsets.zero,
+        padding: EdgeInsets.zero,
         children: [
-          const SizedBox(
-            height: 80, // To change the height of DrawerHeader
-            child: DrawerHeader(
-              decoration:  BoxDecoration(color: Color.fromARGB(255, 217, 162, 180)),
-              margin: EdgeInsets.zero, // Elimina el margen predeterminado
-              padding: EdgeInsets.symmetric(horizontal: 18.0), // Elimina el padding interno
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Menú ',
-                  style: TextStyle(color: Colors.white, fontSize: 22),
+          Container(
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 16,
+              bottom: 24,
+              left: 16,
+              right: 16,
+            ),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Menú',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Inicio'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-              );
-            },
+          const SizedBox(height: 8),
+          _buildMenuItem(
+            context,
+            icon: Icons.home,
+            title: 'Inicio',
+            onTap: () => _navigateTo(context, const WelcomeScreen()),
           ),
-          ListTile(
-            leading: const Icon(Icons.bar_chart),
-            title: const Text('Cotizaciones'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const QuoteScreen()),
-              );
-            },
+          const SizedBox(height: 8), 
+          _buildMenuItem(
+            context,
+            icon: Icons.newspaper,
+            title: 'Noticias',
+            onTap: () => _navigateTo(context, const NoticiaScreen()),
           ),
-          ListTile(
-            leading: const Icon(Icons.task),
-            title: const Text('Tareas'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const TareaScreen()),
-              );
-            },
+          const SizedBox(height: 8),
+          _buildMenuItem(
+            context,
+            icon: Icons.task,
+            title: 'Tareas',
+            onTap: () => _navigateTo(context, const TareaScreen()),
           ),
-          ListTile(
-            leading: const Icon(Icons.newspaper), // Ícono para la nueva opción
-            title: const Text('Noticias'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const NoticiaScreen()), // Navega a MiAppScreen
-              );
-            },
-          ),      
-          ListTile(
-            leading: const Icon(Icons.apps), // Ícono para la nueva opción
-            title: const Text('Mi App'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const MiAppScreen()), // Navega a MiAppScreen
-              );
-            },
+          const SizedBox(height: 8),
+          _buildMenuItem(
+            context,
+            icon: Icons.bar_chart,
+            title: 'Cotizaciones',
+            onTap: () => _navigateTo(context, const QuoteScreen()),
           ),
-          ListTile(
-            leading: const Icon(Icons.numbers), // Ícono para el contador
-            title: const Text('Contador'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ContadorScreen(title: 'Contador'),
-                ),
-              );
-            },
+          const SizedBox(height: 8),
+          _buildMenuItem(
+            context,
+            icon: Icons.apps,
+            title: 'Mi App',
+            onTap: () => _navigateTo(context, const MiAppScreen()),
+          ),     
+          const SizedBox(height: 8),
+          _buildMenuItem(
+            context,
+            icon: Icons.numbers,
+            title: 'Contador',
+            onTap: () => _navigateTo(context, const ContadorScreen(title: 'Contador')),
+          ),         
+          const SizedBox(height: 8),
+          _buildMenuItem(
+            context,
+            icon: Icons.stars,
+            title: 'Juego',
+            onTap: () => _navigateTo(context, const StartScreen()),
           ),
-          ListTile(
-            leading: const Icon(Icons.stars), // Ícono para el contador
-            title: const Text('Juego'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const StartScreen(),
-                ),
-              );
-            },
+          const SizedBox(height: 8),
+          _buildMenuItem(
+            context,
+            icon: Icons.info,
+            title: 'Acerca de',
+            onTap: () => _navigateTo(context, const AcercaDeScreen()),
           ),
-          ListTile(
-            leading: const Icon(Icons.info), // Ícono para el contador
-            title: const Text('Acerca de'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const AcercaDeScreen()),
-              );
-            },
-          ),          
-          ListTile(
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text('Cerrar Sesión'),
-            onTap: () {
-              DialogHelper.mostrarDialogoCerrarSesion(context);
-            },
+          const SizedBox(height: 8),
+          _buildMenuItem(
+            context,
+            icon: Icons.exit_to_app,
+            title: 'Cerrar Sesión',
+            onTap: () => DialogHelper.mostrarDialogoCerrarSesion(context),
+            isSignOut: true,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMenuItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    bool isSignOut = false,
+  }) {
+    final theme = Theme.of(context);
+    
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: isSignOut 
+            ? theme.colorScheme.error
+            : theme.colorScheme.primary,
+      ),
+      title: Text(
+        title,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: isSignOut ? theme.colorScheme.error : null,
+          fontWeight: isSignOut ? FontWeight.bold : null,
+        ),
+      ),
+      onTap: onTap,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      dense: true,
+      visualDensity: VisualDensity.compact,
+    );
+  }
+
+  void _navigateTo(BuildContext context, Widget screen) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => screen),
     );
   }
 }

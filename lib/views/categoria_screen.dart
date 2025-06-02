@@ -89,13 +89,6 @@ class _CategoriaScreenContent extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Categorías de Noticias'),
             centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () =>
-                    context.read<CategoriaBloc>().add(CategoriaInitEvent(forzarRecarga: true)),
-              ),
-            ],
           ),
           drawer: const SideMenu(),
           backgroundColor: Colors.white,
@@ -136,7 +129,7 @@ class _CategoriaScreenContent extends StatelessWidget {
     Future<void> onRefresh() async {
       await Future.delayed(const Duration(milliseconds: 800));
       if (context.mounted) {
-        context.read<CategoriaBloc>().add(CategoriaInitEvent(forzarRecarga: false));
+        context.read<CategoriaBloc>().add(CategoriaInitEvent(forzarRecarga: true));
       }
     }
     

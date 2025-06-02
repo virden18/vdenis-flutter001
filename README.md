@@ -27,7 +27,7 @@ cp .env.example .env
 
 3.Guarda el archivo para que la aplicación pueda leer estas variables al iniciar.
 
-### 📦 Dependencias del sistema (Linux)
+### Dependencias del sistema (Linux)
 
 Si estás en Linux y planeas correr el proyecto con soporte de `flutter_secure_storage`, necesitas instalar la siguiente dependencia del sistema:
 

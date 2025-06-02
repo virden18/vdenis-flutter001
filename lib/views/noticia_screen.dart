@@ -163,11 +163,9 @@ class _NoticiaScreenContent extends StatelessWidget {
               );
             },            
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
           bottomNavigationBar: const CustomBottomNavigationBar(
             selectedIndex: 0,
           ),
-
         );        
       }
     );

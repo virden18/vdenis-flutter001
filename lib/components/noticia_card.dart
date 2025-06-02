@@ -60,14 +60,20 @@ class NoticiaCard extends StatelessWidget {
                         noticia.titulo,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium,
-                      ),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface
+                          )
+                        ),
                       const SizedBox(height: 8.0),
                       Text(
                         noticia.descripcion,
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        )
                       ),
                       const SizedBox(height: 8.0),
                       Text(

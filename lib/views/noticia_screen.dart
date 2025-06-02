@@ -21,7 +21,7 @@ import 'package:vdenis/helpers/dialog_helper.dart';
 import 'package:vdenis/helpers/modal_helper.dart';
 import 'package:vdenis/helpers/snackbar_helper.dart';
 import 'package:vdenis/helpers/snackbar_manager.dart';
-import 'package:vdenis/components/comentarios/categoria_screen.dart';
+import 'package:vdenis/views/categoria_screen.dart';
 import 'package:vdenis/views/preferencia_screen.dart';
 
 class NoticiaScreen extends StatelessWidget {

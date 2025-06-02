@@ -27,8 +27,7 @@ import 'package:vdenis/views/preferencia_screen.dart';
 class NoticiaScreen extends StatelessWidget {
   const NoticiaScreen({super.key});  @override
   Widget build(BuildContext context) {
-    // Limpiar cualquier SnackBar existente al entrar a esta pantalla
-    // pero solo si no está mostrándose el SnackBar de conectividad
+    // Limpiar cualquier SnackBar existente al entrar a esta pantalla pero solo si no está mostrándose el SnackBar de conectividad
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!SnackBarManager().isConnectivitySnackBarShowing) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -240,14 +239,12 @@ class _NoticiaScreenContent extends StatelessWidget {
                 },                child: NoticiaCard(
                   noticia: noticia,
                   onReport: () {
-                    // Mostrar el diálogo de reportes
                     ReporteDialog.mostrarDialogoReporte(
                       context: context, 
                       noticia: noticia,
                     );
                   },
                   onEdit: () async {
-                  // Solo muestra el formulario si las categorías están cargadas
                   if (categorias.isEmpty) {
                     SnackBarHelper.mostrarInfo(
                       context, 
@@ -267,7 +264,6 @@ class _NoticiaScreenContent extends StatelessWidget {
                   );
                   
                   if (noticiaEditada != null && context.mounted) {
-                    // Usar copyWith para mantener el ID original y actualizar el resto de datos
                     final noticiaActualizada = noticiaEditada.copyWith(id: noticia.id);
                     context.read<NoticiaBloc>().add(
                       UpdateNoticiaEvent(noticiaActualizada),
@@ -284,7 +280,6 @@ class _NoticiaScreenContent extends StatelessWidget {
           ),       
         );
       } else {
-          // Añadir esta parte para manejar el caso de lista vacía
           return RefreshIndicator(
             onRefresh: () async {
               await Future.delayed(const Duration(milliseconds: 1200));

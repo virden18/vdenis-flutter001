@@ -4,13 +4,11 @@ import 'package:vdenis/domain/categoria.dart';
 class CategoriaCard extends StatelessWidget {
   final Categoria categoria;
   final VoidCallback onEdit;
-  final VoidCallback onDelete;
 
   const CategoriaCard({
     super.key,
     required this.categoria,
     required this.onEdit,
-    required this.onDelete,
   });
 
   @override
@@ -70,16 +68,8 @@ class CategoriaCard extends StatelessWidget {
                 icon: const Icon(Icons.edit, color: Colors.blue),
                 onPressed: onEdit,
               ),
-              IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: onDelete,
-              ),
             ],
           ),
-          onTap: () {
-            // Aquí podríamos navegar a un detalle de la categoría
-            // o mostrar las noticias filtradas por esta categoría
-          },
         ),
     );
   }

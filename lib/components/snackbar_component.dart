@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Componente que proporciona la configuración visual del SnackBar
 class SnackBarComponent {
-  /// Crea y retorna un SnackBar con un estilo consistente para toda la aplicación
   static SnackBar crear({
     required String mensaje,
     required Color color,

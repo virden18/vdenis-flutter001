@@ -47,7 +47,6 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
   @override
   void initState() {
     super.initState();
-    // Cargar estadísticas al iniciar
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ReporteBloc>().add(
         CargarEstadisticasReporte(noticia: widget.noticia),
@@ -60,21 +59,16 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
     return BlocConsumer<ReporteBloc, ReporteState>(
       listener: (context, state) {
         if (state is ReporteSuccess) {
-          // Mostrar mensaje de éxito
           SnackBarHelper.mostrarExito(context, mensaje: state.mensaje);
-
-          // cerramos el diálogo después de un tiempo
           Future.delayed(const Duration(seconds: 1), () {
             if (context.mounted) {
               Navigator.of(context).pop();
             }
           });
         } else if (state is ReporteError) {
-          // Mostrar mensaje de error
           SnackBarHelper.mostrarError(context, mensaje: state.error.message);
         } else if (state is NoticiaReportesActualizada &&
             state.noticia.id == widget.noticiaId) {
-          // Actualizar directamente el contador en NoticiaBloc sin hacer petición GET
           context.read<NoticiaBloc>().add(
             ActualizarContadorReportesEvent(
               state.noticia.id!,
@@ -83,11 +77,9 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
           );
         }
       },      builder: (context, state) {
-        // Verificar si estamos en estado de carga y obtener el motivo actual
         final bool isLoading = state is ReporteLoading;
         final motivoActual = isLoading ? (state).motivoActual : null;
         
-        // Obtener las estadísticas de reportes del estado
         Map<String, int> estadisticas = {
           'NoticiaInapropiada': 0,
           'InformacionFalsa': 0,
@@ -138,7 +130,8 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                       icon: Icons.warning,
                       color: Colors.red,
                       label: 'Inapropiada',
-                      iconNumber: '${estadisticas['NoticiaInapropiada']}',                      isLoading: isLoading && motivoActual == MotivoReporte.noticiaInapropiada,
+                      iconNumber: '${estadisticas['NoticiaInapropiada']}',                      
+                      isLoading: isLoading && motivoActual == MotivoReporte.noticiaInapropiada,
                       smallSize: true,
                     ),
                     _buildMotivoButton(
@@ -147,7 +140,8 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                       icon: Icons.info,
                       color: Colors.amber,
                       label: 'Falsa',
-                      iconNumber: '${estadisticas['InformacionFalsa']}',                      isLoading: isLoading && motivoActual == MotivoReporte.informacionFalsa,
+                      iconNumber: '${estadisticas['InformacionFalsa']}',                      
+                      isLoading: isLoading && motivoActual == MotivoReporte.informacionFalsa,
                       smallSize: true,
                     ),
                     _buildMotivoButton(
@@ -156,7 +150,8 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                       icon: Icons.flag,
                       color: Colors.blue,
                       label: 'Otro',
-                      iconNumber: '${estadisticas['Otro']}',                      isLoading: isLoading && motivoActual == MotivoReporte.otro,
+                      iconNumber: '${estadisticas['Otro']}',                      
+                      isLoading: isLoading && motivoActual == MotivoReporte.otro,
                       smallSize: true,
                     ),
                   ],

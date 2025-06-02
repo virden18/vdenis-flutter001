@@ -33,6 +33,7 @@ Si estás en Linux y planeas correr el proyecto con soporte de `flutter_secure_s
 
 ```bash
 sudo apt install libsecret-1-dev
+```
 
 ## Ejecución del Proyecto
 

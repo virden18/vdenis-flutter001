@@ -15,12 +15,27 @@ class LastUpdatedHeader extends StatelessWidget {
     if (lastUpdated == null) return const SizedBox.shrink();
     
     final String formattedDate = DateFormat(AppConstantes.formatoFecha).format(lastUpdated!);
+    final theme = Theme.of(context);
     
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
       child: Text(
         'Última actualización: $formattedDate',
-        style: const TextStyle(fontSize: 12, color: Colors.grey),
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
         textAlign: TextAlign.center,
       ),
     );

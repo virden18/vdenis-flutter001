@@ -7,7 +7,6 @@ import 'package:vdenis/bloc/tarea/tarea_state.dart';
 import 'package:vdenis/bloc/tarea_contador/tarea_contador_bloc.dart';
 import 'package:vdenis/bloc/tarea_contador/tarea_contador_event.dart';
 import 'package:vdenis/bloc/tarea_contador/tarea_contador_state.dart';
-import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/tarea.dart';
@@ -39,8 +38,6 @@ class TareaScreen extends StatelessWidget {
 
 class _TareaScreenContent extends StatelessWidget {
   const _TareaScreenContent();
-
-  static const int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -275,11 +272,7 @@ class _TareaScreenContent extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _mostrarModalAgregarTarea(context),
         tooltip: 'Agregar Tarea',
-        child: const Icon(Icons.add),
-      ),
-      bottomNavigationBar: const CustomBottomNavigationBar(
-        selectedIndex: _selectedIndex,
-      ),
+        child: const Icon(Icons.add),      ),
     );
   }
 

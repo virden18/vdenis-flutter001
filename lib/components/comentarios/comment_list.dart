@@ -22,7 +22,6 @@ class CommentList extends StatefulWidget {
 }
 
 class _CommentListState extends State<CommentList> {
-  // Track which comments have their subcomments expanded
   final Map<String, bool> _expandedComments = {};
 
   @override
@@ -41,7 +40,7 @@ class _CommentListState extends State<CommentList> {
             children: [
               Positioned.fill(
                 child: Container(
-                  color: const Color(0x0D000000), // Negro con 20% opacidad
+                  color: const Color(0x0D000000),
                   child: const Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -68,27 +67,22 @@ class _CommentListState extends State<CommentList> {
         ),
       );
     }
-
-    // Separate top-level comments and subcomments
     final topLevelComments = comentarios.where((c) => c.idSubComentario == null).toList();
     final subComments = <String, List<Comentario>>{};
     for (var comment in comentarios.where((c) => c.idSubComentario != null)) {
       subComments.putIfAbsent(comment.idSubComentario!, () => []).add(comment);
     }
 
-    return ListView.separated(
+    return ListView.builder(
       itemCount: topLevelComments.length,
       itemBuilder: (context, index) {
         final comentario = topLevelComments[index];
         final commentSubComments = subComments[comentario.id] ?? [];
-
-        // Toggle state for this comment's subcomments
         final isExpanded = _expandedComments[comentario.id] ?? false;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Render the parent comment
             CommentCard(
               comentario: comentario,
               noticiaId: widget.noticiaId,
@@ -133,7 +127,6 @@ class _CommentListState extends State<CommentList> {
           ],
         );
       },
-      separatorBuilder: (_, __) => const Divider(),
     );
   }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/question_service.dart';
-import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/domain/question.dart';
 import 'package:vdenis/views/result_screen.dart';
@@ -14,10 +13,8 @@ class GameScreen extends StatefulWidget {
 
 class GameScreenState extends State<GameScreen> {
   final QuestionService _questionService = QuestionService();
-  List<Question> questionsList = [];
-  int currentQuestionIndex = 0;
+  List<Question> questionsList = [];  int currentQuestionIndex = 0;
   int userScore = 0;
-  final int _selectedIndex = 0;
   int? selectedAnswerIndex; // Índice de la respuesta seleccionada
   bool? isCorrectAnswer; // Estado para manejar si la respuesta es correcta
 
@@ -181,10 +178,8 @@ class GameScreenState extends State<GameScreen> {
                   child: const Text('Volver al Inicio'),
                 ),
               ],
-            ),
-          ),
+            ),          ),
         ),
-      bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_event.dart';
 import 'package:vdenis/domain/comentario.dart';
+import 'package:vdenis/theme/colors.dart';
 
 class SubcommentCard extends StatelessWidget {
   final Comentario subcomentario;
@@ -17,9 +18,10 @@ class SubcommentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // La fecha ya viene formateada desde el backend
     final fecha = subcomentario.fecha;
+    final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
+      padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -27,25 +29,28 @@ class SubcommentCard extends StatelessWidget {
             children: [
               Text(
                 subcomentario.autor,
-                style: const TextStyle(
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  color: AppColors.blue12,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(subcomentario.texto, style: const TextStyle(fontSize: 13)),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
-            fecha,
-            style: const TextStyle(
-              fontSize: 11,
-              color: Colors.grey,
-              fontStyle: FontStyle.italic,
+            subcomentario.texto,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
+          Text(
+            fecha,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.gray09,
+              fontStyle: FontStyle.italic,
+            ),
+          ),          const SizedBox(height: 8),
           // Botones de reacción (like/dislike)
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -54,26 +59,49 @@ class SubcommentCard extends StatelessWidget {
                 icon: const Icon(
                   Icons.thumb_up_sharp,
                   size: 16,
-                  color: Colors.green,
                 ),
                 onPressed: () => _handleReaction(context, 'like'),
+                style: IconButton.styleFrom(
+                  foregroundColor: AppColors.blue11,
+                  backgroundColor: AppColors.blue02,
+                  padding: const EdgeInsets.all(6),
+                ),
+                constraints: const BoxConstraints(
+                  minWidth: 30,
+                  minHeight: 30,
+                ),
               ),
+              const SizedBox(width: 2),
               Text(
                 subcomentario.likes.toString(),
-                style: const TextStyle(fontSize: 12),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.blue11,
+                ),
               ),
-              const SizedBox(width: 8),
-              IconButton(
+              const SizedBox(width: 12),              IconButton(
                 icon: const Icon(
                   Icons.thumb_down_sharp,
                   size: 16,
-                  color: Colors.red,
                 ),
                 onPressed: () => _handleReaction(context, 'dislike'),
+                style: IconButton.styleFrom(
+                  foregroundColor: AppColors.destructive,
+                  backgroundColor: AppColors.red03,
+                  padding: const EdgeInsets.all(6),
+                ),
+                constraints: const BoxConstraints(
+                  minWidth: 30,
+                  minHeight: 30,
+                ),
               ),
+              const SizedBox(width: 2),
               Text(
                 subcomentario.dislikes.toString(),
-                style: const TextStyle(fontSize: 12),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.destructive,
+                ),
               ),
             ],
           ),

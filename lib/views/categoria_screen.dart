@@ -117,12 +117,12 @@ class _CategoriaScreenContent extends StatelessWidget {
       },
     );
   }
+  
   Widget _construirCuerpoCategorias(
     BuildContext context,
     CategoriaState state,
   ) {
     Future<void> onRefresh() async {
-      await Future.delayed(const Duration(milliseconds: 800));
       if (context.mounted) {
         context.read<CategoriaBloc>().add(CategoriaInitEvent(forzarRecarga: true));
       }

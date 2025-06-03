@@ -40,8 +40,18 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
   final TextEditingController _comentarioController = TextEditingController();
   final TextEditingController _busquedaController = TextEditingController();
   bool _ordenAscendente = true;
+  bool _isSearchVisible = false;
   String? _respondingToId;
   String? _respondingToAutor;
+  void _toggleSearchBar() {
+    setState(() {
+      _isSearchVisible = !_isSearchVisible;
+      if (!_isSearchVisible) {
+        _busquedaController.clear();
+        // Ya no recargamos los datos al ocultar la barra
+      }
+    });
+  }
 
   void _cancelarRespuesta() {
     setState(() {
@@ -62,10 +72,11 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
   void initState() {
     super.initState(); 
   }
-
-  @override
-  Widget build(BuildContext context) {
+  @override  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       appBar: CommentAppBar(
         ordenAscendente: _ordenAscendente,
         onOrdenChanged: (ascendente) {
@@ -73,18 +84,28 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
           context.read<ComentarioBloc>().add(OrdenarComentarios(ascendente));
         },
         titulo: widget.noticiaTitulo,
+        onSearchTap: _toggleSearchBar,
+        isSearchVisible: _isSearchVisible,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            CommentSearchBar(
-              busquedaController: _busquedaController,
-              onSearch: () => _handleSearch(),
-              noticiaId: widget.noticiaId,
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: _isSearchVisible ? 56 : 0,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _isSearchVisible ? 1.0 : 0.0,
+                child: _isSearchVisible ? CommentSearchBar(
+                  busquedaController: _busquedaController,
+                  onSearch: () => _handleSearch(),
+                  noticiaId: widget.noticiaId,
+                ) : null,
+              ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: _isSearchVisible ? 16 : 0),
             Expanded(
               child: CommentList(
                 noticiaId: widget.noticiaId,

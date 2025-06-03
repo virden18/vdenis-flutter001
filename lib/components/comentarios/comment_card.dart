@@ -4,6 +4,7 @@ import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_event.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/components/comentarios/subcomment_card.dart';
+import 'package:vdenis/theme/colors.dart';
 
 class CommentCard extends StatelessWidget {
   final Comentario comentario;
@@ -18,70 +19,103 @@ class CommentCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {    // La fecha ya viene formateada del backend, la usamos directamente
+  Widget build(BuildContext context) {    
+    // La fecha ya viene formateada del backend, la usamos directamente
     final fecha = comentario.fecha;
+    final theme = Theme.of(context);
 
     return Card(
       elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 4),
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   comentario.autor,
-                  style: const TextStyle(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    color: AppColors.blue13,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(comentario.texto),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
+                Text(
+                  comentario.texto,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 12),
                 Text(
                   fecha,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.gray09,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Row(
+                const SizedBox(height: 8),                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     IconButton(
                       icon: const Icon(
                         Icons.thumb_up_sharp,
-                        size: 16,
-                        color: Colors.green,
+                        size: 18,
                       ),
                       onPressed: () => _handleReaction(context, 'like'),
+                      style: IconButton.styleFrom(
+                        foregroundColor: AppColors.blue11,
+                        backgroundColor: AppColors.blue02,
+                        padding: const EdgeInsets.all(6),
+                      ),
                     ),
+                    const SizedBox(width: 2),
                     Text(
                       comentario.likes.toString(),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(width: 8),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.blue11,
+                      ),
+                    ),                    const SizedBox(width: 16),
                     IconButton(
                       icon: const Icon(
                         Icons.thumb_down_sharp,
-                        size: 16,
-                        color: Colors.red,
+                        size: 18,
                       ),
                       onPressed: () => _handleReaction(context, 'dislike'),
+                      style: IconButton.styleFrom(
+                        foregroundColor: AppColors.destructive,
+                        backgroundColor: AppColors.red03,
+                        padding: const EdgeInsets.all(6),
+                      ),
                     ),
+                    const SizedBox(width: 2),
                     Text(
                       comentario.dislikes.toString(),
-                      style: const TextStyle(fontSize: 12),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.destructive,
+                      ),
                     ),
                     const Spacer(),
                     TextButton.icon(
-                      icon: const Icon(Icons.reply, size: 24),
-                      label: const Text('Responder'),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                      icon: Icon(Icons.reply, size: 20, color: theme.colorScheme.primary),
+                      label: Text(
+                        'Responder',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        backgroundColor: AppColors.blue02,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       onPressed: () => onResponder(comentario.id ?? '', comentario.autor),
                     ),
@@ -93,10 +127,10 @@ class CommentCard extends StatelessWidget {
           if (comentario.subcomentarios != null &&
               comentario.subcomentarios!.isNotEmpty)
             Container(
-              margin: const EdgeInsets.only(left: 16),
-              decoration: BoxDecoration(
+              margin: const EdgeInsets.only(left: 20, right: 4, bottom: 8),
+              decoration: const BoxDecoration(
                 border: Border(
-                  left: BorderSide(color: Colors.grey.shade300, width: 2),
+                  left: BorderSide(color: AppColors.blue03, width: 2),
                 ),
               ),
               child: ListView.builder(

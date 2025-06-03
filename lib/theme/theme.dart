@@ -53,7 +53,9 @@ class AppTheme {
         }
         return AppColors.gray05;
       },
-    ), overlayColor: WidgetStateProperty.resolveWith<Color>(
+    ), 
+    
+    overlayColor: WidgetStateProperty.resolveWith<Color>(
           (Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           return AppColors.primary;

@@ -6,7 +6,6 @@ import 'package:vdenis/bloc/categoria/categoria_state.dart';
 import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
 import 'package:vdenis/bloc/noticia/noticia_event.dart';
 import 'package:vdenis/bloc/noticia/noticia_state.dart';
-import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/floating_add_button.dart';
 import 'package:vdenis/components/formulario_noticia.dart';
 import 'package:vdenis/components/last_updated_header.dart';
@@ -160,11 +159,7 @@ class _NoticiaScreenContent extends StatelessWidget {
                 },
                 tooltip: 'Agregar Noticia',
               );
-            },            
-          ),
-          bottomNavigationBar: const CustomBottomNavigationBar(
-            selectedIndex: 0,
-          ),
+            },              ),
         );        
       }
     );

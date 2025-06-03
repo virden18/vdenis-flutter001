@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:vdenis/views/login_screen.dart'; // Añadimos la importación de LoginScreen
@@ -13,7 +12,6 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class WelcomeScreenState extends State<WelcomeScreen> {
-  final int _selectedIndex = 0;
   String _userEmail = '';
   @override
   void initState() {
@@ -67,8 +65,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
+    ),
     );
   }
 }

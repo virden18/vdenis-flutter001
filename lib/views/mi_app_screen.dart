@@ -7,7 +7,6 @@ Column alinea a los widgets hijos uno detras de otro.
 */
 
 import 'package:flutter/material.dart';
-import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/side_menu.dart';
 
 class MiAppScreen extends StatefulWidget {
@@ -18,10 +17,9 @@ class MiAppScreen extends StatefulWidget {
 }
 
 class MiAppScreenState extends State<MiAppScreen> {
-  Color _colorActual = Colors.blue; // Color inicial del Container
+  Color _colorActual = Colors.blue; // Color inicial del Container 
   final List<Color> _colores = [Colors.blue, Colors.red, Colors.green];
   int _indiceColor = 0;
-  final int _selectedIndex = 0;
 
   void _cambiarColor() {
     setState(() {
@@ -77,9 +75,7 @@ class MiAppScreenState extends State<MiAppScreen> {
               ),
             ),
           ],
-        ),
-      ),
-       bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
+        ),      ),
     );
   }
 }

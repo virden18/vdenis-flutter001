@@ -6,7 +6,7 @@ import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/components/comentarios/subcomment_card.dart';
 import 'package:vdenis/theme/colors.dart';
 
-class CommentCard extends StatelessWidget {
+class CommentCard extends StatefulWidget {
   final Comentario comentario;
   final String noticiaId;
   final Function(String, String) onResponder;
@@ -19,9 +19,15 @@ class CommentCard extends StatelessWidget {
   });
 
   @override
+  State<CommentCard> createState() => _CommentCardState();
+}
+
+class _CommentCardState extends State<CommentCard> {
+  bool _mostrarSubcomentarios = false;
+
+  @override
   Widget build(BuildContext context) {    
-    // La fecha ya viene formateada del backend, la usamos directamente
-    final fecha = comentario.fecha;
+    final fecha = widget.comentario.fecha;
     final theme = Theme.of(context);
 
     return Card(
@@ -39,26 +45,23 @@ class CommentCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  comentario.autor,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  widget.comentario.autor,
+                  style: theme.textTheme.titleLarge?.copyWith(
                     color: AppColors.blue13,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  comentario.texto,
-                  style: theme.textTheme.bodyMedium,
+                  widget.comentario.texto,
+                  style: theme.textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 12),
                 Text(
                   fecha,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.gray09,
-                    fontStyle: FontStyle.italic,
-                  ),
+                  style: theme.textTheme.bodySmall
                 ),
-                const SizedBox(height: 8),                Row(
+                const SizedBox(height: 8),                
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     IconButton(
@@ -75,12 +78,13 @@ class CommentCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      comentario.likes.toString(),
+                      widget.comentario.likes.toString(),
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.blue11,
                       ),
-                    ),                    const SizedBox(width: 16),
+                    ),                    
+                    const SizedBox(width: 16),
                     IconButton(
                       icon: const Icon(
                         Icons.thumb_down_sharp,
@@ -95,7 +99,7 @@ class CommentCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      comentario.dislikes.toString(),
+                      widget.comentario.dislikes.toString(),
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.destructive,
@@ -106,10 +110,9 @@ class CommentCard extends StatelessWidget {
                       icon: Icon(Icons.reply, size: 20, color: theme.colorScheme.primary),
                       label: Text(
                         'Responder',
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),                      style: TextButton.styleFrom(
+                        style: theme.textTheme.labelMedium
+                      ),                      
+                      style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         backgroundColor: AppColors.blue02,
@@ -117,43 +120,72 @@ class CommentCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      onPressed: () => onResponder(comentario.id ?? '', comentario.autor),
+                      onPressed: () => widget.onResponder(widget.comentario.id ?? '', widget.comentario.autor),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          if (comentario.subcomentarios != null &&
-              comentario.subcomentarios!.isNotEmpty)
-            Container(
-              margin: const EdgeInsets.only(left: 20, right: 4, bottom: 8),
-              decoration: const BoxDecoration(
-                border: Border(
-                  left: BorderSide(color: AppColors.blue03, width: 2),
+          if (widget.comentario.subcomentarios != null &&
+              widget.comentario.subcomentarios!.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: TextButton.icon(
+                    icon: Icon(
+                      _mostrarSubcomentarios ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                      size: 20,
+                      color: theme.colorScheme.primary,
+                    ),
+                    label: Text(
+                      _mostrarSubcomentarios ? 'Ocultar respuestas' : 'Mostrar ${widget.comentario.subcomentarios!.length} respuestas',
+                      style: theme.textTheme.labelSmall
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _mostrarSubcomentarios = !_mostrarSubcomentarios;
+                      });
+                    },
+                  ),
                 ),
-              ),
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: comentario.subcomentarios!.length,                itemBuilder: (context, index) => SubcommentCard(
-                  subcomentario: comentario.subcomentarios![index],
-                  noticiaId: noticiaId,
-                ),
-              ),
+                if (_mostrarSubcomentarios)
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 4, bottom: 8),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        left: BorderSide(color: AppColors.blue03, width: 2),
+                      ),
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: widget.comentario.subcomentarios!.length,
+                      itemBuilder: (context, index) => SubcommentCard(
+                        subcomentario: widget.comentario.subcomentarios![index],
+                        noticiaId: widget.noticiaId,
+                      ),
+                    ),
+                  ),
+              ],
             ),
         ],
       ),
     );
-  }  void _handleReaction(BuildContext context, String tipoReaccion) {
-    // Capturamos una referencia al bloc fuera del Future.delayed
+  }  
+
+  void _handleReaction(BuildContext context, String tipoReaccion) {
     final comentarioBloc = context.read<ComentarioBloc>();
-    final String currentNoticiaId = noticiaId;
-    
-    // Primero enviamos el evento de reacción
+    final String currentNoticiaId = widget.noticiaId;
     comentarioBloc.add(
       AddReaccion(
-        comentario.id ?? '', 
+        widget.comentario.id ?? '', 
         tipoReaccion, 
         true, 
         null 

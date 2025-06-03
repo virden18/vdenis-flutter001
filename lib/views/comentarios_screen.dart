@@ -48,7 +48,6 @@ class _ComentariosScreenContentState extends State<_ComentariosScreenContent> {
       _isSearchVisible = !_isSearchVisible;
       if (!_isSearchVisible) {
         _busquedaController.clear();
-        // Ya no recargamos los datos al ocultar la barra
       }
     });
   }

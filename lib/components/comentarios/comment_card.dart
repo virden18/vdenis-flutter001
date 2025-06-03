@@ -32,7 +32,7 @@ class _CommentCardState extends State<CommentCard> {
     final theme = Theme.of(context);
 
     return Card(
-      elevation: 2,
+      elevation: 1,
       margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),

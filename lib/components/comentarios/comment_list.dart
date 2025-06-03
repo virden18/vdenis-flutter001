@@ -73,7 +73,7 @@ class _CommentListState extends State<CommentList> {
       subComments.putIfAbsent(comment.idSubComentario!, () => []).add(comment);
     }
 
-    return ListView.separated(
+    return ListView.builder(
       itemCount: topLevelComments.length,
       itemBuilder: (context, index) {
         final comentario = topLevelComments[index];
@@ -127,7 +127,6 @@ class _CommentListState extends State<CommentList> {
           ],
         );
       },
-      separatorBuilder: (_, __) => const Divider(),
     );
   }
 

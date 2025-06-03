@@ -24,7 +24,6 @@ class TareaDetalleScreen extends StatelessWidget {
             onHorizontalDragEnd: (details) {
               if (details.primaryVelocity != null) {
                 if (details.primaryVelocity! > 0) {
-                  // Deslizar hacia la derecha
                   if (indice > 0) {
                     Navigator.pushReplacement(
                       context,
@@ -41,7 +40,6 @@ class TareaDetalleScreen extends StatelessWidget {
                     );
                   }
                 } else if (details.primaryVelocity! < 0) {
-                  // Deslizar hacia la izquierda
                   if (indice < tareas.length - 1) {
                     Navigator.pushReplacement(
                       context,

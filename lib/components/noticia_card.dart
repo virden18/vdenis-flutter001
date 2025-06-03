@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/noticia.dart';
-import 'package:intl/intl.dart';
+import 'package:vdenis/helpers/date_formatter.dart';
 import 'package:vdenis/views/comentarios_screen.dart';
 import 'package:vdenis/components/reporte_dialog.dart';
 
@@ -84,7 +83,7 @@ class NoticiaCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4.0),
                       Text(
-                        _formatDate(noticia.publicadaEl),
+                        DateFormatter.formatearFechaRelativa(noticia.publicadaEl),
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           color: Colors.grey[600],
@@ -252,9 +251,5 @@ class NoticiaCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    return DateFormat(AppConstantes.formatoFecha).format(date);
   }
 }

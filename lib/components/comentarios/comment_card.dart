@@ -4,6 +4,7 @@ import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_event.dart';
 import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/components/comentarios/subcomment_card.dart';
+import 'package:vdenis/helpers/date_formatter.dart';
 import 'package:vdenis/theme/colors.dart';
 
 class CommentCard extends StatefulWidget {
@@ -27,7 +28,7 @@ class _CommentCardState extends State<CommentCard> {
 
   @override
   Widget build(BuildContext context) {    
-    final fecha = widget.comentario.fecha;
+    final fecha = DateFormatter.formatearFecha(widget.comentario.fecha);
     final theme = Theme.of(context);
 
     return Card(

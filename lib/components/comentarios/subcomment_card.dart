@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_event.dart';
 import 'package:vdenis/domain/comentario.dart';
+import 'package:vdenis/helpers/date_formatter.dart';
 import 'package:vdenis/theme/colors.dart';
 
 class SubcommentCard extends StatelessWidget {
@@ -14,10 +15,10 @@ class SubcommentCard extends StatelessWidget {
     required this.subcomentario,
     required this.noticiaId,
   });
+
   @override
   Widget build(BuildContext context) {
-    // La fecha ya viene formateada desde el backend
-    final fecha = subcomentario.fecha;
+    final fecha = DateFormatter.formatearFecha(subcomentario.fecha);
     final theme = Theme.of(context);
 
     return Padding(
@@ -50,8 +51,8 @@ class SubcommentCard extends StatelessWidget {
               color: AppColors.gray09,
               fontStyle: FontStyle.italic,
             ),
-          ),          const SizedBox(height: 8),
-          // Botones de reacción (like/dislike)
+          ),          
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -79,7 +80,8 @@ class SubcommentCard extends StatelessWidget {
                   color: AppColors.blue11,
                 ),
               ),
-              const SizedBox(width: 12),              IconButton(
+              const SizedBox(width: 12),              
+              IconButton(
                 icon: const Icon(
                   Icons.thumb_down_sharp,
                   size: 16,
@@ -108,30 +110,23 @@ class SubcommentCard extends StatelessWidget {
         ],
       ),
     );
-  }  void _handleReaction(BuildContext context, String tipoReaccion) {
-    // Capturamos una referencia al bloc fuera del Future.delayed
+  }  
+  
+  void _handleReaction(BuildContext context, String tipoReaccion) {
     final comentarioBloc = context.read<ComentarioBloc>();
     final String currentNoticiaId = noticiaId;
-    
-    // Determinamos correctamente los IDs para la reacción
     String comentarioId = '';
     String? padreId;
-    
-    // Si tiene ID propio, lo usamos directamente
+
     if (subcomentario.id != null && subcomentario.id!.isNotEmpty) {
       comentarioId = subcomentario.id!;
-      
-      // Si además tiene idSubComentario, ese es el padre
       if (subcomentario.idSubComentario != null && subcomentario.idSubComentario!.isNotEmpty) {
         padreId = subcomentario.idSubComentario;
       }
     } 
-    // Si no tiene ID propio pero tiene idSubComentario, usamos ese como su ID
     else if (subcomentario.idSubComentario != null && subcomentario.idSubComentario!.isNotEmpty) {
       comentarioId = subcomentario.idSubComentario!;
     }
-    
-    // Agregamos la reacción con los IDs correctos
     comentarioBloc.add(
       AddReaccion(
         comentarioId,

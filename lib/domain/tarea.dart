@@ -16,10 +16,10 @@ class Tarea with TareaMappable{
     this.id,
     this.usuario,
     required this.titulo,
-    this.tipo = 'normal', // Valor por defecto
+    this.tipo = 'normal', 
     this.descripcion,
     this.fecha,
     this.fechaLimite,
-    this.completada = false, // Valor por defecto
+    this.completada = false, 
   });
 }

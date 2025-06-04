@@ -4,8 +4,6 @@ import 'package:vdenis/domain/comentario.dart';
 import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
-/// Repositorio para gestionar operaciones relacionadas con los comentarios.
-/// Utiliza caché para mejorar la eficiencia al obtener comentarios.
 class ComentarioRepository extends BaseRepository<Comentario> {
   final _comentarioService = di<ComentarioService>();
   final _secureStorageService = di<SecureStorageService>();
@@ -17,12 +15,10 @@ class ComentarioRepository extends BaseRepository<Comentario> {
     validarNoVacio(comentario.noticiaId, 'ID de la noticia');
   }
 
-  /// Método para validar un subcomentario
   void validarSubcomentario(Comentario subcomentario) {
     validarEntidad(subcomentario);
   }
 
-  /// Obtiene todos los comentarios de una noticia específica
   Future<List<Comentario>> obtenerComentariosPorNoticia(
     String noticiaId,
   ) async {
@@ -35,7 +31,6 @@ class ComentarioRepository extends BaseRepository<Comentario> {
     }, mensajeError: 'Error al obtener comentarios');
   }
 
-  /// Agrega un nuevo comentario a una noticia
   Future<Comentario> agregarComentario(Comentario comentario) async {
     return manejarExcepcion(() async {
       validarEntidad(comentario);
@@ -47,7 +42,6 @@ class ComentarioRepository extends BaseRepository<Comentario> {
     }, mensajeError: 'Error al agregar comentario');
   }
 
-  /// Registra una reacción (like o dislike) a un comentario
   Future<Comentario> reaccionarComentario(
     String comentarioId,
     String tipo,
@@ -70,22 +64,20 @@ class ComentarioRepository extends BaseRepository<Comentario> {
     }, mensajeError: 'Error al registrar reacción');
   }
 
-  /// Agrega un subcomentario a un comentario existente
-  /// Los subcomentarios no pueden tener a su vez subcomentarios
   Future<Comentario> agregarSubcomentario(Comentario subcomentario) async {
     return manejarExcepcion(() async {
       validarSubcomentario(subcomentario);
       final comentarioPadreId = subcomentario.idSubComentario!;
 
-      //Asignar un ID único al subcomentario y autor al comentario
       subcomentario = subcomentario.copyWith(
-        id: 'sub_${DateTime.now().millisecondsSinceEpoch}_${subcomentario.texto.hashCode}',
-        autor: await _secureStorageService.getUserEmail(),      
+        id:
+            'sub_${DateTime.now().millisecondsSinceEpoch}_${subcomentario.texto.hashCode}',
+        autor: await _secureStorageService.getUserEmail(),
       );
-      
+
       final response = await _comentarioService.agregarSubcomentario(
         comentarioId: comentarioPadreId,
-        subComentario: subcomentario,          
+        subComentario: subcomentario,
       );
       return response;
     }, mensajeError: 'Error al agregar subcomentario');

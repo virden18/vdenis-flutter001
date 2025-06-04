@@ -5,7 +5,6 @@ import 'package:vdenis/domain/tarea.dart';
 class TareaService extends BaseService {
   final String _endpoint = ApiConstantes.tareasEndpoint;
 
-  /// Obtiene la lista de tareas
   Future<List<Tarea>> obtenerTareas(String usuario) async {
     final List<dynamic> tareasJson = await get<List<dynamic>>(
       '$_endpoint?usuario=$usuario',
@@ -17,7 +16,6 @@ class TareaService extends BaseService {
         .toList();
   }
 
-  /// Crea una nueva tarea
   Future<Tarea> crearTarea(Tarea tarea) async {
     final json = await post(
       _endpoint,
@@ -28,13 +26,11 @@ class TareaService extends BaseService {
     return TareaMapper.fromMap(json);
   }
 
-  /// Elimina una tarea existente
   Future<void> eliminarTarea(String tareaId) async {
     final url = '$_endpoint/$tareaId';
     await delete(url, errorMessage: 'Error al eliminar la tarea');
   }
 
-  /// Actualiza una tarea existente
   Future<Tarea> actualizarTarea(Tarea tarea) async {
     final url = '$_endpoint/${tarea.id}';
     final json = await put(

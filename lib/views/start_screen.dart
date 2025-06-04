@@ -5,6 +5,7 @@ import 'package:vdenis/views/game_screen.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
+  
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

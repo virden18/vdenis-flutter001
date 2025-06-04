@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ModalHelper {
-  /// Muestra un modal bottom sheet con configuración estandarizada
   static Future<T?> mostrarModal<T>({
     required BuildContext context,
     required Widget child,
@@ -18,7 +17,6 @@ class ModalHelper {
     );
   }
 
-  /// Muestra un diálogo de alerta con configuración estandarizada
   static Future<T?> mostrarDialogo<T>({
     required BuildContext context,
     required Widget child,

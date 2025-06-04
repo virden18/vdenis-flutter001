@@ -81,14 +81,12 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
         event.noticia,
       );
 
-      // Reemplazar la noticia con el mismo ID por la versión actualizada
       final noticiasActualizadas =
           noticiasActuales.map((noticia) {
-            // Si encuentra la noticia con el mismo ID, devuelve la versión actualizada
             if (noticia.id == noticiaActualizada.id) {
               return noticiaActualizada;
             }
-            // De lo contrario, mantiene la noticia original
+
             return noticia;
           }).toList();
 
@@ -113,7 +111,6 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     try {
       await _noticiaRepository.eliminarNoticia(event.id);
 
-      // Filtrar la lista de noticias para quitar la noticia eliminada
       final noticiasActualizadas =
           noticiasActuales.where((noticia) => noticia.id != event.id).toList();
 
@@ -156,7 +153,6 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     ResetNoticiaEvent event,
     Emitter<NoticiaState> emit,
   ) async {
-    // Reiniciar el estado a inicial
     emit(NoticiaInitial());
   }
 
@@ -169,29 +165,23 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
       noticiasActuales = [...(state as NoticiaLoaded).noticias];
     }
 
-    // Buscar la noticia que necesitamos actualizar
     final index = noticiasActuales.indexWhere(
       (noticia) => noticia.id == event.noticiaId,
     );
 
-    // Si encontramos la noticia, actualizamos su contador
     if (index >= 0) {
       try {
-        // Persistir el cambio en la API
         await _noticiaRepository.incrementarContadorReportes(
           event.noticiaId,
           event.nuevoContador,
         );
 
-        // Crear una copia de la noticia con el contador actualizado
         final noticiaActualizada = noticiasActuales[index].copyWith(
           contadorReportes: event.nuevoContador,
         );
 
-        // Reemplazar la noticia en la lista
         noticiasActuales[index] = noticiaActualizada;
 
-        // Emitir nuevo estado con la lista actualizada
         emit(NoticiaLoaded(noticiasActuales, DateTime.now()));
       } catch (e) {
         if (e is ApiException) {
@@ -210,29 +200,23 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
       noticiasActuales = [...(state as NoticiaLoaded).noticias];
     }
 
-    // Buscar la noticia que necesitamos actualizar
     final index = noticiasActuales.indexWhere(
       (noticia) => noticia.id == event.noticiaId,
     );
 
-    // Si encontramos la noticia, actualizamos su contador
     if (index >= 0) {
       try {
-        // Persistir el cambio en la API
         await _noticiaRepository.incrementarContadorComentarios(
           event.noticiaId,
           event.nuevoContador,
         );
 
-        // Crear una copia de la noticia con el contador actualizado
         final noticiaActualizada = noticiasActuales[index].copyWith(
           contadorComentarios: event.nuevoContador,
         );
 
-        // Reemplazar la noticia en la lista
         noticiasActuales[index] = noticiaActualizada;
 
-        // Emitir nuevo estado con la lista actualizada
         emit(NoticiaLoaded(noticiasActuales, DateTime.now()));
       } catch (e) {
         if (e is ApiException) {
@@ -248,14 +232,12 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
   ) {
     List<Noticia> noticiasRetornadas;
     if (categoriasIds.isEmpty) {
-      // Si no hay categorías seleccionadas, devolver todas las noticias
       noticiasRetornadas = noticias;
     } else {
       noticiasRetornadas =
           noticias
               .where(
                 (noticia) =>
-                    // Solo incluir noticias que tienen categoría y esa categoría está seleccionada
                     noticia.categoriaId != null &&
                     noticia.categoriaId!.isNotEmpty &&
                     categoriasIds.contains(noticia.categoriaId),

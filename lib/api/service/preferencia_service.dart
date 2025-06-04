@@ -3,7 +3,6 @@ import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/preferencia.dart';
 
 class PreferenciaService extends BaseService {
-  /// Obtiene las preferencias del usuario identificadas por su email
   Future<Preferencia> obtenerPreferenciaPorEmail(String email) async {
     final endpoint = '${ApiConstantes.preferenciasEndpoint}/$email';
     final Map<String, dynamic> responseData = await get<Map<String, dynamic>>(
@@ -14,7 +13,6 @@ class PreferenciaService extends BaseService {
     return PreferenciaMapper.fromMap(responseData);
   }
 
-  /// Actualiza las preferencias del usuario en la API
   Future<void> guardarPreferencias(Preferencia preferencia) async {
     final endpoint = '${ApiConstantes.preferenciasEndpoint}/${preferencia.email}';
     final dataToSend = PreferenciaMapper.ensureInitialized().encodeMap(preferencia);
@@ -25,7 +23,7 @@ class PreferenciaService extends BaseService {
       errorMessage: 'Error al guardar preferencias',
     );
   }
-    /// Crea un nuevo registro de preferencias en la API
+
   Future<Preferencia> crearPreferencias(String email, {List<String>? categorias}) async {
     final Map<String, dynamic> preferenciasData = {
       'email': email,

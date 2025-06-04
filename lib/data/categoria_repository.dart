@@ -3,11 +3,9 @@ import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/domain/categoria.dart';
 
-/// Repositorio de categorías con capacidad de caché
 class CategoriaRepository extends CacheableRepository<Categoria> {
   final CategoriaService _categoriaService = CategoriaService();
 
-  // Timestamp de la última actualización
   DateTime? _lastRefreshed;
 
   @override
@@ -20,7 +18,6 @@ class CategoriaRepository extends CacheableRepository<Categoria> {
     validarNoVacio(categoria.imagenUrl, ValidacionConstantes.imagenUrl);
   }
 
-  /// Implementación del método abstracto de CacheableRepository
   @override
   Future<List<Categoria>> cargarDatos() async {
     final categorias = await manejarExcepcion(
@@ -31,19 +28,14 @@ class CategoriaRepository extends CacheableRepository<Categoria> {
     return categorias;
   }
 
-  /// Obtiene el timestamp de la última actualización
   DateTime? get lastRefreshed => _lastRefreshed;
 
-  /// Obtiene todas las categorías desde el repositorio
-  /// Si hay caché, devolverá los datos en caché
   Future<List<Categoria>> obtenerCategorias({
     bool forzarRecarga = false,
   }) async {
     return obtenerDatos(forzarRecarga: forzarRecarga);
   }
 
-  /// Crea una nueva categoría
-  /// Retorna la categoría creada con su ID asignado por el servidor
   Future<Categoria> crearCategoria(Categoria categoria) async {
     return manejarExcepcion(() async {
       validarEntidad(categoria);
@@ -53,7 +45,6 @@ class CategoriaRepository extends CacheableRepository<Categoria> {
     }, mensajeError: CategoriaConstantes.errorCreated);
   }
 
-  /// Edita una categoría existente
   Future<Categoria> actualizarCategoria(Categoria categoria) async {
     return manejarExcepcion(() async {
       validarEntidad(categoria);
@@ -63,7 +54,6 @@ class CategoriaRepository extends CacheableRepository<Categoria> {
     }, mensajeError: CategoriaConstantes.errorUpdated);
   }
 
-  /// Elimina una categoría
   Future<void> eliminarCategoria(String id) async {
     return manejarExcepcion(() async {
       validarId(id);
@@ -72,7 +62,6 @@ class CategoriaRepository extends CacheableRepository<Categoria> {
     }, mensajeError: CategoriaConstantes.errorDelete);
   }
 
-  /// Limpia la caché de categorías (método público)
   void limpiarCache() {
     invalidarCache();
     _lastRefreshed = null;

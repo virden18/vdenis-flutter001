@@ -24,7 +24,6 @@ class AcercaDeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Logo de la empresa centrado
               Center(
                 child: Container(
                   width: 120,
@@ -82,7 +81,6 @@ class AcercaDeScreen extends StatelessWidget {
   }
 
   Widget _buildValoresSection() {
-    // Lista de valores con sus descripciones
     final valores = [
       {
         'titulo': 'Honestidad',
@@ -144,7 +142,6 @@ class AcercaDeScreen extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Icono del valor
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -154,7 +151,6 @@ class AcercaDeScreen extends StatelessWidget {
               child: Icon(icon, color: AppTheme.bootcampTheme.colorScheme.primary, size: 28),
             ),
             const SizedBox(width: 16),
-            // Contenido del valor
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +171,6 @@ class AcercaDeScreen extends StatelessWidget {
   }
 
   Widget _buildContactSection() {
-    // Lista de información de contacto
     final contactInfo = [
       {
         'icon': Icons.location_on_outlined,
@@ -226,7 +221,6 @@ class AcercaDeScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icono del contacto
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -236,7 +230,6 @@ class AcercaDeScreen extends StatelessWidget {
             child: Icon(icon, color: AppTheme.bootcampTheme.colorScheme.primary, size: 24),
           ),
           const SizedBox(width: 16),
-          // Contenido del contacto
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

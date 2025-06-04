@@ -6,7 +6,6 @@ import 'package:vdenis/domain/comentario.dart';
 class ComentarioService extends BaseService {
   final _url = ApiConstantes.comentariosEndpoint;
 
-  /// Obtiene todos los comentarios de una noticia específica
   Future<List<Comentario>> obtenerComentariosPorNoticia(
     String noticiaId,
   ) async {
@@ -19,7 +18,6 @@ class ComentarioService extends BaseService {
           (json) => ComentarioMapper.fromMap(json as Map<String, dynamic>)).toList();
   }
 
-  /// Agrega un nuevo comentario a una noticia
   Future<Comentario> agregarComentario(Comentario comentario) async {
     final response = await post(
       _url,
@@ -29,8 +27,6 @@ class ComentarioService extends BaseService {
     return ComentarioMapper.fromMap(response);
   }
 
-  /// Calcula el número de comentarios para una noticia específica
-  /// Suma también los subcomentarios
   Future<int> obtenerNumeroComentarios(String noticiaId) async {
     final comentarios = await obtenerComentariosPorNoticia(noticiaId);
     int contador = comentarios.length;
@@ -71,8 +67,6 @@ class ComentarioService extends BaseService {
     return ComentarioMapper.fromMap(response);
   }
 
-  /// Busca un subcomentario específico por su ID
-  /// Retorna el subcomentario encontrado o null si no existe
   Future<Comentario?> buscarPorSubComentarioId({
     required String subcomentarioId,
   }) async {
@@ -122,9 +116,8 @@ class ComentarioService extends BaseService {
     return ComentarioMapper.fromMap(response);
   }
 
-  /// Agrega un subcomentario a un comentario existente
   Future<Comentario> agregarSubcomentario({
-    required String comentarioId, // ID del comentario principal
+    required String comentarioId, 
     required Comentario subComentario, 
   }) async {
     Comentario comentario = await obtenerComentarioPorId(comentarioId: comentarioId);

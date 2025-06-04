@@ -19,17 +19,18 @@ class TareaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Card(
-      elevation: 8, // Borde sombreado
-      color: Colors.white, // Color de fondo blanco
+      elevation: 8, 
+      color: theme.cardColor,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: CommonWidgetsHelper.buildRoundedBorder(),
       child: Padding(
-        padding: const EdgeInsets.all(16.0), // Agrega un padding de 10 alrededor del Card
+        padding: const EdgeInsets.all(16.0), 
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Imagen aleatoria
             ClipRRect(
               borderRadius: CommonWidgetsHelper.buildTopRoundedBorder(),
               child: Image.network(
@@ -43,21 +44,28 @@ class TareaCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Título
                 CommonWidgetsHelper.buildBoldTitle(tarea.titulo),
                 CommonWidgetsHelper.buildSpacing(),
-                CommonWidgetsHelper.buildInfoLines(tarea.descripcion ?? ''), // Espacio entre el título y la descripción
+                CommonWidgetsHelper.buildInfoLines(tarea.descripcion ?? ''),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinea el botón a la derecha
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, 
                   children: [
                     CommonWidgetsHelper.buildBoldFooter('${TareasConstantes.fechaLimite} $fechaLimiteDato'),
                     ElevatedButton.icon(
                       onPressed: onBackPressed,
-                      icon: const Icon(Icons.arrow_back, size: 16),
-                      label: const Text('Volver'),
+                      icon: Icon(Icons.arrow_back, 
+                        size: 16,
+                        color: theme.colorScheme.onPrimary,
+                      ),
+                      label: Text(
+                        'Volver',
+                        style: TextStyle(
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
-                        foregroundColor: Colors.white,
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

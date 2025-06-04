@@ -9,7 +9,6 @@ import 'package:watch_it/watch_it.dart';
 
 class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
   final ComentarioRepository _comentarioRepository = di<ComentarioRepository>();
-  // Utilizamos la inyección de dependencias para acceder a NoticiaBLoc
   final _noticiaRepository = di<NoticiaRepository>();
 
   ComentarioBloc() : super(ComentarioInitial()) {
@@ -55,7 +54,6 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
       final comentario = await _comentarioRepository.agregarComentario(
         event.comentario,
       );
-      // Agregar el nuevo comentario a la lista actual
       final comentariosActualizadas = [...comentariosActuales, comentario];
       emit(
         ComentarioLoaded(
@@ -82,7 +80,6 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
 
     final comentariosFiltrados =
         comentariosActuales.where((comentario) {
-          // Busca en el texto, autor o fecha del comentario
           return comentario.texto.toLowerCase().contains(
                 event.terminoBusqueda.toLowerCase(),
               ) ||
@@ -107,21 +104,18 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     OrdenarComentarios event,
     Emitter<ComentarioState> emit,
   ) async {
-    // Si ya tenemos los comentarios cargados en el estado actual, los usamos
     if (state is ComentarioLoaded) {
       final currentState = state as ComentarioLoaded;
       final List<Comentario> comentarios = List<Comentario>.from(
         currentState.comentarios,
       );
 
-      // Ordenamos por fecha
       comentarios.sort((a, b) {
         return event.ascendente
-            ? a.fecha.compareTo(b.fecha) // Orden ascendente
-            : b.fecha.compareTo(a.fecha); // Orden descendente
+            ? a.fecha.compareTo(b.fecha) 
+            : b.fecha.compareTo(a.fecha); 
       });
 
-      // Emitimos un nuevo estado con los comentarios ordenados
       emit(
         ComentariosOrdenados(
           comentarios: comentarios,
@@ -130,7 +124,6 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
         ),
       );
     } else {
-      // Si no tenemos estado cargado, no podemos ordenar nada
       emit(
         ComentarioError(
           ApiException(
@@ -149,7 +142,6 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
     final currentState = state;
     emit(ReaccionLoading());
     try {
-      // Llamamos al repositorio para persistir el cambio
       final comentarioResponse = await _comentarioRepository
           .reaccionarComentario(event.comentarioId, event.tipoReaccion);
       if (currentState is ComentarioLoaded) {
@@ -207,7 +199,6 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
         event.subcomentario,
       );
 
-      // Agregar el nuevo subcomentario al comentario padre
       final comentarioPadreIndex = comentariosActuales.indexWhere(
         (c) => c.id == event.subcomentario.idSubComentario,
       );
@@ -245,8 +236,6 @@ class ComentarioBloc extends Bloc<ComentarioEvent, ComentarioState> {
         event.noticiaId,
         event.cantidad,
       );
-
-      // Emitimos un estado para indicar que el contador fue actualizado
       emit(
         ContadorComentariosActualizado(
           noticiaId: event.noticiaId,

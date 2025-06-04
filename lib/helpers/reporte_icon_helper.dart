@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/domain/reporte.dart';
 
-
-/// Helper para construcción de iconos y botones relacionados con reportes
 class ReporteIconHelper {
-  /// Construye un botón para reportar con ícono, contador y estado
   static Widget buildReporteButton({
     required MotivoReporte motivo,
     required int contadorReportes,
     required bool yaReportado,
     required VoidCallback onTap,
   }) {
-    // Determinar el ícono y color basado en el tipo de reporte
     IconData icono;
     Color color;
     String tooltip;
@@ -54,7 +50,6 @@ class ReporteIconHelper {
     );
   }
   
-  /// Obtiene una descripción textual del motivo de reporte
   static String getMotivoDescript(MotivoReporte motivo) {
     switch (motivo) {
       case MotivoReporte.noticiaInapropiada:

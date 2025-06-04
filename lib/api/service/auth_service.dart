@@ -1,3 +1,4 @@
+import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/core/base_service.dart';
 import 'package:vdenis/domain/login_request.dart';
 import 'package:vdenis/domain/login_response.dart';
@@ -23,19 +24,19 @@ class AuthService extends BaseService {
             usuario.password == request.password,
       );
        if (credencialesValidas) {
-        data = await postUnauthorized('/login', data: request.toJson());
+        data = await postUnauthorized(ApiConstantes.loginEndpoint, data: request.toJson());
       }
 
       if (data != null) {
         return LoginResponseMapper.fromMap(data);
       } else {
-        throw ApiException('Error de autenticación: respuesta vacía');
+        throw ApiException(AppConstantes.errorAuthVacio);
       }
     } catch (e) {
       if (e is ApiException) {
         rethrow;
       } else {
-        throw ApiException('Error en login');
+        throw ApiException(WhereConstants.errorLogin);
       }
     }
   }

@@ -69,6 +69,11 @@ class BaseService {
       errorUnauthorized = ComentarioConstantes.errorUnauthorized;
       errorBadRequest = ComentarioConstantes.errorInvalidData;
       errorServer = ComentarioConstantes.errorServer;
+    } else if(ApiConstantes.tareasEndpoint.contains(endpoint)){
+      errorNotFound = TareasConstantes.errorNotFound;
+      errorUnauthorized = TareasConstantes.errorUnauthorized;
+      errorBadRequest = TareasConstantes.errorInvalidData;
+      errorServer = TareasConstantes.errorServer;
     }
     // falta los otros endpoints
     final statusCode = e.response?.statusCode;

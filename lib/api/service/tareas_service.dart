@@ -8,7 +8,7 @@ class TareaService extends BaseService {
   Future<List<Tarea>> obtenerTareas(String usuario) async {
     final List<dynamic> tareasJson = await get<List<dynamic>>(
       '$_endpoint?usuario=$usuario',
-      errorMessage: 'Error al obtener las tareas',
+      errorMessage: TareasConstantes.mensajeError,
     );
 
     return tareasJson
@@ -20,7 +20,7 @@ class TareaService extends BaseService {
     final json = await post(
       _endpoint,
       data: tarea.toMap(),
-      errorMessage: 'Error al crear la tarea',
+      errorMessage: TareasConstantes.errorCrear,
     );
 
     return TareaMapper.fromMap(json);
@@ -36,7 +36,7 @@ class TareaService extends BaseService {
     final json = await put(
       url,
       data: tarea.toMap(),
-      errorMessage: 'Error al actualizar la tarea',
+      errorMessage: TareasConstantes.errorActualizar,
     );
 
     return TareaMapper.fromMap(json);

@@ -9,6 +9,7 @@ import 'package:vdenis/bloc/noticia/noticia_state.dart';
 
 class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
   final NoticiaRepository _noticiaRepository = di<NoticiaRepository>();
+  
   NoticiaBloc() : super(NoticiaInitial()) {
     on<FetchNoticiasEvent>(_onFetchNoticias);
     on<AddNoticiaEvent>(_onAddNoticia);
@@ -28,8 +29,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     try {
       final noticias = await _noticiaRepository.obtenerNoticias();
       final preferenciaRepo = di<PreferenciaRepository>();
-      List<String> categoriasIds =
-          await preferenciaRepo.obtenerCategoriasSeleccionadas();
+      List<String> categoriasIds = await preferenciaRepo.obtenerCategoriasSeleccionadas();
 
       List<Noticia> noticiasFiltradas = _filtrarNoticiasPorCategorias(
         noticias,

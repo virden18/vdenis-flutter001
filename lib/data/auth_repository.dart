@@ -7,10 +7,11 @@ import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthRepository {
-  final AuthService _authService = AuthService();
+  final AuthService _authService = di<AuthService>();
   final _secureStorage = di<SecureStorageService>();
   final _tareaRepository = di<TareasRepository>();
   final preferenciaRepository = di<PreferenciaRepository>();
+
   Future<bool> login(String email, String password) async {
     try {
       if (email.isEmpty || password.isEmpty) {
@@ -21,7 +22,6 @@ class AuthRepository {
       final LoginResponse response = await _authService.login(loginRequest);
       await _secureStorage.saveJwt(response.sessionToken);
       await _secureStorage.saveUserEmail(email);
-      await preferenciaRepository.cargarDatos();
       return true;
     } catch (e) {
       return false;

@@ -6,8 +6,7 @@ import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PreferenciaBloc extends Bloc<PreferenciaEvent, PreferenciaState> {
-  final PreferenciaRepository _preferenciaRepository =
-      di<PreferenciaRepository>();
+  final PreferenciaRepository _preferenciaRepository = di<PreferenciaRepository>();
 
   PreferenciaBloc() : super(PreferenciaInitial()) {
     on<LoadPreferences>(_onLoadPreferences);

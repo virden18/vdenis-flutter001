@@ -6,7 +6,7 @@ import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 class PreferenciaRepository extends CacheableRepository<Preferencia> {
-  final PreferenciaService _preferenciaService = PreferenciaService();
+  final PreferenciaService _preferenciaService = di<PreferenciaService>();
   final SecureStorageService _secureStorage = di<SecureStorageService>();
 
   Preferencia? _cachedPreferencias;

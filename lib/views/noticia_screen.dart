@@ -6,6 +6,8 @@ import 'package:vdenis/bloc/categoria/categoria_state.dart';
 import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
 import 'package:vdenis/bloc/noticia/noticia_event.dart';
 import 'package:vdenis/bloc/noticia/noticia_state.dart';
+import 'package:vdenis/bloc/preferencia/preferencia_bloc.dart';
+import 'package:vdenis/bloc/preferencia/preferencia_event.dart';
 import 'package:vdenis/components/floating_add_button.dart';
 import 'package:vdenis/components/formulario_noticia.dart';
 import 'package:vdenis/components/last_updated_header.dart';
@@ -26,12 +28,18 @@ import 'package:vdenis/views/preferencia_screen.dart';
 class NoticiaScreen extends StatelessWidget {
   const NoticiaScreen({super.key});  @override
   Widget build(BuildContext context) {
-    // Limpiar cualquier SnackBar existente al entrar a esta pantalla pero solo si no está mostrándose el SnackBar de conectividad
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!SnackBarManager().isConnectivitySnackBarShowing) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
       }
     });
+
+    final preferenciasBloc = BlocProvider.of<PreferenciaBloc>(context, listen: false);
+    preferenciasBloc.add(LoadPreferences());
+
+    final noticiasBloc = BlocProvider.of<NoticiaBloc>(context, listen: false);
+    noticiasBloc.add(FetchNoticiasEvent());
+      
     return BlocProvider<CategoriaBloc>(
       create: (context) => CategoriaBloc()..add(CategoriaInitEvent()),
       child: _NoticiaScreenContent(),

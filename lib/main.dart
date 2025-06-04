@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:vdenis/bloc/auth/auth_bloc.dart';
 import 'package:vdenis/bloc/comentario/comentario_bloc.dart';
+import 'package:vdenis/bloc/preferencia/preferencia_bloc.dart';
 import 'package:vdenis/bloc/reporte/reporte_bloc.dart';
 import 'package:vdenis/bloc/tarea/tarea_bloc.dart';
 import 'package:vdenis/core/services/shared_preferences_service.dart';
@@ -54,10 +55,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ReporteBloc()),
         BlocProvider(create: (context) => AuthBloc()),
         BlocProvider<NoticiaBloc>(create: (context) => NoticiaBloc()),
-                BlocProvider<TareaBloc>(
-          create: (context) => TareaBloc(),
-          lazy: false, 
-        ),
+        BlocProvider<TareaBloc>(create: (context) => TareaBloc(), lazy: false),
+        BlocProvider<PreferenciaBloc>(create: (context) => PreferenciaBloc()),
       ],
       child: MaterialApp(
         title: 'VDenis App Demo',

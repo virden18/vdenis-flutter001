@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/auth/auth_bloc.dart';
 import 'package:vdenis/bloc/auth/auth_event.dart';
 import 'package:vdenis/bloc/auth/auth_state.dart';
-import 'package:vdenis/bloc/noticia/noticia_bloc.dart';
-import 'package:vdenis/bloc/noticia/noticia_event.dart';
 import 'package:vdenis/components/snackbar_component.dart';
 import 'package:vdenis/views/welcome_screen.dart';
 
@@ -35,8 +33,6 @@ class LoginScreen extends StatelessWidget {
               context,
               rootNavigator: true,
             ).popUntil((route) => route.isFirst);
-
-            context.read<NoticiaBloc>().add(FetchNoticiasEvent());
 
             Navigator.pushReplacement(
               context,

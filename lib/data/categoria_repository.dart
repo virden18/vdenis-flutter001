@@ -2,9 +2,10 @@ import 'package:vdenis/api/service/categoria_service.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/domain/categoria.dart';
+import 'package:watch_it/watch_it.dart';
 
 class CategoriaRepository extends CacheableRepository<Categoria> {
-  final CategoriaService _categoriaService = CategoriaService();
+  final CategoriaService _categoriaService = di<CategoriaService>();
 
   DateTime? _lastRefreshed;
 

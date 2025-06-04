@@ -7,7 +7,6 @@ import 'package:vdenis/components/floating_add_button.dart';
 import 'package:vdenis/components/last_updated_header.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/components/categoria_card.dart';
-import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/components/formulario_categoria.dart';
 import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/helpers/modal_helper.dart';
@@ -89,7 +88,6 @@ class _CategoriaScreenContent extends StatelessWidget {
             title: const Text('Categorías de Noticias'),
             centerTitle: true,
           ),
-          drawer: const SideMenu(),
           backgroundColor: Colors.white,
           body: Column(
             children: [

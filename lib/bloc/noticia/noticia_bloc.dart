@@ -29,8 +29,7 @@ class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
     try {
       final noticias = await _noticiaRepository.obtenerNoticias();
       final preferenciaRepo = di<PreferenciaRepository>();
-      List<String> categoriasIds =
-          await preferenciaRepo.obtenerCategoriasSeleccionadas();
+      List<String> categoriasIds = await preferenciaRepo.obtenerCategoriasSeleccionadas();
 
       List<Noticia> noticiasFiltradas = _filtrarNoticiasPorCategorias(
         noticias,

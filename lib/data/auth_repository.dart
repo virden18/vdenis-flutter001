@@ -7,7 +7,7 @@ import 'package:vdenis/core/services/secure_storage_service.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthRepository {
-  final AuthService _authService = AuthService();
+  final AuthService _authService = di<AuthService>();
   final _secureStorage = di<SecureStorageService>();
   final _tareaRepository = di<TareasRepository>();
   final preferenciaRepository = di<PreferenciaRepository>();

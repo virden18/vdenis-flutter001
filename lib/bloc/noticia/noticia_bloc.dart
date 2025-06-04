@@ -9,6 +9,7 @@ import 'package:vdenis/bloc/noticia/noticia_state.dart';
 
 class NoticiaBloc extends Bloc<NoticiaEvent, NoticiaState> {
   final NoticiaRepository _noticiaRepository = di<NoticiaRepository>();
+  
   NoticiaBloc() : super(NoticiaInitial()) {
     on<FetchNoticiasEvent>(_onFetchNoticias);
     on<AddNoticiaEvent>(_onAddNoticia);

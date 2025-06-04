@@ -3,10 +3,11 @@ import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/core/base_repository.dart';
 import 'package:vdenis/data/reporte_repository.dart';
 import 'package:vdenis/domain/noticia.dart';
+import 'package:watch_it/watch_it.dart';
 
 class NoticiaRepository extends BaseRepository<Noticia> {
-  final NoticiaService _noticiaService = NoticiaService();
-  final reporteRepo = ReporteRepository();
+  final NoticiaService _noticiaService = di<NoticiaService>();
+  final ReporteRepository reporteRepo = di<ReporteRepository>();
 
   @override
   void validarEntidad(Noticia noticia) {

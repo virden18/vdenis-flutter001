@@ -6,7 +6,6 @@ import 'package:vdenis/views/mi_app_screen.dart';
 import 'package:vdenis/views/noticia_screen.dart';
 import 'package:vdenis/views/quote_screen.dart';
 import 'package:vdenis/views/start_screen.dart';
-import 'package:vdenis/views/welcome_screen.dart';
 import 'package:vdenis/views/tareas_screen.dart';
 
 class SideMenu extends StatelessWidget {
@@ -24,7 +23,7 @@ class SideMenu extends StatelessWidget {
           Container(
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top + 16,
-              bottom: 24,
+              bottom: 17,
               left: 16,
               right: 16,
             ),
@@ -36,7 +35,7 @@ class SideMenu extends StatelessWidget {
               children: [
                 Text(
                   'Menú',
-                  style: theme.textTheme.headlineSmall?.copyWith(
+                  style: theme.textTheme.headlineLarge?.copyWith(
                     color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
@@ -45,13 +44,6 @@ class SideMenu extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          _buildMenuItem(
-            context,
-            icon: Icons.home,
-            title: 'Inicio',
-            onTap: () => _navigateTo(context, const WelcomeScreen()),
-          ),
-          const SizedBox(height: 8), 
           _buildMenuItem(
             context,
             icon: Icons.newspaper,

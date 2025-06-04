@@ -7,7 +7,7 @@ class PreferenciaService extends BaseService {
     final endpoint = '${ApiConstantes.preferenciasEndpoint}/$email';
     final Map<String, dynamic> responseData = await get<Map<String, dynamic>>(
       endpoint,
-      errorMessage: 'Error al obtener preferencias',
+      errorMessage: PreferenciaConstantes.errorObtener,
     );
     
     return PreferenciaMapper.fromMap(responseData);
@@ -20,7 +20,7 @@ class PreferenciaService extends BaseService {
     await put(
       endpoint,
       data: dataToSend,
-      errorMessage: 'Error al guardar preferencias',
+      errorMessage: PreferenciaConstantes.errorUpdated,
     );
   }
 
@@ -33,7 +33,7 @@ class PreferenciaService extends BaseService {
     await post(
       ApiConstantes.preferenciasEndpoint,
       data: preferenciasData,
-      errorMessage: 'Error al crear preferencias',
+      errorMessage: PreferenciaConstantes.errorCreated,
     );
     
     return Preferencia(

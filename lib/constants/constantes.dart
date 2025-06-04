@@ -1,4 +1,6 @@
 class ComentarioConstantes {
+  static const String like = 'like';
+  static const String dislike = 'dislike';
   static const String mensajeCargando = 'Cargando comentarios...';
   static const String listaVacia = 'No hay comentarios disponibles';
   static const String errorNotFound = 'Comentario no encontrado';
@@ -9,6 +11,11 @@ class ComentarioConstantes {
   static const String mensajeError = 'Error al obtener comentarios';
   static const String errorUnauthorized = 'No autorizado para acceder a comentario';
   static const String errorInvalidData = 'Datos inválidos en comentario';
+  static const String errorAgregarComentario = 'Error al agregar el comentario';
+  static const String errorAgregarSub = 'Error al agregar el subcomentario';
+  static const String errorReaccionarComentario = 'Error al reaccionar al comentario';
+  static const String errorBuscarSubComentario = 'Error al buscar el subcomentario por ID';
+  static const String errorReaccionarSub = 'Error al reaccionar al subcomentario';
 }
 
 class CategoriaConstantes{
@@ -71,6 +78,7 @@ class AppConstantes {
   static const String errorCriticoServidor = 'Error crítico en el servidor';
   static const String notUser = 'No hay usuario autenticado';
   static const String errorCache = 'Error al actualizar caché local';
+  static const String errorAuthVacio = 'Error de autenticación: Respuesta vacía';
 }
 
 class ApiConstantes {
@@ -81,6 +89,7 @@ class ApiConstantes {
   static const String reportesEndpoint = '/reportes';
   static const String tareasCachePrefsEndpoint = '/tareasPreferencias';
   static const String tareasEndpoint = '/tareas';
+  static const String loginEndpoint = '/login';
 }
 
 class TareasCachePrefsConstantes {
@@ -124,6 +133,10 @@ class TareasConstantes {
   static const String datosActualizados = 'Datos actualizados correctamente';
   static const String ultimaActualizacion = 'Última actualización: ';
   static const String cargandoTareas = 'Cargando tareas...';
+  static const String errorNotFound = 'Tarea no encontrada';
+  static const String errorUnauthorized = 'No autorizado para acceder a la tarea';
+  static const String errorInvalidData = 'Datos inválidos en tarea';
+  static const String errorServer = 'Error del servidor en tarea';
 }
 
 // Constantes para el Juego de Preguntas
@@ -211,6 +224,7 @@ class ValidacionConstantes {
 
 class PreferenciaConstantes {
   static const String mensajeError = 'Error al obtener categorías';
+  static const String errorObtener = 'Error al obtener preferencias';
   // static const String mensajeCargando = 'Cargando preferencias...';
   // static const String listaVacia = 'No hay preferencias disponibles';
   // static const String errorNoPreferencia = 'Preferencia no encontrada';
@@ -232,4 +246,8 @@ class AcercaDeConstantes {
   static const String logo = 'assets/images/logo_sodep.png';
   static const String valoresSodepianos = 'Valores Sodepianos';
   static const String contacto = 'Contacto';
+}
+
+class WhereConstants {
+  static const String errorLogin = 'Error en login';
 }

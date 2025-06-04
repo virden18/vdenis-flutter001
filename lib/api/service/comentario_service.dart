@@ -22,7 +22,7 @@ class ComentarioService extends BaseService {
     final response = await post(
       _url,
       data: comentario.toMap(),
-      errorMessage: 'Error al agregar el comentario',
+      errorMessage: ComentarioConstantes.errorAgregarComentario,
     );
     return ComentarioMapper.fromMap(response);
   }
@@ -43,7 +43,7 @@ class ComentarioService extends BaseService {
   }) async {
     final response = await get(
       '$_url/$comentarioId',
-      errorMessage: "Error al obtener el comentario",
+      errorMessage: ComentarioConstantes.mensajeError,
     );
     return MapperContainer.globals.fromMap<Comentario>(response);
   }
@@ -62,7 +62,7 @@ class ComentarioService extends BaseService {
       final response = await put(
       '$_url/$comentarioId',
       data: comentarioActualizado.toMap(),
-      errorMessage: "Error al reaccionar al comentario",
+      errorMessage: ComentarioConstantes.errorReaccionarComentario,
     );
     return ComentarioMapper.fromMap(response);
   }
@@ -72,7 +72,7 @@ class ComentarioService extends BaseService {
   }) async {
     final response = await get(
       '$_url?subcomentarios.id=$subcomentarioId',
-      errorMessage: "Error al buscar el subcomentario",
+      errorMessage: ComentarioConstantes.errorBuscarSubComentario,
     );
 
     return ComentarioMapper.fromMap(response[0] as Map<String, dynamic>);
@@ -111,7 +111,7 @@ class ComentarioService extends BaseService {
     final response = await put(
       '$_url/${comentario?.id}',
       data: comentario?.toMap(),
-      errorMessage: "Error al reaccionar al subcomentario",
+      errorMessage: ComentarioConstantes.errorReaccionarSub,
     );
     return ComentarioMapper.fromMap(response);
   }
@@ -128,7 +128,7 @@ class ComentarioService extends BaseService {
     final response = await put(
      '$_url/$comentarioId',
       data: comentario.toMap(),
-      errorMessage: "Error al agregar el subcomentario",
+      errorMessage: ComentarioConstantes.errorAgregarSub,
     );
     return ComentarioMapper.fromMap(response);
   }
@@ -140,9 +140,9 @@ Comentario _actualizarContadores({
   }) {
     int currentLikes = comentario!.likes;
     int currentDislikes = comentario.dislikes;
-    if (tipoReaccion == 'like') {
+    if (tipoReaccion == ComentarioConstantes.like) {
       currentLikes++;
-    } else if (tipoReaccion == 'dislike') {
+    } else if (tipoReaccion == ComentarioConstantes.dislike) {
       currentDislikes++;
     }
     return comentario = comentario.copyWith(

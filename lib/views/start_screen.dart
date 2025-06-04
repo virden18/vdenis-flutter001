@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
 import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/views/game_screen.dart';
 
 class StartScreen extends StatelessWidget {
   const StartScreen({super.key});
-
-  final int _selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(PreguntasConstantes.titleApp), 
         centerTitle: true,
+        backgroundColor: theme.appBarTheme.backgroundColor,
       ),
       drawer: const SideMenu(),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               PreguntasConstantes.welcomeMessage, 
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: theme.textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -34,15 +34,21 @@ class StartScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const GameScreen()),
                 );
               },
-               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue, 
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
-              child: const Text(PreguntasConstantes.startGame), // Texto del botón definido en constants.dart
+              child: Text(
+                PreguntasConstantes.startGame,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.colorScheme.onPrimary,
+                ),
+              ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar:  CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

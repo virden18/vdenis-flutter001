@@ -7,7 +7,6 @@ import 'package:vdenis/bloc/tarea/tarea_state.dart';
 import 'package:vdenis/bloc/tarea_contador/tarea_contador_bloc.dart';
 import 'package:vdenis/bloc/tarea_contador/tarea_contador_event.dart';
 import 'package:vdenis/bloc/tarea_contador/tarea_contador_state.dart';
-import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/tarea.dart';
 import 'package:vdenis/helpers/progreso_card_helper.dart';
@@ -25,7 +24,8 @@ class TareaScreen extends StatelessWidget {
       providers: [
         BlocProvider.value(
           value:
-              context.read<TareaBloc>()..add(TareaLoadEvent(forzarRecarga: false)),
+              context.read<TareaBloc>()
+                ..add(TareaLoadEvent(forzarRecarga: false)),
         ),
         BlocProvider(create: (_) => TareaContadorBloc()),
       ],
@@ -41,6 +41,11 @@ class _TareaScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Volver',
+        ),
         title: BlocBuilder<TareaContadorBloc, TareaContadorState>(
           builder: (context, contadorState) {
             return const Text(TareasConstantes.tituloAppBar);
@@ -63,7 +68,6 @@ class _TareaScreenContent extends StatelessWidget {
           ),
         ],
       ),
-      drawer: const SideMenu(),
       backgroundColor: Colors.grey[200],
       body: MultiBlocListener(
         listeners: [
@@ -106,7 +110,7 @@ class _TareaScreenContent extends StatelessWidget {
             listenWhen: (previous, current) => current is TareaCompletada,
             listener: (context, state) {
               if (state is TareaCompletada) {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar(); 
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -116,7 +120,7 @@ class _TareaScreenContent extends StatelessWidget {
                     ),
                     backgroundColor:
                         state.completada ? Colors.green : Colors.orange,
-                    duration: const Duration(seconds: 2)
+                    duration: const Duration(seconds: 2),
                   ),
                 );
 
@@ -254,13 +258,17 @@ class _TareaScreenContent extends StatelessWidget {
         onPressed: () {
           final state = context.read<TareaBloc>().state;
           if (state is TareaLoaded && state.tareas.length >= 3) {
-            SnackBarHelper.mostrarAdvertencia(context, mensaje: 'No puedes crear más de 3 tareas');
+            SnackBarHelper.mostrarAdvertencia(
+              context,
+              mensaje: 'No puedes crear más de 3 tareas',
+            );
           } else {
             _mostrarModalAgregarTarea(context);
           }
         },
         tooltip: 'Agregar Tarea',
-        child: const Icon(Icons.add)),
+        child: const Icon(Icons.add),
+      ),
     );
   }
 

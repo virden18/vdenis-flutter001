@@ -53,10 +53,10 @@ class AppConstantes {
   static const double espaciadoAlto = 10;
   static const String errorTimeOut = 'Tiempo de espera agotado';
   static const String usuarioDefault = 'Usuario anonimo';
-  static const String errorServer = 'Error del servidor';//
-  static const String errorUnauthorized = 'Se requiere autenticación';//
-  static const String errorNoInternet = 'Sin conexión a Internet';//
-  static const String errorInvalidData = 'Datos inválidos';//
+  static const String errorServer = 'Error del servidor';
+  static const String errorUnauthorized = 'Se requiere autenticación';
+  static const String errorNoInternet = 'Sin conexión a Internet';
+  static const String errorInvalidData = 'Datos inválidos';
   static const String tokenNoEncontrado = 'No se encontró el token de autenticación';
   static const String errorDeleteDefault = 'Error al eliminar el recurso';
   static const String errorUpdateDefault = 'Error al actualizar el recurso';

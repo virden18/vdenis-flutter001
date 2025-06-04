@@ -7,7 +7,6 @@ abstract class ConnectivityEvent extends Equatable {
   List<Object> get props => [];
 }
 
-/// Evento que se dispara cuando cambia el estado de conectividad
 class ConnectivityStatusChanged extends ConnectivityEvent {
   final dynamic connectivityResult;
 
@@ -17,5 +16,4 @@ class ConnectivityStatusChanged extends ConnectivityEvent {
   List<Object> get props => [connectivityResult.hashCode];
 }
 
-/// Evento para verificar manualmente el estado de la conectividad
 class CheckConnectivity extends ConnectivityEvent {}

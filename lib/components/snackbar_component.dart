@@ -27,7 +27,7 @@ class SnackBarComponent {
           : null,      behavior: SnackBarBehavior.fixed,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
-      elevation: 0, // Sin sombra
+      elevation: 0,
     );
   }
 }

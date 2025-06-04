@@ -27,7 +27,6 @@ class PreferenciaError extends PreferenciaState {
   List<Object?> get props => [mensaje, error, tipoOperacion];
 }
 
-// Estado base cuando las preferencias están cargadas
 class PreferenciasLoaded extends PreferenciaState {
   final List<String> categoriasSeleccionadas;
   final DateTime? lastUpdated;
@@ -47,7 +46,6 @@ class PreferenciasLoaded extends PreferenciaState {
   ];
 }
 
-// Estado después de guardar preferencias con éxito
 class PreferenciasSaved extends PreferenciasLoaded {
   PreferenciasSaved({
     required super.categoriasSeleccionadas,
@@ -56,7 +54,6 @@ class PreferenciasSaved extends PreferenciasLoaded {
   });
 }
 
-// Estado después de resetear todos los filtros
 class PreferenciasReset extends PreferenciasLoaded {
   PreferenciasReset({
     super.categoriasSeleccionadas = const [],

@@ -17,7 +17,6 @@ class SnackBarHelper {
       color: Colors.green,
       duracion: const Duration(seconds: 3),
     );
-    return Future.delayed(const Duration(milliseconds: 1500));
   }
 
   static void mostrarInfo(BuildContext context, {required String mensaje}) {

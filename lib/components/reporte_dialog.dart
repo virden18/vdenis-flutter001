@@ -62,11 +62,9 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
       listener: (context, state) {
         if (state is ReporteSuccess) {
           SnackBarHelper.mostrarExito(context, mensaje: state.mensaje);
-          Future.delayed(const Duration(seconds: 1), () {
             if (context.mounted) {
               Navigator.of(context).pop();
             }
-          });
         } else if (state is ReporteError) {
           SnackBarHelper.mostrarError(context, mensaje: state.error.message);
         } else if (state is NoticiaReportesActualizada &&

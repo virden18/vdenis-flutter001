@@ -13,19 +13,19 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   void _onItemTapped(BuildContext context, int index) {
     switch (index) {
-      case 0: // Inicio
+      case 0:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const WelcomeScreen()),
         );
         break;
-      case 1: // Añadir Tarea
+      case 1:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const TareaScreen()),
         );
         break;
-      case 2: // Salir
+      case 2: 
         DialogHelper.mostrarDialogoCerrarSesion(context); 
         break;
     }

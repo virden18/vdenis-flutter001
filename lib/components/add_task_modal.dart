@@ -3,7 +3,7 @@ import 'package:vdenis/domain/tarea.dart';
 
 class AddTaskModal extends StatefulWidget {
   final Function(Tarea) onTaskAdded;
-  final Tarea? taskToEdit; // Tarea opcional para editar
+  final Tarea? taskToEdit;
 
   const AddTaskModal({super.key, required this.onTaskAdded, this.taskToEdit});
 
@@ -23,7 +23,6 @@ class AddTaskModalState extends State<AddTaskModal> {
   @override
   void initState() {
     super.initState();
-    // Inicializa los controladores con los datos de la tarea a editar (si existe)
     tituloController = TextEditingController(
       text: widget.taskToEdit?.titulo ?? '',
     );
@@ -46,7 +45,6 @@ class AddTaskModalState extends State<AddTaskModal> {
               : '',
     );
 
-    // Inicializa el tipo de tarea
     tipoSeleccionado = widget.taskToEdit?.tipo ?? 'normal';
   }
 

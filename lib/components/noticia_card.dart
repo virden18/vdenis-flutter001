@@ -29,7 +29,6 @@ class NoticiaCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Categoría
           Padding(
             padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 0),
             child: Row(
@@ -124,7 +123,6 @@ class NoticiaCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
               children: [
-                // Botón Comentarios
                 Expanded(
                   child: _buildActionButton(
                     context: context,
@@ -146,7 +144,6 @@ class NoticiaCard extends StatelessWidget {
                   ),
                 ),
 
-                // Botón Reportar
                 Expanded(
                   child: _buildActionButton(
                     context: context,
@@ -167,7 +164,6 @@ class NoticiaCard extends StatelessWidget {
                   ),
                 ),
 
-                // Botón Editar
                 Expanded(
                   child: _buildActionButton(
                     context: context,
@@ -227,14 +223,14 @@ class NoticiaCard extends StatelessWidget {
                   ],
                 ),
                 constraints: const BoxConstraints(
-                  minWidth: 16, // Aumentado
-                  minHeight: 16, // Aumentado
+                  minWidth: 16, 
+                  minHeight: 16, 
                 ),
                 child: Text(
                   badge > 99 ? '99+' : '$badge',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 10, // Aumentado
+                    fontSize: 10, 
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,

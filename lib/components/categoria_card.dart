@@ -13,7 +13,6 @@ class CategoriaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Obtener colores del tema
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
     final surfaceColor = theme.colorScheme.surface;
@@ -112,7 +111,6 @@ class CategoriaCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Botón de edición
                 Container(
                   margin: const EdgeInsets.only(right: 8),
                   child: IconButton(

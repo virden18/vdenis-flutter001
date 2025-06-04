@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-/// Estado para el contador de tareas
 class TareaContadorState extends Equatable {
   final int totalTareas;
   final int tareasCompletadas;
@@ -12,7 +11,6 @@ class TareaContadorState extends Equatable {
     this.tareasPendientes = 0,
   });
 
-  /// Crea una copia del estado con los valores actualizados
   TareaContadorState copyWith({
     int? totalTareas,
     int? tareasCompletadas,

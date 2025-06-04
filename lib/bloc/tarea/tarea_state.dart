@@ -7,13 +7,10 @@ abstract class TareaState extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Estado inicial cuando aún no se ha cargado ninguna tarea
 class TareaInitial extends TareaState {}
 
-/// Tipo de operación para manejar errores específicos
 enum TipoOperacionTarea { cargar, crear, actualizar, eliminar, completar }
 
-/// Estado de error para cualquier operación de tareas
 class TareaError extends TareaState {
   final Exception error;
   final TipoOperacionTarea tipoOperacion;
@@ -22,12 +19,11 @@ class TareaError extends TareaState {
 
   @override
   List<Object?> get props => [error, tipoOperacion];
-  /// Método para obtener un mensaje de error amigable según el tipo de operación
+
   String get mensaje {
-    final base = error is ApiException 
-        ? (error as ApiException)
-        : error.toString();
-          switch (tipoOperacion) {
+    final base =
+        error is ApiException ? (error as ApiException) : error.toString();
+    switch (tipoOperacion) {
       case TipoOperacionTarea.cargar:
         return 'Error al cargar las tareas: $base';
       case TipoOperacionTarea.crear:
@@ -42,19 +38,15 @@ class TareaError extends TareaState {
   }
 }
 
-/// Estado de carga para cualquier operación
 class TareaLoading extends TareaState {
   final bool isInitialLoad;
-  
+
   TareaLoading({this.isInitialLoad = true});
-  
+
   @override
   List<Object?> get props => [isInitialLoad];
 }
 
-// Se eliminó la clase TareaLoadingMore que se usaba para paginación
-
-/// Estado base para cuando se han cargado las tareas
 class TareaLoaded extends TareaState {
   final List<Tarea> tareas;
   final bool desdeCache;
@@ -68,8 +60,7 @@ class TareaLoaded extends TareaState {
 
   @override
   List<Object?> get props => [tareas, desdeCache, ultimaActualizacion];
-  
-  /// Factory para crear una copia con nuevos valores
+
   TareaLoaded copyWith({
     List<Tarea>? tareas,
     bool? desdeCache,
@@ -83,7 +74,6 @@ class TareaLoaded extends TareaState {
   }
 }
 
-/// Estado para cuando se ha creado una nueva tarea
 class TareaCreated extends TareaLoaded {
   final Tarea nuevaTarea;
 
@@ -98,7 +88,6 @@ class TareaCreated extends TareaLoaded {
   List<Object?> get props => [nuevaTarea, ...super.props];
 }
 
-/// Estado para cuando se ha actualizado una tarea
 class TareaUpdated extends TareaLoaded {
   final Tarea tareaActualizada;
 
@@ -113,7 +102,6 @@ class TareaUpdated extends TareaLoaded {
   List<Object?> get props => [tareaActualizada, ...super.props];
 }
 
-/// Estado para cuando se ha eliminado una tarea
 class TareaDeleted extends TareaLoaded {
   final String tareaEliminadaId;
 
@@ -128,7 +116,6 @@ class TareaDeleted extends TareaLoaded {
   List<Object?> get props => [tareaEliminadaId, ...super.props];
 }
 
-/// Estado para cuando se ha marcado una tarea como completada o no completada
 class TareaCompletada extends TareaLoaded {
   final String tareaId;
   final bool completada;

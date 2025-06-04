@@ -7,10 +7,9 @@ import 'package:vdenis/views/login_screen.dart';
 import 'package:get_it/get_it.dart';
 
 class DialogHelper {
-
   static Future<bool?> mostrarConfirmacion({
-    required BuildContext context, 
-    required String titulo, 
+    required BuildContext context,
+    required String titulo,
     required String mensaje,
     String textoCancelar = 'Cancelar',
     String textoConfirmar = 'Confirmar',
@@ -34,8 +33,8 @@ class DialogHelper {
         );
       },
     );
-  } 
-  
+  }
+
   static void mostrarDialogoCerrarSesion(BuildContext context) {
     showDialog(
       context: context,
@@ -46,30 +45,27 @@ class DialogHelper {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el diálogo
+                Navigator.of(context).pop();
               },
               child: const Text('Cancelar'),
             ),
-            ElevatedButton(              onPressed: () async {
-                // Cerramos primero el diálogo
+            ElevatedButton(
+              onPressed: () async {
                 Navigator.of(context).pop();
-                
-                // Obtener instancia del PreferenciaRepository para limpiar la caché
-                final preferenciasRepo = GetIt.instance<PreferenciaRepository>();
-                
-                // Limpiar caché de preferencias ANTES del logout y redirección
+
+                final preferenciasRepo =
+                    GetIt.instance<PreferenciaRepository>();
+
                 preferenciasRepo.invalidarCache();
-                
-                // Usar el BLoC para manejar el cierre de sesión
+
                 if (context.mounted) {
                   BlocProvider.of<AuthBloc>(context).add(AuthLogoutRequested());
                 }
-                
-                // Redireccionar a la pantalla de login, eliminando todas las pantallas del stack
+
                 if (context.mounted) {
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => LoginScreen()),
-                    (route) => false, // Elimina todas las rutas previas
+                    (route) => false,
                   );
                 }
               },

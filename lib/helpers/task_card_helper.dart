@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:vdenis/bloc/tarea/tarea_bloc.dart';
 import 'package:vdenis/bloc/tarea/tarea_event.dart';
-import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/tarea.dart';
 
 class CommonWidgetsHelper {
@@ -122,15 +120,6 @@ Widget construirTarjetaDeportiva(
         icon: const Icon(Icons.edit, size: 16),
         style: ElevatedButton.styleFrom(foregroundColor: Colors.grey),
       ),
-      subtitle: CommonWidgetsHelper.buildInfoLines(
-        tarea.descripcion ?? '',
-        '${TareasConstantes.tipoTarea}${tarea.tipo}',
-        '${TareasConstantes.fechaLimite}${_formatDate(tarea.fechaLimite ?? DateTime.now())}',
-      ),
     ),
   );
-}
-
-String _formatDate(DateTime date) {
-  return DateFormat(AppConstantes.formatoFecha).format(date);
 }

@@ -200,7 +200,6 @@ class _NoticiaScreenContent extends StatelessWidget {
       if (state.noticias.isNotEmpty) {
         return RefreshIndicator(
           onRefresh: () async {
-            await Future.delayed(const Duration(milliseconds: 1200));
             if (context.mounted) {
               context.read<NoticiaBloc>().add(FetchNoticiasEvent());
             }
@@ -277,7 +276,6 @@ class _NoticiaScreenContent extends StatelessWidget {
       } else {
           return RefreshIndicator(
             onRefresh: () async {
-              await Future.delayed(const Duration(milliseconds: 1200));
               if (context.mounted) {
                 context.read<NoticiaBloc>().add(FetchNoticiasEvent());
               }            

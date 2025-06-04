@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/contador/contador_bloc.dart';
 import 'package:vdenis/bloc/contador/contador_event.dart';
 import 'package:vdenis/bloc/contador/contador_state.dart';
-import 'package:vdenis/components/custom_bottom_navigation_bar.dart';
-import 'package:vdenis/components/side_menu.dart';
 
 class ContadorScreen extends StatelessWidget {
   const ContadorScreen({super.key, required this.title});
@@ -24,16 +22,19 @@ class _ContadorView extends StatelessWidget {
   const _ContadorView({required this.title});
 
   final String title;
-  final int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Volver',
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(title),
       ),
-      drawer: const SideMenu(),
       body: BlocBuilder<ContadorBloc, ContadorState>(
         builder: (context, state) {
           return Center(
@@ -43,9 +44,8 @@ class _ContadorView extends StatelessWidget {
                 const Text('You have pushed the button this many times:'),
                 Text(
                   '${state.valor}',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.headlineLarge,
                 ),
-                const SizedBox(height: 16),
                 Text(
                   state.mensaje,
                   style: TextStyle(fontSize: 18, color: state.colorMensaje),
@@ -92,7 +92,6 @@ class _ContadorView extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: _selectedIndex),
     );
   }
 }

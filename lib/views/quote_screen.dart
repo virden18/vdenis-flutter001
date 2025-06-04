@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/api/service/quote_service.dart';
-import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/domain/quote.dart';
 import 'package:vdenis/constants/constantes.dart';
-import 'package:intl/intl.dart'; // Importa el paquete intl
+import 'package:intl/intl.dart';
 
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
@@ -21,12 +20,12 @@ class QuoteScreenState extends State<QuoteScreen> {
   bool _isLoading = false;
   bool _hasMore = true;
 
-  static const double spacingHeight = 10; // Espaciado entre Cards
+  static const double spacingHeight = 10; 
 
   @override
   void initState() {
     super.initState();
-    _loadInitialQuotes(); // Carga las cotizaciones iniciales
+    _loadInitialQuotes();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent && !_isLoading && _hasMore) {
         _loadQuotes();
@@ -40,11 +39,10 @@ class QuoteScreenState extends State<QuoteScreen> {
     });
 
     try {
-      // Carga todas las cotizaciones disponibles
       final allQuotes = await _quoteService.getAllQuotes();
       setState(() {
         _quotes = allQuotes;
-        _pageNumber = 1; // Configura la paginación para el scroll infinito
+        _pageNumber = 1;
         _hasMore = allQuotes.isNotEmpty;
       });
     } catch (e) {
@@ -93,14 +91,19 @@ class QuoteScreenState extends State<QuoteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Volver',
+        ),
         title: const Text(CotizacionConstantes.titleApp),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: theme.appBarTheme.backgroundColor
       ),
-      drawer: const SideMenu(),
-      backgroundColor: Colors.grey[200], // Fondo gris claro
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: _quotes.isEmpty && _isLoading
           ? const Center(
               child: Text(CotizacionConstantes.loadingMessage),
@@ -148,7 +151,7 @@ class QuoteScreenState extends State<QuoteScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: spacingHeight), // Espaciado entre Cards
+                    const SizedBox(height: spacingHeight),
                   ],
                 );
               },

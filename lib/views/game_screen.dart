@@ -13,10 +13,11 @@ class GameScreen extends StatefulWidget {
 
 class GameScreenState extends State<GameScreen> {
   final QuestionService _questionService = QuestionService();
-  List<Question> questionsList = [];  int currentQuestionIndex = 0;
+  List<Question> questionsList = [];  
+  int currentQuestionIndex = 0;
   int userScore = 0;
-  int? selectedAnswerIndex; // Índice de la respuesta seleccionada
-  bool? isCorrectAnswer; // Estado para manejar si la respuesta es correcta
+  int? selectedAnswerIndex;
+  bool? isCorrectAnswer;
 
 
   @override
@@ -39,11 +40,10 @@ class GameScreenState extends State<GameScreen> {
           questionsList[currentQuestionIndex].isCorrect(selectedIndex);
 
       if (isCorrectAnswer!) {
-        userScore++; // Incrementa el puntaje si es correcto
+        userScore++;
       }
     });
 
-    // Define el mensaje del SnackBar
     final snackBarMessage = isCorrectAnswer == true
         ? const SnackBar(
             content: Text('¡Correcto!'),
@@ -53,23 +53,17 @@ class GameScreenState extends State<GameScreen> {
             content: Text('Incorrecto'),
             backgroundColor: Colors.red,
           );
-
-    // Muestra el SnackBar
     ScaffoldMessenger.of(context).showSnackBar(snackBarMessage);
 
-
-    // Retraso para mostrar el color antes de avanzar
     Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return; // Verifica si el widget sigue montado
-
-      // Oculta el SnackBar antes de avanzar
+      if (!mounted) return;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
       if (currentQuestionIndex < questionsList.length - 1) {
         setState(() {
-          currentQuestionIndex++; // Avanza a la siguiente pregunta
-          selectedAnswerIndex = null; // Reinicia el índice seleccionado
-          isCorrectAnswer = null; // Reinicia el estado de la respuesta
+          currentQuestionIndex++;
+          selectedAnswerIndex = null;
+          isCorrectAnswer = null;
         });
       } else {
         Navigator.pushReplacement(
@@ -84,10 +78,13 @@ class GameScreenState extends State<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     if (questionsList.isEmpty) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: theme.colorScheme.primary,
+          ),
         ),
       );
     }
@@ -95,90 +92,80 @@ class GameScreenState extends State<GameScreen> {
     final questionCounterText =
         'Pregunta ${currentQuestionIndex + 1} de ${questionsList.length}';
     final currentQuestion = questionsList[currentQuestionIndex];
-    const double spacingHeight = 16; // Variable para el espaciado entre la pregunta y las opciones
-  
+    const double spacingHeight = 16; 
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Juego de Preguntas'),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: theme.appBarTheme.backgroundColor,
       ),
       drawer: const SideMenu(),
-      backgroundColor: Colors.white,      
+      backgroundColor: theme.scaffoldBackgroundColor,      
       body: 
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child:Center(
+          child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              // mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   '¡Bienvenido al Juego!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: theme.textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
                 Text(
                   'Puntaje: $userScore',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: theme.textTheme.titleLarge,
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   questionCounterText,
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.secondary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
                 Text(
                   currentQuestion.questionText,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: theme.textTheme.titleMedium,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: spacingHeight), // Espaciado entre la pregunta y las opciones
+                const SizedBox(height: spacingHeight),
                 ...currentQuestion.answerOptions.asMap().entries.map((entry) {
                   final index = entry.key;
                   final option = entry.value;
-                   // Si la respuesta seleccionada es correcta, todos los botones serán verdes
-                  final buttonColor = isCorrectAnswer == true
-                      ? Colors.green
-                      : (selectedAnswerIndex == index ? Colors.red : Colors.blue);
+                  final buttonColor = selectedAnswerIndex == null
+                      ? theme.colorScheme.primary
+                      : (selectedAnswerIndex == index && isCorrectAnswer == true 
+                          ? Colors.green 
+                          : (selectedAnswerIndex == index ? Colors.red : theme.colorScheme.primary));
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: ElevatedButton(
-                       onPressed: selectedAnswerIndex == null
-                      ? () => _onAnswerSelected(index)
-                      : () {}, // Evita que el usuario seleccione otra opción
+                      onPressed: selectedAnswerIndex == null
+                        ? () => _onAnswerSelected(index)
+                        : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: buttonColor,
-                        foregroundColor: Colors.white,
+                        foregroundColor: theme.colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       child: Text(
                         option,
-                        style: const TextStyle(fontSize: 16),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onPrimary,
+                        ),
                       ),
                     ),
                   );
                 }),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Regresa a la pantalla anterior
-                  },
-                  child: const Text('Volver al Inicio'),
-                ),
               ],
-            ),          ),
+            ),          
+          ),
         ),
     );
   }

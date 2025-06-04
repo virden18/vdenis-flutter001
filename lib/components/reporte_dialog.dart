@@ -98,13 +98,12 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                 state.estadisticas[MotivoReporte.informacionFalsa] ?? 0,
             'Otro': state.estadisticas[MotivoReporte.otro] ?? 0,
           };
-        }
-
+        }        
+        final theme = Theme.of(context);
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          backgroundColor: const Color(0xFFFCEAE8),
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 70.0,
             vertical: 24.0,
@@ -114,16 +113,18 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   'Reportar Noticia',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: theme.textTheme.headlineLarge?.copyWith(
+                    fontSize: 16
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Selecciona el motivo:',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14),
+                  style: theme.textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -171,10 +172,9 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed:
-                        isLoading ? null : () => Navigator.of(context).pop(),
-                    child: const Text(
+                        isLoading ? null : () => Navigator.of(context).pop(),                    child: const Text(
                       'Cerrar',
-                      style: TextStyle(color: Colors.brown, fontSize: 14),
+                      style: TextStyle(fontSize: 14),
                     ),
                   ),
                 ),
@@ -196,6 +196,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
     bool isLoading = false,
     bool smallSize = false,
   }) {
+    final theme = Theme.of(context);
     final buttonSize = smallSize ? 50.0 : 60.0;
     final iconSize = smallSize ? 24.0 : 30.0;
     final badgeSize = smallSize ? 16.0 : 18.0;
@@ -227,7 +228,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                   )
                 else
                   Icon(icon, color: color, size: iconSize),
-                Positioned(
+                  Positioned(
                   bottom: 0,
                   right: 0,
                   child: Container(
@@ -240,21 +241,21 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                     child: Center(
                       child: Text(
                         iconNumber,
-                        style: TextStyle(
+                        style: theme.textTheme.labelSmall?.copyWith(
                           color: Colors.white,
                           fontSize: fontSize,
                           fontWeight: FontWeight.bold,
-                        ),
                       ),
                     ),
                   ),
+                  )
                 ),
               ],
             ),
           ),
         ),
         SizedBox(height: smallSize ? 6.0 : 8.0),
-        Text(label, style: TextStyle(fontSize: fontSize)),
+        Text(label, style: theme.textTheme.bodyLarge?.copyWith(fontSize: fontSize))  
       ],
     );
   }

@@ -11,6 +11,7 @@ import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/tarea.dart';
 import 'package:vdenis/helpers/progreso_card_helper.dart';
+import 'package:vdenis/helpers/snackbar_helper.dart';
 import 'package:vdenis/helpers/task_card_helper.dart';
 import 'package:vdenis/components/add_task_modal.dart';
 import 'package:vdenis/views/tarea_detalle_screen.dart';
@@ -22,13 +23,10 @@ class TareaScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        // Usamos BlocProvider.value para el TareaBloc existente
         BlocProvider.value(
           value:
-              context.read<TareaBloc>()
-                ..add(TareaLoadEvent(forzarRecarga: false)),
+              context.read<TareaBloc>()..add(TareaLoadEvent(forzarRecarga: false)),
         ),
-        // Añadimos el TareaContadorBloc
         BlocProvider(create: (_) => TareaContadorBloc()),
       ],
       child: const _TareaScreenContent(),
@@ -45,10 +43,7 @@ class _TareaScreenContent extends StatelessWidget {
       appBar: AppBar(
         title: BlocBuilder<TareaContadorBloc, TareaContadorState>(
           builder: (context, contadorState) {
-            return Text(
-              '${TareasConstantes.tituloAppBar} - '
-              'Total: ${contadorState.totalTareas}',
-            );
+            return const Text(TareasConstantes.tituloAppBar);
           },
         ),
         actions: [
@@ -72,7 +67,6 @@ class _TareaScreenContent extends StatelessWidget {
       backgroundColor: Colors.grey[200],
       body: MultiBlocListener(
         listeners: [
-          // Listener para estados generales de TareaBloc
           BlocListener<TareaBloc, TareaState>(
             listener: (context, state) {
               if (state is TareaError) {
@@ -83,7 +77,6 @@ class _TareaScreenContent extends StatelessWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Tarea creada con éxito')),
                 );
-                // Actualizamos el contador de tareas
                 context.read<TareaContadorBloc>().add(
                   SetTotalTareas(state.tareas.length),
                 );
@@ -93,28 +86,22 @@ class _TareaScreenContent extends StatelessWidget {
                     content: Text(TareasConstantes.tareaEliminada),
                   ),
                 );
-                // Actualizamos el contador de tareas
                 context.read<TareaContadorBloc>().add(
                   SetTotalTareas(state.tareas.length),
                 );
               } else if (state is TareaLoaded) {
-                // Actualizamos el contador cada vez que se cargan tareas
                 int totalTareas = state.tareas.length;
                 int tareasCompletadas =
                     state.tareas.where((t) => t.completada).length;
-
-                // Reseteamos completamente el contador para evitar acumulación
                 context.read<TareaContadorBloc>().add(
                   SetTotalTareas(totalTareas),
                 );
-
-                // Establecemos directamente el número de tareas completadas
                 context.read<TareaContadorBloc>().add(
                   SetTareasCompletadas(tareasCompletadas),
                 );
               }
             },
-          ), // Listener específico para estados de TareaCompletada
+          ),
           BlocListener<TareaBloc, TareaState>(
             listenWhen: (previous, current) => current is TareaCompletada,
             listener: (context, state) {
@@ -153,8 +140,6 @@ class _TareaScreenContent extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             } else if (state is TareaLoaded) {
               final tareas = state.tareas;
-
-              // Widget para mostrar la última actualización
               final ultimaActualizacionWidget =
                   state.ultimaActualizacion != null
                       ? Padding(
@@ -187,14 +172,12 @@ class _TareaScreenContent extends StatelessWidget {
 
               return Column(
                 children: [
-                  // Widget que muestra la última actualización
-                  ultimaActualizacionWidget, // Widget de progreso
+                  ultimaActualizacionWidget,
                   BlocBuilder<TareaContadorBloc, TareaContadorState>(
                     builder: (context, contadorState) {
                       return ProgresoCardHelper(contadorState: contadorState);
                     },
                   ),
-                  // Lista de tareas con indicador de recarga
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () async {
@@ -250,8 +233,6 @@ class _TareaScreenContent extends StatelessWidget {
                 ],
               );
             }
-
-            // Si hay un error
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -270,13 +251,19 @@ class _TareaScreenContent extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _mostrarModalAgregarTarea(context),
+        onPressed: () {
+          final state = context.read<TareaBloc>().state;
+          if (state is TareaLoaded && state.tareas.length >= 3) {
+            SnackBarHelper.mostrarAdvertencia(context, mensaje: 'No puedes crear más de 3 tareas');
+          } else {
+            _mostrarModalAgregarTarea(context);
+          }
+        },
         tooltip: 'Agregar Tarea',
-        child: const Icon(Icons.add),      ),
+        child: const Icon(Icons.add)),
     );
   }
 
-  // Método para mostrar detalles de tarea
   void _mostrarDetallesTarea(
     BuildContext context,
     List<Tarea> tareas,
@@ -291,7 +278,6 @@ class _TareaScreenContent extends StatelessWidget {
     );
   }
 
-  // Método para mostrar el modal de agregar tarea
   void _mostrarModalAgregarTarea(BuildContext context) {
     showDialog(
       context: context,
@@ -304,7 +290,6 @@ class _TareaScreenContent extends StatelessWidget {
     );
   }
 
-  // Método para mostrar el modal de editar tarea
   void _mostrarModalEditarTarea(BuildContext context, Tarea tarea) {
     showDialog(
       context: context,

@@ -5,18 +5,21 @@ import 'package:vdenis/bloc/noticia/noticia_event.dart';
 import 'package:vdenis/bloc/reporte/reporte_bloc.dart';
 import 'package:vdenis/bloc/reporte/reporte_event.dart';
 import 'package:vdenis/bloc/reporte/reporte_state.dart';
+import 'package:vdenis/components/limite_reportes_dialog.dart';
 import 'package:vdenis/domain/reporte.dart';
 import 'package:vdenis/domain/noticia.dart';
 import 'package:vdenis/helpers/snackbar_helper.dart';
 import 'package:watch_it/watch_it.dart';
 
-/// Clase para mostrar el diálogo de reportes de noticias
 class ReporteDialog {
-  /// Muestra un diálogo de reporte para una noticia
   static Future<void> mostrarDialogoReporte({
     required BuildContext context,
     required Noticia noticia,
   }) async {
+    final int? totalReportes = noticia.contadorReportes;
+    if (totalReportes! >= 3) {
+      return LimiteReportesDialog.mostrar(context);
+    }
     return showDialog(
       context: context,
       builder: (context) {
@@ -43,7 +46,6 @@ class _ReporteDialogContent extends StatefulWidget {
 }
 
 class _ReporteDialogContentState extends State<_ReporteDialogContent> {
-
   @override
   void initState() {
     super.initState();
@@ -76,27 +78,33 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
             ),
           );
         }
-      },      builder: (context, state) {
+      },
+      builder: (context, state) {
         final bool isLoading = state is ReporteLoading;
         final motivoActual = isLoading ? (state).motivoActual : null;
-        
+
         Map<String, int> estadisticas = {
           'NoticiaInapropiada': 0,
           'InformacionFalsa': 0,
           'Otro': 0,
         };
-        
-        if (state is ReporteEstadisticasLoaded && state.noticia.id == widget.noticiaId) {
+
+        if (state is ReporteEstadisticasLoaded &&
+            state.noticia.id == widget.noticiaId) {
           estadisticas = {
-            'NoticiaInapropiada': state.estadisticas[MotivoReporte.noticiaInapropiada] ?? 0,
-            'InformacionFalsa': state.estadisticas[MotivoReporte.informacionFalsa] ?? 0,
+            'NoticiaInapropiada':
+                state.estadisticas[MotivoReporte.noticiaInapropiada] ?? 0,
+            'InformacionFalsa':
+                state.estadisticas[MotivoReporte.informacionFalsa] ?? 0,
             'Otro': state.estadisticas[MotivoReporte.otro] ?? 0,
           };
         }
-        
+
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          backgroundColor: const Color(0xFFFCEAE8), // Color rosa suave
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          backgroundColor: const Color(0xFFFCEAE8),
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 70.0,
             vertical: 24.0,
@@ -108,10 +116,7 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
               children: [
                 const Text(
                   'Reportar Noticia',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
@@ -121,17 +126,19 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                   style: TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 16),
-                // Opciones de reporte con íconos y contadores
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [                    _buildMotivoButton(
+                  children: [
+                    _buildMotivoButton(
                       context: context,
                       motivo: MotivoReporte.noticiaInapropiada,
                       icon: Icons.warning,
                       color: Colors.red,
                       label: 'Inapropiada',
-                      iconNumber: '${estadisticas['NoticiaInapropiada']}',                      
-                      isLoading: isLoading && motivoActual == MotivoReporte.noticiaInapropiada,
+                      iconNumber: '${estadisticas['NoticiaInapropiada']}',
+                      isLoading:
+                          isLoading &&
+                          motivoActual == MotivoReporte.noticiaInapropiada,
                       smallSize: true,
                     ),
                     _buildMotivoButton(
@@ -140,8 +147,10 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                       icon: Icons.info,
                       color: Colors.amber,
                       label: 'Falsa',
-                      iconNumber: '${estadisticas['InformacionFalsa']}',                      
-                      isLoading: isLoading && motivoActual == MotivoReporte.informacionFalsa,
+                      iconNumber: '${estadisticas['InformacionFalsa']}',
+                      isLoading:
+                          isLoading &&
+                          motivoActual == MotivoReporte.informacionFalsa,
                       smallSize: true,
                     ),
                     _buildMotivoButton(
@@ -150,8 +159,9 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                       icon: Icons.flag,
                       color: Colors.blue,
                       label: 'Otro',
-                      iconNumber: '${estadisticas['Otro']}',                      
-                      isLoading: isLoading && motivoActual == MotivoReporte.otro,
+                      iconNumber: '${estadisticas['Otro']}',
+                      isLoading:
+                          isLoading && motivoActual == MotivoReporte.otro,
                       smallSize: true,
                     ),
                   ],
@@ -160,13 +170,11 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: isLoading ? null : () => Navigator.of(context).pop(),
+                    onPressed:
+                        isLoading ? null : () => Navigator.of(context).pop(),
                     child: const Text(
                       'Cerrar',
-                      style: TextStyle(
-                        color: Colors.brown,
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: Colors.brown, fontSize: 14),
                     ),
                   ),
                 ),
@@ -188,7 +196,6 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
     bool isLoading = false,
     bool smallSize = false,
   }) {
-    // Definir tamaños según el parámetro smallSize
     final buttonSize = smallSize ? 50.0 : 60.0;
     final iconSize = smallSize ? 24.0 : 30.0;
     final badgeSize = smallSize ? 16.0 : 18.0;
@@ -209,7 +216,6 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Mostrar un indicador de carga si este botón está en proceso
                 if (isLoading)
                   SizedBox(
                     width: iconSize,
@@ -251,8 +257,9 @@ class _ReporteDialogContentState extends State<_ReporteDialogContent> {
         Text(label, style: TextStyle(fontSize: fontSize)),
       ],
     );
-  }  void _enviarReporte(BuildContext context, MotivoReporte motivo) {
-    // Enviar el reporte usando el bloc directamente
+  }
+
+  void _enviarReporte(BuildContext context, MotivoReporte motivo) {
     context.read<ReporteBloc>().add(
       EnviarReporte(noticia: widget.noticia, motivo: motivo),
     );

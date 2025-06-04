@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vdenis/bloc/categoria/categoria_event.dart';
 import 'package:vdenis/bloc/categoria/categoria_state.dart';
 import 'package:vdenis/data/categoria_repository.dart';
-import 'package:vdenis/domain/categoria.dart'; // Añadir importación para Categoria
+import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -20,15 +20,12 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     CategoriaInitEvent event,
     Emitter<CategoriaState> emit,
   ) async {
-    // Siempre emitimos un estado de carga
     emit(CategoriaLoading());
 
     try {
-      // Pasamos el parámetro forzarRecarga al repositorio
       final categorias = await _categoriaRepository.obtenerCategorias(
         forzarRecarga: event.forzarRecarga,
       );
-      // Emitir simplemente el estado cargado sin mostrar SnackBar
       if (event.forzarRecarga == true) {
         emit(CategoriaReloaded(categorias, DateTime.now()));
       } else {
@@ -45,7 +42,6 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     CategoriaCreateEvent event,
     Emitter<CategoriaState> emit,
   ) async {
-    // Guardar el estado actual para no perder las categorías ya cargadas
     List<Categoria> categoriasActuales = [];
     if (state is CategoriaLoaded) {
       categoriasActuales = [...(state as CategoriaLoaded).categorias];
@@ -55,7 +51,6 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
       final categoriaCreada = await _categoriaRepository.crearCategoria(
         event.categoria,
       );
-      //Agrega al final la categoría creada
       final categoriasActualizadas = [...categoriasActuales, categoriaCreada];
       emit(CategoriaCreated(categoriasActualizadas, DateTime.now()));
     } catch (e) {
@@ -78,15 +73,11 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     try {
       final categoriaActualizada = await _categoriaRepository
           .actualizarCategoria(event.categoria);
-
-      // Reemplazar la categoría con el mismo ID por la versión actualizada
       final categoriasActualizadas =
           categoriasActuales.map((categoria) {
-            // Si encuentra la categoría con el mismo ID, devuelve la versión actualizada
             if (categoria.id == categoriaActualizada.id) {
               return categoriaActualizada;
             }
-            // De lo contrario, mantiene la categoría original
             return categoria;
           }).toList();
 
@@ -111,7 +102,6 @@ class CategoriaBloc extends Bloc<CategoriaEvent, CategoriaState> {
     try {
       await _categoriaRepository.eliminarCategoria(event.id);
 
-      // Filtrar la lista de categorías para quitar la categoría eliminada
       final categoriasActualizadas =
           categoriasActuales
               .where((categoria) => categoria.id != event.id)

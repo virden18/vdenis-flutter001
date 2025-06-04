@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vdenis/domain/categoria.dart';
 
 class FormularioCategoria extends StatefulWidget {
-  final Categoria? categoria; // Categoría existente para edición (null para creación)
+  final Categoria? categoria;
 
   const FormularioCategoria({super.key, this.categoria});
 
@@ -35,14 +35,14 @@ class _FormularioCategoriaState extends State<FormularioCategoria> {
   void _guardarCategoria() {
     if (_formKey.currentState!.validate()) {
       final categoria = Categoria(
-        id: widget.categoria?.id, // Solo se usa para edición
+        id: widget.categoria?.id, 
         nombre: _nombreController.text,
         descripcion: _descripcionController.text,
         imagenUrl: _imagenUrlController.text.isNotEmpty
             ? _imagenUrlController.text
-            : "https://picsum.photos/200/300", // Imagen por defecto
+            : "https://picsum.photos/200/300", 
       );
-      Navigator.of(context).pop(categoria); // Devuelve la categoría al helper
+      Navigator.of(context).pop(categoria); 
     }
   }
 
@@ -62,12 +62,6 @@ class _FormularioCategoriaState extends State<FormularioCategoria> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Text(
-              //   widget.categoria == null ? 'Crear nueva categoría' : 'Editar categoría',
-              //   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              //   textAlign: TextAlign.center,
-              // ),
-              // const SizedBox(height: 16),
               TextFormField(
                 controller: _nombreController,
                 decoration: const InputDecoration(
@@ -112,7 +106,6 @@ class _FormularioCategoriaState extends State<FormularioCategoria> {
                 },
               ),
               const SizedBox(height: 16),
-              // Vista previa de la imagen
               if (_imagenUrlController.text.isNotEmpty)
                 Container(
                   height: 120,

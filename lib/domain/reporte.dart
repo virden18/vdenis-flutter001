@@ -2,7 +2,6 @@ import 'package:dart_mappable/dart_mappable.dart';
 
 part 'reporte.mapper.dart';
 
-/// Enum que define los posibles motivos de reporte
 @MappableEnum()
 enum MotivoReporte { 
   noticiaInapropiada,
@@ -10,7 +9,6 @@ enum MotivoReporte {
   otro 
 }
 
-/// Clase que representa un reporte de noticia
 @MappableClass()
 class Reporte with ReporteMappable {
   final String? id;

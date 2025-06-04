@@ -11,12 +11,10 @@ class ProgresoCardHelper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calcular porcentaje con protección contra división por cero
     final double porcentajeCompletado = contadorState.totalTareas > 0
         ? contadorState.tareasCompletadas / contadorState.totalTareas
         : 0.0;
     
-    // Asegurar que el porcentaje no exceda el 100%
     final double porcentajeNormalizado = porcentajeCompletado > 1.0 ? 1.0 : porcentajeCompletado;
     
     return Card(
@@ -56,7 +54,7 @@ class ProgresoCardHelper extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
-                value: porcentajeNormalizado, // Usar el valor normalizado
+                value: porcentajeNormalizado, 
                 minHeight: 10,
                 backgroundColor: Colors.grey[300],
                 valueColor: AlwaysStoppedAnimation<Color>(
@@ -68,7 +66,6 @@ class ProgresoCardHelper extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             
-            // Texto que muestra tareas completadas
             Align(
               alignment: Alignment.centerRight,
               child: Text(

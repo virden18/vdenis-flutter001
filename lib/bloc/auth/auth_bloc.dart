@@ -7,7 +7,7 @@ import 'package:vdenis/exceptions/api_exception.dart';
 import 'package:watch_it/watch_it.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepository _authRepository= di<AuthRepository>(); // Obtenemos el repositorio del locator
+  final AuthRepository _authRepository= di<AuthRepository>(); 
 
   AuthBloc(): super(AuthInitial()) {
     on<AuthLoginRequested>(_onAuthLoginRequested);

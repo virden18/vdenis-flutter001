@@ -6,10 +6,8 @@ import 'package:vdenis/data/preferencia_repository.dart';
 import 'package:vdenis/views/login_screen.dart';
 import 'package:get_it/get_it.dart';
 
-/// Helper para gestionar diferentes tipos de diálogos en la aplicación
 class DialogHelper {
 
-  /// Muestra un diálogo de confirmación genérico
   static Future<bool?> mostrarConfirmacion({
     required BuildContext context, 
     required String titulo, 
@@ -36,7 +34,8 @@ class DialogHelper {
         );
       },
     );
-  }  /// Muestra un diálogo específico para cerrar sesión
+  } 
+  
   static void mostrarDialogoCerrarSesion(BuildContext context) {
     showDialog(
       context: context,

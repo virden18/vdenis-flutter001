@@ -6,7 +6,6 @@ import 'package:vdenis/bloc/connectivity/connectivity_state.dart';
 import 'package:vdenis/core/services/connectivity_service.dart';
 import 'package:watch_it/watch_it.dart';
 
-/// BLoC para gestionar el estado de la conectividad a Internet en la aplicación
 class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
   final ConnectivityService _connectivityService = di<ConnectivityService>();
   late StreamSubscription _connectivitySubscription;
@@ -15,14 +14,12 @@ class ConnectivityBloc extends Bloc<ConnectivityEvent, ConnectivityState> {
     on<CheckConnectivity>(_onCheckConnectivity);
     on<ConnectivityStatusChanged>(_onConnectivityStatusChanged);
 
-    // Suscripción a cambios de conectividad
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
       result,
     ) {
       add(ConnectivityStatusChanged(result));
     });
 
-    // Verificación inicial
     add(CheckConnectivity());
   }
 

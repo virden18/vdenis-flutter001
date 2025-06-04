@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vdenis/components/dinosaur_animation.dart';
 
-/// Pantalla completa que se muestra cuando no hay conectividad a internet
 class NoConnectivityScreen extends StatelessWidget {
   const NoConnectivityScreen({super.key});
 
@@ -13,7 +12,6 @@ class NoConnectivityScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icono de wifi con una línea cruzada
             Icon(
               Icons.wifi_off,
               size: 64,
@@ -21,7 +19,6 @@ class NoConnectivityScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             
-            // Animación del dinosaurio
             const SizedBox(
               height: 200,
               width: 200,
@@ -30,7 +27,6 @@ class NoConnectivityScreen extends StatelessWidget {
             
             const SizedBox(height: 40),
             
-            // Mensaje de error principal
             Text(
               '¡Sin conexión a Internet!',
               style: TextStyle(
@@ -42,7 +38,6 @@ class NoConnectivityScreen extends StatelessWidget {
             
             const SizedBox(height: 16),
             
-            // Mensaje secundario
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Text(
@@ -57,10 +52,8 @@ class NoConnectivityScreen extends StatelessWidget {
             
             const SizedBox(height: 40),
             
-            // Botón para reintentar (opcional)
             ElevatedButton.icon(
               onPressed: () {
-                // Aquí se podría agregar lógica para verificar manualmente la conectividad
                 final snackBar = const SnackBar(
                   content: Text('Verificando conexión...'),
                   duration: Duration(seconds: 2),

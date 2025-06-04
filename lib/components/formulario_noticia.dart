@@ -5,8 +5,8 @@ import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/domain/noticia.dart';
 
 class FormularioNoticia extends StatefulWidget {
-  final Noticia? noticia; // Noticia existente para edición (null para creación)
-  final List<Categoria> categorias; // Lista de categorías disponibles
+  final Noticia? noticia; 
+  final List<Categoria> categorias; 
 
   const FormularioNoticia({super.key, this.noticia, required this.categorias});
 
@@ -35,7 +35,6 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
       text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada)
     );
     
-    // Verificar si el ID de categoría existe en la lista antes de asignarlo
     if (widget.noticia?.categoriaId != null) {
       final existeCategoria = widget.categorias.any((c) => c.id == widget.noticia!.categoriaId);
       _selectedCategoriaId = existeCategoria 
@@ -126,15 +125,6 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Text(
-            //   widget.noticia == null ? 'Agregar Noticia' : 'Editar Noticia',
-            //   style: const TextStyle(
-            //     fontSize: 20,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            //   textAlign: TextAlign.center,
-            // ),
-            //const SizedBox(height: 16),
             TextFormField(
               controller: _tituloController,
               decoration: const InputDecoration(
@@ -188,12 +178,10 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
                 if (value == null || value.isEmpty) {
                   return 'Por favor ingrese la URL de una imagen';
                 }
-                // Podríamos validar que es una URL válida
                 return null;
               },
             ),
             const SizedBox(height: 16),
-            // Campo de fecha
             TextFormField(
               controller: _fechaController,
               decoration: const InputDecoration(
@@ -211,7 +199,6 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
               },
             ),
             const SizedBox(height: 16),
-            // Selector de categoría
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(
                 labelText: 'Categoría',
@@ -219,11 +206,10 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
               ),
               value: _selectedCategoriaId,
               items: [
-                // Opción por defecto
                 const DropdownMenuItem<String>(
                   value: CategoriaConstantes.defaultcategoriaId,
                   child: Text('Sin categoría'),
-                ),                // Opciones de categorías cargadas
+                ),
                 ...widget.categorias
                     .where((categoria) => categoria.id != null && categoria.id!.isNotEmpty)
                     .map((categoria) {

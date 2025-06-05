@@ -4,17 +4,11 @@ Aplicación desarrollada como parte del Bootcamp de Flutter de Sodep (2025). Imp
 
 ## Capturas de pantalla
 
-![Pantalla de Login](screenshots/login_screen.jpeg)
-![Pantalla de Bienvenida](screenshots/welcome_screen.jpeg)
-![Menú Lateral](screenshots/side_menu.jpeg)
+![Pantalla de Login](screenshots/login_screen.jpeg) ![Pantalla de Bienvenida](screenshots/welcome_screen.jpeg) ![Menú Lateral](screenshots/side_menu.jpeg)
 
-![Pantalla de Noticias](screenshots/noticias_screen.jpeg)
-![Pantalla de Tareas](screenshots/tareas_screen.jpeg)
-![Pantalla de Categorías](screenshots/categorias_screen.jpeg)
+![Pantalla de Noticias](screenshots/noticias_screen.jpeg) ![Pantalla de Tareas](screenshots/tareas_screen.jpeg) ![Pantalla de Categorías](screenshots/categorias_screen.jpeg)
 
-![Pantalla de Preferencias](screenshots/preferencias_screen.jpeg)
-![Pantalla Acerca de](screenshots/acercade_screen.jpeg)
-![Diálogo de Cierre de Sesión](screenshots/logout_dialog.jpeg)
+![Pantalla de Preferencias](screenshots/preferencias_screen.jpeg) ![Pantalla Acerca de](screenshots/acercade_screen.jpeg) ![Diálogo de Cierre de Sesión](screenshots/logout_dialog.jpeg)
 
 ## Entorno de desarrollo
 

@@ -2,14 +2,6 @@
 
 Aplicación desarrollada como parte del Bootcamp de Flutter de Sodep (2025). Implementa un sistema completo de tipo CRUD (Crear, Leer, Actualizar, Eliminar), utilizando Dio para la comunicación HTTP y Bloc como patrón de gestión de estado.
 
-## Capturas de pantalla
-
-![Pantalla de Login](screenshots/login_screen.jpeg) ![Pantalla de Bienvenida](screenshots/welcome_screen.jpeg) ![Menú Lateral](screenshots/side_menu.jpeg)
-
-![Pantalla de Noticias](screenshots/noticias_screen.jpeg) ![Pantalla de Tareas](screenshots/tareas_screen.jpeg) ![Pantalla de Categorías](screenshots/categorias_screen.jpeg)
-
-![Pantalla de Preferencias](screenshots/preferencias_screen.jpeg) ![Pantalla Acerca de](screenshots/acercade_screen.jpeg) ![Diálogo de Cierre de Sesión](screenshots/logout_dialog.jpeg)
-
 ## Entorno de desarrollo
 
 Estas son las versiones utilizadas en el desarrollo para asegurar compatibilidad:
@@ -61,3 +53,25 @@ flutter pub get
 # 4. Ejecutar (usar tu dispositivo conectado o emulador)
 flutter run
 ```
+
+## Capturas de pantalla
+
+<p align="center">
+<table>
+  <tr>
+    <td><img src="screenshots/login_screen.jpeg" width="250" alt="Pantalla de Login"></td>
+    <td><img src="screenshots/welcome_screen.jpeg" width="250" alt="Pantalla de Bienvenida"></td>
+    <td><img src="screenshots/side_menu.jpeg" width="250" alt="Menú Lateral"></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/noticias_screen.jpeg" width="250" alt="Pantalla de Noticias"></td>
+    <td><img src="screenshots/tareas_screen.jpeg" width="250" alt="Pantalla de Tareas"></td>
+    <td><img src="screenshots/categorias_screen.jpeg" width="250" alt="Pantalla de Categorías"></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/preferencias_screen.jpeg" width="250" alt="Pantalla de Preferencias"></td>
+    <td><img src="screenshots/acercade_screen.jpeg" width="250" alt="Pantalla Acerca de"></td>
+    <td><img src="screenshots/logout_dialog.jpeg" width="250" alt="Diálogo de Cierre de Sesión"></td>
+  </tr>
+</table>
+</p>

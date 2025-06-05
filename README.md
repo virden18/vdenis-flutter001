@@ -2,6 +2,20 @@
 
 Aplicación desarrollada como parte del Bootcamp de Flutter de Sodep (2025). Implementa un sistema completo de tipo CRUD (Crear, Leer, Actualizar, Eliminar), utilizando Dio para la comunicación HTTP y Bloc como patrón de gestión de estado.
 
+## Capturas de pantalla
+
+![Pantalla de Login](screenshots/login_screen.jpeg)
+![Pantalla de Bienvenida](screenshots/welcome_screen.jpeg)
+![Menú Lateral](screenshots/side_menu.jpeg)
+
+![Pantalla de Noticias](screenshots/noticias_screen.jpeg)
+![Pantalla de Tareas](screenshots/tareas_screen.jpeg)
+![Pantalla de Categorías](screenshots/categorias_screen.jpeg)
+
+![Pantalla de Preferencias](screenshots/preferencias_screen.jpeg)
+![Pantalla Acerca de](screenshots/acercade_screen.jpeg)
+![Diálogo de Cierre de Sesión](screenshots/logout_dialog.jpeg)
+
 ## Entorno de desarrollo
 
 Estas son las versiones utilizadas en el desarrollo para asegurar compatibilidad:
@@ -27,6 +41,8 @@ cp .env.example .env
 
 3.Guarda el archivo para que la aplicación pueda leer estas variables al iniciar.
 
+## Ejecución del Proyecto
+
 ### Dependencias del sistema (Linux)
 
 Si estás en Linux y planeas correr el proyecto con soporte de `flutter_secure_storage`, necesitas instalar la siguiente dependencia del sistema:
@@ -34,8 +50,6 @@ Si estás en Linux y planeas correr el proyecto con soporte de `flutter_secure_s
 ```bash
 sudo apt install libsecret-1-dev
 ```
-
-## Ejecución del Proyecto
 
 Sigue estos pasos para configurar y ejecutar el proyecto localmente:
 

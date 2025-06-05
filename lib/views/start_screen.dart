@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/views/game_screen.dart';
 
@@ -12,11 +11,15 @@ class StartScreen extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Volver',
+        ),
         title: const Text(PreguntasConstantes.titleApp), 
         centerTitle: true,
         backgroundColor: theme.appBarTheme.backgroundColor,
       ),
-      drawer: const SideMenu(),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Column(

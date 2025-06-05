@@ -13,7 +13,6 @@ import 'package:vdenis/components/formulario_noticia.dart';
 import 'package:vdenis/components/last_updated_header.dart';
 import 'package:vdenis/components/noticia_card.dart';
 import 'package:vdenis/components/reporte_dialog.dart';
-import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/domain/categoria.dart';
 import 'package:vdenis/domain/noticia.dart';
@@ -99,6 +98,11 @@ class _NoticiaScreenContent extends StatelessWidget {
         }
         return Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+              tooltip: 'Volver',
+            ),
             title: const Text(NoticiasConstantes.tituloApp),
             centerTitle: true,
             actions: [              
@@ -132,7 +136,6 @@ class _NoticiaScreenContent extends StatelessWidget {
               ),
             ],
           ),
-          drawer: const SideMenu(),
           backgroundColor: Colors.white,
           body: Column(
             children: [

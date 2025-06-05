@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vdenis/components/side_menu.dart';
 import 'package:vdenis/constants/constantes.dart';
 import 'package:vdenis/theme/colors.dart';
 import 'package:vdenis/theme/text.style.dart';
@@ -12,11 +11,15 @@ class AcercaDeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Volver',
+        ),
         title: const Text(AcercaDeConstantes.tituloSodep),
         backgroundColor: AppTheme.bootcampTheme.appBarTheme.backgroundColor,
         foregroundColor: AppTheme.bootcampTheme.appBarTheme.foregroundColor,
       ),
-      drawer: const SideMenu(),
       backgroundColor: AppTheme.bootcampTheme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Padding(

@@ -170,7 +170,8 @@ class _NoticiaScreenContent extends StatelessWidget {
                 },
                 tooltip: 'Agregar Noticia',
               );
-            },              ),
+            },              
+          ),
         );        
       }
     );
@@ -201,7 +202,6 @@ class _NoticiaScreenContent extends StatelessWidget {
         ),
       );
     } else if (state is NoticiaLoaded) {
-      // Obtener las categorías del BlocProvider
       final categoriaState = context.watch<CategoriaBloc>().state;
       List<Categoria> categorias = [];
       

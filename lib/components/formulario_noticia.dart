@@ -31,9 +31,7 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
     _fuenteController = TextEditingController(text: widget.noticia?.fuente ?? '');
     _imagenUrlController = TextEditingController(text: widget.noticia?.urlImagen ?? '');
     _fechaSeleccionada = widget.noticia?.publicadaEl ?? DateTime.now();
-    _fechaController = TextEditingController(
-      text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada)
-    );
+    _fechaController = TextEditingController(text: DateFormat('dd/MM/yyyy').format(_fechaSeleccionada));
     
     if (widget.noticia?.categoriaId != null) {
       final existeCategoria = widget.categorias.any((c) => c.id == widget.noticia!.categoriaId);
@@ -105,6 +103,8 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
             ? "https://picsum.photos/200/300" 
             : _imagenUrlController.text,
         categoriaId: _selectedCategoriaId,
+        contadorReportes: widget.noticia?.contadorReportes ?? 0,
+        contadorComentarios: widget.noticia?.contadorComentarios ?? 0,
       );
       Navigator.of(context).pop(noticia);
     }
@@ -174,12 +174,6 @@ class _FormularioNoticiaState extends State<FormularioNoticia> {
                 labelText: 'URL de la imagen',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese la URL de una imagen';
-                }
-                return null;
-              },
             ),
             const SizedBox(height: 16),
             TextFormField(

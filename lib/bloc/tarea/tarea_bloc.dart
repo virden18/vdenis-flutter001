@@ -95,9 +95,7 @@ class TareaBloc extends Bloc<TareaEvent, TareaState> {
           (t) => t.id == event.taskId,
         );
 
-        final usuarioActual =
-            tareaActual.usuario ??
-            (await _secureStorage.getUserEmail() ?? 'usuario@anonimo.com');
+        final usuarioActual = tareaActual.usuario ?? (await _secureStorage.getUserEmail() ?? 'usuario@anonimo.com');
 
         final tareaConEmail = event.tarea.copyWith(usuario: usuarioActual);
 

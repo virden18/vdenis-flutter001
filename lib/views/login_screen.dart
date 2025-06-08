@@ -5,17 +5,44 @@ import 'package:vdenis/bloc/auth/auth_event.dart';
 import 'package:vdenis/bloc/auth/auth_state.dart';
 import 'package:vdenis/components/snackbar_component.dart';
 import 'package:vdenis/views/welcome_screen.dart';
+import 'package:vdenis/theme/colors.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
-  LoginScreen({super.key});
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      final username = _usernameController.text.trim();
+      final password = _passwordController.text.trim();
+      context.read<AuthBloc>().add(
+        AuthLoginRequested(
+          email: username,
+          password: password,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
+    final theme = Theme.of(context);
     return BlocProvider(
       create: (context) => AuthBloc(),
       child: BlocConsumer<AuthBloc, AuthState>(
@@ -25,7 +52,11 @@ class LoginScreen extends StatelessWidget {
               context: context,
               barrierDismissible: false,
               builder: (BuildContext context) {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: theme.colorScheme.primary,
+                  ),
+                );
               },
             );
           } else if (state is AuthAuthenticated) {
@@ -47,7 +78,7 @@ class LoginScreen extends StatelessWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBarComponent.crear(
                 mensaje: state.error.message,
-                color: Colors.red,
+                color: theme.colorScheme.error,
                 duracion: const Duration(seconds: 4),
               ),
             );
@@ -55,62 +86,133 @@ class LoginScreen extends StatelessWidget {
         },
         builder: (context, state) {
           return Scaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Inicio de Sesión',
-                      style: TextStyle(color: Colors.black, fontSize: 22),
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Card(
+                    elevation: 0,
+                    margin: const EdgeInsets.all(8.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    TextFormField(
-                      controller: usernameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Usuario *',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'El correo es obligatorio';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: passwordController,
-                      decoration: const InputDecoration(
-                        labelText: 'Contraseña *',
-                        border: OutlineInputBorder(),
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'La contraseña es obligatoria';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          final username = usernameController.text.trim();
-                          final password = passwordController.text.trim();
-                          context.read<AuthBloc>().add(
-                            AuthLoginRequested(
-                              email: username,
-                              password: password,
+                    color: theme.cardTheme.color,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Icon(
+                              Icons.lock_outline,
+                              size: 80,
+                              color: theme.colorScheme.primary,
                             ),
-                          );
-                        }
-                      },
-                      child: const Text('Iniciar Sesión'),
+                            const SizedBox(height: 24),
+                            Text(
+                              'Inicio de Sesión',
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primaryDarkBlue,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 32),
+                            TextFormField(
+                              controller: _usernameController,
+                              decoration: InputDecoration(
+                                labelText: 'Usuario',
+                                labelStyle: TextStyle(color: theme.colorScheme.primary),
+                                hintText: 'Ingresa el nombre de usuario o correo',
+                                hintStyle: const TextStyle(color: AppColors.gray05),
+                                prefixIcon: Icon(Icons.person, color: theme.colorScheme.primary),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: AppColors.gray05),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+                                ),
+                                filled: true,
+                                fillColor: AppColors.gray01,
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              style: theme.textTheme.bodyLarge,
+                              cursorColor: theme.colorScheme.primary,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'El usuario o correo es obligatorio';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _passwordController,
+                              decoration: InputDecoration(
+                                labelText: 'Contraseña',
+                                labelStyle: TextStyle(color: theme.colorScheme.primary),
+                                hintText: 'Ingresa tu contraseña',
+                                hintStyle: const TextStyle(color: AppColors.gray05),
+                                prefixIcon: Icon(Icons.lock, color: theme.colorScheme.primary),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: AppColors.gray05),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+                                ),
+                                filled: true,
+                                fillColor: AppColors.gray01,
+                              ),
+                              obscureText: _obscurePassword,
+                              textInputAction: TextInputAction.done,
+                              onFieldSubmitted: (_) => _submitForm(context),
+                              style: theme.textTheme.bodyLarge,
+                              cursorColor: theme.colorScheme.primary,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'La contraseña es obligatoria';
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 32),
+                            FilledButton(
+                              onPressed: () => _submitForm(context),
+                              style: theme.filledButtonTheme.style,
+                              child: Text(
+                                'INICIAR SESIÓN',
+                                style: theme.textTheme.labelLarge?.copyWith(
+                                  color: theme.colorScheme.onPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

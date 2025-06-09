@@ -29,7 +29,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     if (token == null || token.isEmpty) {
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false, // Elimina todas las rutas previas
         );
       }

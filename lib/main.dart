@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return ConnectivityWrapper(child: child ?? const SizedBox.shrink());
         },
-        home: LoginScreen(),
+        home: const LoginScreen(),
       ),
     );
   }
